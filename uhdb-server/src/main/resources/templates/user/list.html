@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4" layout:decorate="~{layout/layout}">
+<head>
+<title>회원 가입자 목록</title>
+<!-- page script -->
+<script type="text/javascript" th:inline="javascript">
+/*<![CDATA[*/
+/**
+$(function() {
+    $("#userList").DataTable({
+        "paging": false,
+        "lengthChange": false,
+        "searching": false,
+        "ordering": false,
+        "info": false,
+        "autoWidth": false
+    });
+});
+*/
+$(document).ready(function() {
+
+	$("#userList").DataTable({
+		"lengthChange": false
+		, "info": false
+		, "language": {
+			"loadingRecords": "Please wait - loading..."
+			, "search": "검색 "
+			/**
+		    , lengthMenu: "출력 <select class=\"form-control input-sm\">" +
+		    	"<option value=\"10\">10</option>" +
+		    	"<option value=\"20\">20</option>" +
+		    	"<option value=\"50\">50</option>" +
+		    	"<option value=\"-1\">All</option>" +
+		    	"</select> 개"
+		    */
+			// , "info": "총 _PAGES_ 중 _PAGE_ 번째 페이지" // Showing _START_ to _END_ of _TOTAL_ entries
+		    , "paginate": {
+		    	"first": "First page"
+		    	, "last": "Last page"
+		    	, "previous": "이전"
+		    	, "next": "다음"
+		    }
+		}
+	});
+
+/**
+    $("#userList").DataTable({
+        "paging": true
+        , "lengthChange": true
+        , "searching": true
+        , "ordering": true
+        , "info": true
+        , "autoWidth": true
+    });
+*/
+
+});
+/*]]>*/
+</script>
+</head>
+<body>
+
+  <!--// 본문 영역 -->
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper" layout:fragment="content">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        회원관리
+        <small>회원 가입자 목록</small>
+      </h1>
+      <!--
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="#">Tables</a></li>
+        <li class="active">Data tables</li>
+      </ol>
+      -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box">
+            <div class="box-header">
+              <!--<h3 class="box-title"> Hover Data Table</h3>-->
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <table id="userList" class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                  <th>회원ID</th>
+                  <th>이름</th>
+                  <th>핸드폰번호</th>
+                  <th>가입일시</th>
+                  <th>생년월일</th>
+                  <th>성별</th>
+                  <th>탈퇴여부</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${not #lists.isEmpty(userList)}" th:each="user : ${userList}">
+                  <td><a href="#" th:href="@{/user/} + ${user.seq}" th:text="${user.username}">Trident</a></td>
+                  <td th:text="${user.getDecName()}">Internet Explorer 4.0</td>
+                  <td th:text="${user.getDecMobile()}">Win 95+</td>
+                  <td th:text="${#dates.format(user.regDate, 'yyyy-MM-dd HH:mm')}"> 4</td>
+                  <td th:text="${user.birthDate}">Trident</td>
+                  <td th:text="${user.sex}">Trident</td>
+                  <td th:text="${user.secedeYn}">Trident</td>
+                </tr>
+                </tbody>
+<!--
+                <tfoot>
+                <tr>
+                  <th>회원ID</th>
+                  <th>이름</th>
+                  <th>핸드폰번호</th>
+                  <th>가입일시</th>
+                  <th>생년월일</th>
+                  <th>성별</th>
+                  <th>탈퇴여부</th>
+                </tr>
+                </tfoot>
+-->
+              </table>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  <!-- 본문 영역 //-->
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4" layout:decorate="~{layout/layout}">
+<head>
+<title>공지사항 등록</title>
+<!-- page script -->
+<script type="text/javascript" th:inline="javascript">
+/*<![CDATA[*/
+
+$(document).ready(function() {
+
+});
+
+/*]]>*/
+</script>
+</head>
+<body>
+
+  <!--// 본문 영역 -->
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper" layout:fragment="content">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        공지사항 관리
+        <small>공지사항 등록</small>
+      </h1>
+<!--
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="#">Tables</a></li>
+        <li class="active">Data tables</li>
+      </ol>
+-->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-xs-10">
+          <div class="box box-primary">
+            <div class="box-header with-border">
+              <!--<h3 class="box-title"> Hover Data Table</h3>-->
+            </div>
+ 			<form id="form-notice-reg" name="form-notice-reg" role="form" method="post" action="#" th:action="@{/notice/reg}">
+              <div class="box-body">
+                <div class="form-group">
+                  <label for="title">제목</label>
+                  <input type="text" class="form-control" id="title" name="title" placeholder="제목을 입력하세요." required="required" />
+                </div>
+				<div class="form-group">
+                  <label>내용</label>
+                  <textarea id="content" name="content" class="form-control" rows="5" placeholder="내용을 입력하세요" required="required"></textarea>
+                </div>
+<!--
+                <div class="form-group">
+                  <label for="exampleInputFile">File input</label>
+                  <input type="file" id="exampleInputFile">
+                  <p class="help-block">Example block-level help text here.</p>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox"> Check me out
+                  </label>
+                </div>
+-->
+              </div>
+              <!-- /.box-body -->
+
+              <div class="box-footer">
+                <button type="submit" class="btn btn-primary pull-right">저장</button>
+              </div>
+            </form>
+          </div>
+          <!-- /.box -->
+
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  <!-- 본문 영역 //-->
+</body>
+</html>

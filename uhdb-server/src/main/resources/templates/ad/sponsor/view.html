@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4" layout:decorate="~{layout/layout}">
+<head>
+<title>광고주 상세보기</title>
+<!-- page script -->
+<script type="text/javascript" th:inline="javascript">
+/*<![CDATA[*/
+
+$(document).ready(function() {
+	if ($("#delYn").val() == 'Y') {
+		$("#name").prop("disabled", true);
+		$("#mobile").prop("disabled", true);
+		$("#email").prop("disabled", true);
+		$("#memo").prop("disabled", true);
+		$("#cb-del-yn").prop("checked", true);
+	}
+
+	$("#cb-del-yn").click(function() {
+		if ($("#cb-del-yn").prop("checked")) { // 삭제
+			$("#name").prop("disabled", true);
+			$("#mobile").prop("disabled", true);
+			$("#email").prop("disabled", true);
+			$("#memo").prop("disabled", true);
+			$("#delYn").val('Y');
+		}
+		else {
+			$("#name").prop("disabled", false);
+			$("#mobile").prop("disabled", false);
+			$("#email").prop("disabled", false);
+			$("#memo").prop("disabled", false);
+			$("#delYn").val('N');
+		}
+	});
+});
+
+/*]]>*/
+</script>
+</head>
+<body>
+
+  <!--// 본문 영역 -->
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper" layout:fragment="content">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        광고 관리
+        <small>광고주 상세보기</small>
+      </h1>
+<!--
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="#">Tables</a></li>
+        <li class="active">Data tables</li>
+      </ol>
+-->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-xs-10">
+          <div class="box box-primary">
+            <div class="box-header with-border">
+              <!--<h3 class="box-title"> Hover Data Table</h3>-->
+            </div>
+ 			<form id="form-sponsor-modify" name="form-sponsor-modify" role="form" class="form-horizontal" method="post" action="#" th:action="@{/ad/sponsor/modify} + ${sponsor.seq}">
+              <div class="box-body">
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">광고주명</label>
+                  <div class="col-sm-4">
+                  	<input type="text" class="form-control" id="name" name="name" placeholder="광고주명" required="required" th:value="${sponsor.name}" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">핸드폰번호</label>
+                  <div class="col-sm-4">
+                  	<input type="text" id="mobile" name="mobile" class="form-control" placeholder="핸드폰번호" required="required" data-inputmask='"mask": "999-9999-9999"' data-mask th:value="${sponsor.mobile}" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">이메일주소</label>
+                  <div class="col-sm-4">
+                  	<input type="text" id="email" name="email" class="form-control" placeholder="이메일주소" required="required" data-inputmask="'alias': 'email'" data-mask th:value="${sponsor.email}" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">비고</label>
+                  <div class="col-sm-9">
+                  	<textarea id="memo" name="memo" class="form-control" rows="5" placeholder="비고" th:text="${sponsor.memo}" /></textarea>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">등록일시</label>
+                  <div class="col-sm-2">
+                  	<input type="text" class="form-control" id="_regDate" name="_regDate" readonly="readonly" th:value="${#dates.format(sponsor.regDate, 'yyyy-MM-dd HH:mm')}" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">삭제여부</label>
+                  <div class="col-sm-9">
+	                <div class="checkbox">
+	                  <label>
+	                    <input type="checkbox" id="cb-del-yn"> 삭제 여부 (체크 시 해당 광고주의 광고 미노출)
+	                    <input type="hidden" id="delYn" name="delYn" th:value="${sponsor.delYn}" />
+	                  </label>
+	                </div>
+                  </div>
+                </div>
+<!--
+                <div class="form-group">
+                  <label for="exampleInputFile">File input</label>
+                  <input type="file" id="exampleInputFile">
+                  <p class="help-block">Example block-level help text here.</p>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox"> Check me out
+                  </label>
+                </div>
+-->
+              </div>
+              <!-- /.box-body -->
+
+              <div class="box-footer">
+              	<div class="col-sm-offset-2 col-sm-9">
+              	    <button type="submit" class="btn btn-primary pull-right">저장</button>
+              	    <a href="javascript:history.back();" class="btn btn-info">회원 목록</a>
+              	</div>
+              </div>
+            </form>
+          </div>
+          <!-- /.box -->
+
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+
+	<script type="text/javascript" th:inline="javascript">
+	/*<![CDATA[*/
+	$(function () {
+	    $("[data-mask]").inputmask();
+	});
+	</script>
+
+  </div>
+  <!-- /.content-wrapper -->
+  <!-- 본문 영역 //-->
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4" layout:decorate="~{layout/layout}">
+<head>
+<title>매장 등록</title>
+<!-- page script -->
+<script type="text/javascript" th:inline="javascript">
+/*<![CDATA[*/
+
+$(document).ready(function() {
+	$("#tel").inputmask("9{1,4}-9{3,4}-9{4}");
+	$("#homepage").inputmask("http://*{1,10}.*{1,10}.*{2,4}");
+});
+
+/*]]>*/
+</script>
+</head>
+<body>
+
+  <!--// 본문 영역 -->
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper" layout:fragment="content">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        광고 관리
+        <small>매장 등록</small>
+      </h1>
+<!--
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="#">Tables</a></li>
+        <li class="active">Data tables</li>
+      </ol>
+-->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-xs-10">
+          <div class="box box-primary">
+            <div class="box-header with-border">
+              <!--<h3 class="box-title"> Hover Data Table</h3>-->
+            </div>
+ 			<form id="form-shop-reg" name="form-shop-reg" enctype="multipart/form-data" role="form" class="form-horizontal" method="post" action="#" th:action="@{/ad/shop/reg}">
+ 			  <input type="hidden" id="sponsorSeq" name="sponsorSeq" value="" th:value="${sponsor.seq}" />
+              <div class="box-body">
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">광고주명</label>
+                  <div class="col-sm-4">
+                  	<input type="text" class="form-control" id="_sponsorName" name="_sponsorName" readonly="readonly" th:value="${sponsor.name}" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">매장명</label>
+                  <div class="col-sm-4">
+                  	<input type="text" class="form-control" id="name" name="name" placeholder="매장명" required="required" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">매장 전화번호</label>
+                  <div class="col-sm-4">
+                  	<input type="text" id="tel" name="tel" class="form-control" placeholder="매장전화번호" required="required" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">홈페이지</label>
+                  <div class="col-sm-4">
+                  	<input type="text" id="homepage" name="homepage" class="form-control" placeholder="홈페이지" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">매장 주소</label>
+                  <div class="col-sm-9">
+					<div class="input-group">
+					  <span class="input-group-addon" style="cursor: pointer;" onclick="execDaumPostcode();"><i class="fa fa-envelope"></i></span>
+					  <input type="text" id="zipCode" name="zipCode" class="form-control" style="width: 120px; cursor: pointer;" placeholder="우편번호 검색" onclick="execDaumPostcode();" readonly="readonly" />
+	              	</div>
+					<input type="text" id="addr1" name="addr1" class="form-control" style="margin-top: 5px;" placeholder="주소" onclick="execDaumPostcode();" readonly="readonly" />
+					<input type="text" id="addr2" name="addr2" class="form-control" style="margin-top: 5px;" placeholder="상세주소" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">매장 사진<span class="badge" style="display: none;">0</span></label>
+                  <div class="col-sm-9">
+                  	<!--// 파일업로드 처리 -->
+	                <input type="file" id="attachFile" name="attachFile" onchange="uploadFile(this, 3, 10);" />
+
+					<div class="progress" style="display: none;">
+						<div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">0%</div>
+					</div>
+
+					<ul id="_ul_uploaded_files_area" style="display:none;"></ul>
+					<!-- 파일업로드 처리 //-->
+                  </div>
+                </div>
+<!--
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox"> Check me out
+                  </label>
+                </div>
+-->
+              </div>
+              <!-- /.box-body -->
+
+              <div class="box-footer">
+              	<div class="col-sm-offset-2 col-sm-9">
+              	    <button type="submit" class="btn btn-primary pull-right">저장</button>
+              	</div>
+              </div>
+            </form>
+          </div>
+          <!-- /.box -->
+
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+
+	<script type="text/javascript" th:inline="javascript">
+	/*<![CDATA[*/
+		$(function () {
+		    $("[data-mask]").inputmask();
+		});
+	/*]]>*/
+	</script>
+
+  </div>
+  <!-- /.content-wrapper -->
+  <!-- 본문 영역 //-->
+</body>
+</html>

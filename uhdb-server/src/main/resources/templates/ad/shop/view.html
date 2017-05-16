@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4" layout:decorate="~{layout/layout}">
+<head>
+<title>매장 상세보기</title>
+<!-- page script -->
+<script type="text/javascript" th:inline="javascript">
+/*<![CDATA[*/
+
+$(document).ready(function() {
+	$("#tel").inputmask("9{1,4}-9{3,4}-9{4}");
+	$("#homepage").inputmask("http://*{1,10}.*{1,10}.*{2,4}");
+
+	if ($("#delYn").val() == 'Y') {
+		$("#name").prop("disabled", true);
+		$("#tel").prop("disabled", true);
+		$("#homepage").prop("disabled", true);
+		$("#addr2").prop("disabled", true);
+		$("#cb-del-yn").prop("checked", true);
+	}
+
+	$("#cb-del-yn").click(function() {
+		if ($("#cb-del-yn").prop("checked")) { // 삭제
+			$("#name").prop("disabled", true);
+			$("#tel").prop("disabled", true);
+			$("#homepage").prop("disabled", true);
+			$("#addr2").prop("disabled", true);
+			$("#delYn").val('Y');
+		}
+		else {
+			$("#name").prop("disabled", false);
+			$("#tel").prop("disabled", false);
+			$("#homepage").prop("disabled", false);
+			$("#addr2").prop("disabled", false);
+			$("#delYn").val('N');
+		}
+	});
+});
+
+/*]]>*/
+</script>
+</head>
+<body>
+
+  <!--// 본문 영역 -->
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper" layout:fragment="content">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        광고 관리
+        <small>매장 상세보기</small>
+      </h1>
+<!--
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="#">Tables</a></li>
+        <li class="active">Data tables</li>
+      </ol>
+-->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-xs-10">
+          <div class="box box-primary">
+            <div class="box-header with-border">
+              <!--<h3 class="box-title"> Hover Data Table</h3>-->
+            </div>
+ 			<form id="form-shop-modify" name="form-shop-modify" enctype="multipart/form-data" role="form" class="form-horizontal" method="post" action="#" th:action="@{/ad/shop/modify/} + ${shop.seq}">
+ 			  <input type="hidden" id="sponsorSeq" name="sponsorSeq" value="" th:value="${sponsor.seq}" />
+              <div class="box-body">
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">광고주명</label>
+                  <div class="col-sm-4">
+                  	<input type="text" class="form-control" id="_sponsorName" name="_sponsorName" readonly="readonly" th:value="${sponsor.name}" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">매장명</label>
+                  <div class="col-sm-4">
+                  	<input type="text" class="form-control" id="name" name="name" placeholder="매장명" required="required" th:value="${shop.name}" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">매장 전화번호</label>
+                  <div class="col-sm-4">
+                  	<input type="text" id="tel" name="tel" class="form-control" placeholder="매장전화번호" required="required" th:value="${shop.tel}" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">홈페이지</label>
+                  <div class="col-sm-4">
+                  	<input type="text" id="homepage" name="homepage" class="form-control" placeholder="홈페이지" th:value="${shop.homepage}" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">매장 주소</label>
+                  <div class="col-sm-9">
+					<div class="input-group">
+					  <span class="input-group-addon" style="cursor: pointer;" onclick="execDaumPostcode();"><i class="fa fa-envelope"></i></span>
+					  <input type="text" id="zipCode" name="zipCode" class="form-control" style="width: 120px; cursor: pointer;" placeholder="우편번호 검색" onclick="execDaumPostcode();" readonly="readonly" th:value="${address.zipCode}" />
+	              	</div>
+					<input type="text" id="addr1" name="addr1" class="form-control" style="margin-top: 5px;" placeholder="주소" onclick="execDaumPostcode();" readonly="readonly" th:value="${address.addr1}" />
+					<input type="text" id="addr2" name="addr2" class="form-control" style="margin-top: 5px;" placeholder="상세주소" th:value="${address.addr2}" />
+					<input type="hidden" id="addrSeq" name="addrSeq" value="" th:value="${address.addrSeq}" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">매장 사진<span class="badge" style="display: none;">0</span></label>
+                  <div class="col-sm-9">
+                  	<!--// 파일업로드 처리 -->
+	                <input type="file" id="attachFile" name="attachFile" onchange="uploadFile(this, 3, 10);" style="margin-bottom:5px;" />
+
+					<div class="progress" style="display: none;">
+						<div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">0%</div>
+					</div>
+
+					<ul id="_ul_uploaded_files_area">
+						<li style="padding-top: 5px;" th:if="${not #lists.isEmpty(attachFileList)}" th:each="attachFile,iterStat : ${attachFileList}">
+							<span th:id="'span_file_name_' + ${attachFile.fileSeq}" th:text="${attachFile.orgName}">파일명</span>
+							<span th:text="'(' + ${#numbers.formatInteger(attachFile.size, 3, 'COMMA')} + 'KB)'">파일사이즈</span> &nbsp;
+							<button class="btn btn-xs btn-danger" th:onclick="'deleteUploadedFile(this, ' + ${attachFile.fileSeq} + ')'" type="button">삭제</button>
+							<a class="btn btn-xs btn-info" data-toggle="modal" data-target="#image-view-modal" th:data-target="'#image-view-modal-' + ${attachFile.fileSeq}">보기</a>
+
+					        <div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" id="image-view-modal" th:id="'image-view-modal-' + ${attachFile.fileSeq}">
+					          <div class="modal-dialog">
+					            <div class="modal-content">
+					              <div class="modal-header">
+					                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					                	<span aria-hidden="true"></span>&times;
+					                </button>
+					                <h4 class="modal-title" th:text="${attachFile.orgName}"></h4>
+					              </div>
+					              <div class="modal-body">
+					                <img th:src="@{/common/file/} + ${attachFile.fileSeq}" onerror="alert('no-image');" class="img-responsive" />
+					              </div>
+<!--
+					              <div class="modal-footer">
+					                <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+					                <button type="button" class="btn btn-primary">Save changes</button>
+					              </div>
+-->
+					            </div>
+					            <!-- /.modal-content -->
+					          </div>
+					          <!-- /.modal-dialog -->
+					        </div>
+					        <!-- /.modal -->
+
+						</li>
+					</ul>
+					<!-- 파일업로드 처리 //-->
+
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">등록일시</label>
+                  <div class="col-sm-2">
+                  	<input type="text" class="form-control" id="_regDate" name="_regDate" readonly="readonly" th:value="${#dates.format(shop.regDate, 'yyyy-MM-dd HH:mm')}" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">삭제여부</label>
+                  <div class="col-sm-9">
+	                <div class="checkbox">
+	                  <label>
+	                    <input type="checkbox" id="cb-del-yn"> 삭제 여부 (체크 시 해당 매장의 광고 미노출)
+	                    <input type="hidden" id="delYn" name="delYn" th:value="${shop.delYn}" />
+	                  </label>
+	                </div>
+                  </div>
+                </div>
+              </div>
+              <!-- /.box-body -->
+
+              <div class="box-footer">
+              	<div class="col-sm-offset-2 col-sm-9">
+              	    <button type="submit" class="btn btn-primary pull-right">저장</button>
+              	    <a href="javascript:history.back();" class="btn btn-info">매장 목록</a>
+              	</div>
+              </div>
+            </form>
+          </div>
+          <!-- /.box -->
+
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+
+	<script type="text/javascript" th:inline="javascript">
+	/*<![CDATA[*/
+		$(function () {
+		    $("[data-mask]").inputmask();
+		});
+	/*]]>*/
+	</script>
+
+  </div>
+  <!-- /.content-wrapper -->
+  <!-- 본문 영역 //-->
+</body>
+</html>

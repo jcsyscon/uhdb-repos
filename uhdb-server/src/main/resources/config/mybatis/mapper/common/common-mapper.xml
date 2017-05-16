@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.realsnake.sample.mapper.common.CommonMapper">
+
+<!-- 첨부파일 //-->
+	<update id="insertAttachFile" parameterType="AttachFileVo" useGeneratedKeys="true" keyProperty="fileSeq">
+	    INSERT /* insertAttachFile, 전강욱(realsnake1975@gmail.com) */ INTO attach_file (
+	    	group_seq
+	    	, gubun
+	    	, path
+	        , org_name
+	        , name
+	        , size
+	        , ext
+	        , reg_user_seq
+	        , reg_date
+	        , del_yn
+	    ) VALUES (
+	    	#{groupSeq}
+	    	, #{gubun}
+	    	, #{path}
+	        , #{orgName}
+	        , #{name}
+	        , #{size}
+	        , #{ext}
+	        , #{regUserSeq}
+	        , NOW()
+	        , 'N'
+	    )
+	</update>
+
+	<select id="selectAttachFile" parameterType="int" resultType="AttachFileVo">
+	    SELECT /* selectAttachFile, 전강욱(realsnake1975@gmail.com) */ file_seq
+	    , group_seq
+    	, gubun
+    	, path
+        , org_name
+        , name
+        , size
+        , ext
+        , reg_user_seq
+        , reg_date
+		, del_yn
+	    , del_user_seq
+		, del_date
+	    FROM attach_file
+		WHERE file_seq = #{fileSeq}
+	</select>
+
+	<sql id="whereClauseOfAttachFile">
+		<where>
+			AND group_seq = #{groupSeq}
+			AND gubun = #{gubun}
+			AND del_yn = 'N'
+		</where>
+	</sql>
+
+	<select id="selectAttachFileList" parameterType="AttachFileVo" resultType="AttachFileVo">
+	    SELECT /* selectAttachFileList, 전강욱(realsnake1975@gmail.com) */ file_seq
+	    , group_seq
+    	, gubun
+    	, path
+        , org_name
+        , name
+        , size
+        , ext
+        , reg_user_seq
+        , reg_date
+		, del_yn
+	    , del_user_seq
+		, del_date
+	    FROM attach_file
+	    <include refid="whereClauseOfAttachFile" />
+	</select>
+
+	<update id="deleteAttachFile" parameterType="AttachFileVo">
+		UPDATE /* deleteAttachFile, 전강욱(realsnake1975@gmail.com) */ attach_file
+		SET del_yn = 'Y'
+		, del_user_seq = #{delUserSeq}
+		, del_date = NOW()
+		WHERE file_seq = #{fileSeq}
+     </update>
+<!-- 첨부파일 //-->
+
+<!-- 주소 //-->
+	<update id="insertAddress" parameterType="AddressVo" useGeneratedKeys="true" keyProperty="addrSeq">
+	    INSERT /* insertAddress, 전강욱(realsnake1975@gmail.com) */ INTO address (
+	    	group_seq
+	    	, gubun
+	        , zip_code
+	        , addr1
+	        , addr2
+	        , lat
+	        , lng
+	        , reg_user_seq
+	        , reg_date
+	        , del_yn
+	    ) VALUES (
+	    	#{groupSeq}
+	    	, #{gubun}
+	        , #{zipCode}
+	        , #{addr1}
+	        , #{addr2}
+	        , #{lat}
+	        , #{lng}
+	        , #{regUserSeq}
+	        , NOW()
+	        , 'N'
+	    )
+	</update>
+
+	<select id="selectAddress" parameterType="int" resultType="AddressVo">
+	    SELECT /* selectAddressList, 전강욱(realsnake1975@gmail.com) */ addr_seq
+        , group_seq
+    	, gubun
+        , zip_code
+        , addr1
+        , addr2
+        , lat
+        , lng
+        , reg_user_seq
+        , reg_date
+		, del_yn
+	    , del_user_seq
+		, del_date
+	    FROM address
+		WHERE addr_seq = #{addrSeq}
+	</select>
+
+	<sql id="whereClauseOfAddress">
+		<where>
+			AND group_seq = #{groupSeq}
+			AND gubun = #{gubun}
+			AND del_yn = 'N'
+		</where>
+	</sql>
+
+	<select id="selectAddressList" parameterType="AddressVo" resultType="AddressVo">
+	    SELECT /* selectAddressList, 전강욱(realsnake1975@gmail.com) */ addr_seq
+        , group_seq
+    	, gubun
+        , zip_code
+        , addr1
+        , addr2
+        , lat
+        , lng
+        , reg_user_seq
+        , reg_date
+		, del_yn
+	    , del_user_seq
+		, del_date
+	    FROM address
+	    <include refid="whereClauseOfAddress" />
+	</select>
+
+	<update id="deleteAddress" parameterType="AddressVo">
+		UPDATE /* deleteAddress, 전강욱(realsnake1975@gmail.com) */ address
+		SET del_yn = 'Y'
+		, del_user_seq = #{delUserSeq}
+		, del_date = NOW()
+		WHERE addr_seq = #{addrSeq}
+     </update>
+<!-- 주소  //-->
+
+<!--// 공통코드 -->
+	<update id="insertCommonCode" parameterType="CommonCodeVo">
+	    INSERT /* insertCommonCode, 전강욱(realsnake1975@gmail.com) */ INTO common.common_code (
+	    	code
+	    	, value
+	        , group_code
+	        , depth
+	        , sort_order
+	        , reg_user_seq
+	        , reg_date
+	        , del_yn
+	    ) VALUES (
+	    	#{code}
+	        , #{value}
+	        , #{groupCode}
+	        , #{depth}
+	        , #{sortOrder}
+	        , #{regUserSeq}
+	        , NOW()
+	        , 'N'
+	    )
+	</update>
+
+	<update id="updateCommonCode" parameterType="CommonCodeVo">
+		UPDATE /* updateCommonCode, 전강욱(realsnake1975@gmail.com) */ common.common_code
+		<set>
+	    	<if test=' code != null and !"".equals(code) '>, code = #{code}</if>
+	    	<if test=' value != null and !"".equals(value) '>, value = #{value}</if>
+	    	<if test=' sort_order != null and sort_order > 0 '>, sort_order = #{sortOrder}</if>
+			, mod_user_seq = #{modUserSeq}
+			, mod_date = NOW()
+		</set>
+		WHERE code = #{code}
+     </update>
+
+	<update id="deleteCommonCode" parameterType="CommonCodeVo">
+		UPDATE /* deleteCommonCode, 전강욱(realsnake1975@gmail.com) */ common.common_code
+		SET del_yn = 'Y'
+		, del_user_seq = #{delUserSeq}
+		, del_date = NOW()
+		WHERE code = #{code}
+     </update>
+
+	<sql id="whereClauseOfCommonCode">
+	    <where>
+	    	<choose>
+	    		<when test=' group_code != null and !"".equals(group_code) '>AND group_code = #{groupCode}</when>
+	    		<otherwise>AND depth = 0</otherwise>
+	    	</choose>
+		    <!--<if test=' isAdmin == null or isAdmin == false'>AND del_yn = 'N'</if>-->
+		    AND del_yn = 'N'
+		    <choose>
+		    	<when test=' pagingHelper.search.startDate != null and !"".equals(pagingHelper.search.startDate) '>
+			    	AND reg_date &gt;= CONCAT(#{pagingHelper.search.startDate}, ' 00:00:00')
+			    	<if test=' pagingHelper.search.endDate != null and !"".equals(pagingHelper.search.endDate) '>
+			    		AND reg_date &lt;= CONCAT(#{pagingHelper.search.endDate}, ' 23:59:59')
+			    	</if>
+		    	</when>
+		    	<otherwise>
+			    	<if test=' pagingHelper.search.endDate != null and !"".equals(pagingHelper.search.endDate) '>
+			    		AND reg_date &lt;= CONCAT(#{pagingHelper.search.endDate}, ' 23:59:59')
+			    	</if>
+		    	</otherwise>
+		    </choose>
+	    	<if test=' pagingHelper.search.keyword != null and !"".equals(pagingHelper.search.keyword) '>
+			    <choose>
+			    	<when test=' "code".equals(pagingHelper.search.item) '>
+						AND code LIKE CONCAT('%', #{pagingHelper.search.keyword}, '%')
+			    	</when>
+			    	<when test=' "value".equals(pagingHelper.search.item) '>
+						AND value LIKE CONCAT('%', #{pagingHelper.search.keyword}, '%')
+			    	</when>
+			    	<otherwise>
+						AND (code LIKE CONCAT('%', #{pagingHelper.search.keyword}, '%') OR value LIKE CONCAT('%', #{pagingHelper.search.keyword}, '%'))
+			    	</otherwise>
+			    </choose>
+	    	</if>
+	    </where>
+	</sql>
+
+	<sql id="orderClauseOfCommonCode">
+		<if test=' pagingHelper != null and pagingHelper.sortList != null '>
+            <foreach collection="pagingHelper.sortList" item="sort" open="ORDER BY " separator="," close="">
+                ${sort.column} ${sort.ascOrDesc}
+            </foreach>
+        </if>
+	</sql>
+
+	<select id="selectCommonCode" parameterType="string" resultType="CommonCodeVo">
+	    SELECT /* selectCommonCode, 전강욱(realsnake1975@gmail.com) */ code
+	    , value
+	    , group_code
+	    , depth
+	    , sort_order
+	    , reg_user_seq
+		, reg_date
+	    , mod_user_seq
+		, mod_date
+		, del_yn
+	    , del_user_seq
+		, del_date
+	    FROM common.common_code
+	    WHERE code = #{code}
+	</select>
+
+	<select id="selectCommonCodeListCount" parameterType="CommonDto" resultType="int">
+	    SELECT /* selectCommonCodeListCount, 전강욱(realsnake1975@gmail.com) */ COUNT(*)
+	    FROM common.common_code
+	    <include refid="whereClauseOfCommonCode" />
+	</select>
+
+	<select id="selectCommonCodeList" parameterType="CommonDto" resultType="CommonCodeVo">
+	    SELECT /* selectCommonCodeList, 전강욱(realsnake1975@gmail.com) */ code
+	    , value
+	    , group_code
+	    , depth
+	    , sort_order
+	    , reg_user_seq
+		, reg_date
+	    , mod_user_seq
+		, mod_date
+		, del_yn
+	    , del_user_seq
+		, del_date
+	    FROM common.common_code
+	    <include refid="whereClauseOfCommonCode" />
+	    ORDER BY group_code, depth, sort_order
+	    LIMIT #{pagingHelper.startNum}, #{pagingHelper.endNum}
+	</select>
+<!-- 공통코드 //-->
+
+<!--// 도로명 등 주소 -->
+	<update id="insertBuildingInfo" parameterType="BuildingInfoVo">
+		INSERT /* insertBuildingInfo, 전강욱(realsnake1975@gmail.com) */ INTO common.building_info (
+			beopjungdong_code,
+			sido_name,
+			sigungu_name,
+			beopjungeopmyendong_name,
+			beopjungri_name,
+			san_yn,
+			bunji,
+			ho,
+			road_name_code,
+			road_name,
+			jiha_yn,
+			building_bonbun,
+			building_bubun,
+			building_name,
+			detail_building_name,
+			building_mgt_no,
+			eopmyendong_seq,
+			haengjungdong_code,
+			haengjungdong_name,
+			zip_code,
+			zip_seq,
+			mass_delivery_name,
+			move_reason_code,
+			disp_date,
+			before_update_road_name,
+			building_name_per_sigungu,
+			union_housing_yn,
+			new_zip_code,
+			detail_addr_yn,
+			bigo1,
+			bigo2
+		) VALUES (
+			#{beopjungdongCode},
+			#{sidoName},
+			#{sigunguName},
+			#{beopjungeopmyendongName},
+			#{beopjungriName},
+			#{sanYn},
+			#{bunji},
+			#{ho},
+			#{roadNameCode},
+			#{roadName},
+			#{jihaYn},
+			#{buildingBonbun},
+			#{buildingBubun},
+			#{buildingName},
+			#{detailBuildingName},
+			#{buildingMgtNo},
+			#{eopmyendongSeq},
+			#{haengjungdongCode},
+			#{haengjungdongName},
+			#{zipCode},
+			#{zipSeq},
+			#{massDeliveryName},
+			#{moveReasonCode},
+			#{dispDate},
+			#{beforeUpdateRoadName},
+			#{buildingNamePerSigungu},
+			#{unionHousingYn},
+			#{newZipCode},
+			#{detailAddrYn},
+			#{bigo1},
+			#{bigo2}
+		)
+	</update>
+
+	<update id="insertJibun" parameterType="JibunVo">
+		INSERT /* insertJibun, 전강욱(realsnake1975@gmail.com) */ INTO common.jibun (
+			beopjungdong_code,
+			sido_name,
+			sigungu_name,
+			beopjungeopmyendong_name,
+			beopjungri_name,
+			san_yn,
+			bunji,
+			ho,
+			road_name_code,
+			jiha_yn,
+			building_bonbun,
+			building_bubun,
+			jibun_seq,
+			move_reason_code
+		) VALUES (
+			#{beopjungdongCode},
+			#{sidoName},
+			#{sigunguName},
+			#{beopjungeopmyendongName},
+			#{beopjungriName},
+			#{sanYn},
+			#{bunji},
+			#{ho},
+			#{roadNameCode},
+			#{jihaYn},
+			#{buildingBonbun},
+			#{buildingBubun},
+			#{jibunSeq},
+			#{moveReasonCode}
+		)
+	</update>
+
+	<update id="insertRoadNameCode" parameterType="RoadNameCodeVo">
+		INSERT /* insertRoadNameCode, 전강욱(realsnake1975@gmail.com) */ INTO common.road_name_code (
+			sigungu_code,
+			road_name_no,
+			road_name,
+			road_name_rome,
+			eopmyendong_seq,
+			sido_name,
+			sigungu_name,
+			eopmyendong_gubun,
+			eopmyendong_code,
+			eopmyendong_name,
+			upper_road_name_no,
+			upper_road_name,
+			use_yn,
+			update_reason,
+			update_hist_info,
+			sido_name_rome,
+			sigungu_name_rome,
+			eopmyendong_name_rome,
+			disp_date,
+			end_date
+		) VALUES (
+			#{sigunguCode},
+			#{roadNameNo},
+			#{roadName},
+			#{roadNameRome},
+			#{eopmyendongSeq},
+			#{sidoName},
+			#{sigunguName},
+			#{eopmyendongGubun},
+			#{eopmyendongCode},
+			#{eopmyendongName},
+			#{upperRoadNameNo},
+			#{upperRoadName},
+			#{useYn},
+			#{updateReason},
+			#{updateHistInfo},
+			#{sidoNameRome},
+			#{sigunguNameRome},
+			#{eopmyendongNameRome},
+			#{dispDate},
+			#{endDate}
+		)
+	</update>
+<!-- 도로명 등 주소 //-->
+
+</mapper>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4" layout:decorate="~{layout/layout}">
+<head>
+<title>광고주 등록</title>
+<!-- page script -->
+<script type="text/javascript" th:inline="javascript">
+/*<![CDATA[*/
+
+$(document).ready(function() {
+
+});
+
+/*]]>*/
+</script>
+</head>
+<body>
+
+  <!--// 본문 영역 -->
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper" layout:fragment="content">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        광고 관리
+        <small>광고주 등록</small>
+      </h1>
+<!--
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="#">Tables</a></li>
+        <li class="active">Data tables</li>
+      </ol>
+-->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-xs-10">
+          <div class="box box-primary">
+            <div class="box-header with-border">
+              <!--<h3 class="box-title"> Hover Data Table</h3>-->
+            </div>
+ 			<form id="form-sponsor-reg" name="form-sponsor-reg" role="form" class="form-horizontal" method="post" action="#" th:action="@{/ad/sponsor/reg}">
+              <div class="box-body">
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">광고주명</label>
+                  <div class="col-sm-4">
+                  	<input type="text" class="form-control" id="name" name="name" placeholder="광고주명" required="required" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">핸드폰번호</label>
+                  <div class="col-sm-4">
+                  	<input type="text" id="mobile" name="mobile" class="form-control" placeholder="핸드폰번호" required="required" data-inputmask='"mask": "999-9999-9999"' data-mask />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">이메일주소</label>
+                  <div class="col-sm-4">
+                  	<input type="text" id="email" name="email" class="form-control" placeholder="이메일주소" required="required" data-inputmask="'alias': 'email'" data-mask />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">비고</label>
+                  <div class="col-sm-9">
+                  	<textarea id="memo" name="memo" class="form-control" rows="5" placeholder="비고"></textarea>
+                  </div>
+                </div>
+<!--
+                <div class="form-group">
+                  <label for="exampleInputFile">File input</label>
+                  <input type="file" id="exampleInputFile">
+                  <p class="help-block">Example block-level help text here.</p>
+                </div>
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox"> Check me out
+                  </label>
+                </div>
+-->
+              </div>
+              <!-- /.box-body -->
+
+              <div class="box-footer">
+              	<div class="col-sm-offset-2 col-sm-9">
+              	    <button type="submit" class="btn btn-primary pull-right">저장</button>
+              	</div>
+              </div>
+            </form>
+          </div>
+          <!-- /.box -->
+
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+
+	<script type="text/javascript" th:inline="javascript">
+	/*<![CDATA[*/
+	$(function () {
+	    $("[data-mask]").inputmask();
+	});
+	</script>
+
+  </div>
+  <!-- /.content-wrapper -->
+  <!-- 본문 영역 //-->
+</body>
+</html>

@@ -1,0 +1,334 @@
+-- mysql -uroot -p
+USE mysql
+;
+CREATE DATABASE sample DEFAULT CHARACTER SET UTF8 COLLATE UTF8_GENERAL_CI
+;
+/**
+-- 5.7 버전에서 password 칼럼이 없어 오류 발생(password ->  authentication_string)
+SELECT * -- host, user, password
+FROM user
+;
+INSERT INTO mysql.user (host,user,password,ssl_cipher,x509_issuer,x509_subject,authentication_string)
+VALUES ('%','sample',password('sample'),'','','','')
+;
+*/
+CREATE USER 'sample'@'%' IDENTIFIED BY 'sample'
+;
+FLUSH PRIVILEGES
+;
+GRANT ALL PRIVILEGES ON sample.* TO 'sample'@'%' (GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '!@#jcsyscondb123')
+;
+FLUSH PRIVILEGES
+;
+USE sample
+;
+CREATE TABLE `user` (
+  `seq` INT NOT NULL AUTO_INCREMENT COMMENT '일련번호',
+  `username` VARCHAR(20) NOT NULL COMMENT '아이디',
+  `password` VARCHAR(200) NOT NULL COMMENT '비밀번호',
+  `name` VARCHAR(200) NOT NULL COMMENT '이름',
+  `mobile` VARCHAR(200) NOT NULL COMMENT '핸드폰번호',
+  `email` VARCHAR(200) NULL COMMENT '이메일',
+  `reg_date` DATETIME NOT NULL COMMENT '등록일시',
+  `secede_yn` CHAR(1) NOT NULL DEFAULT 'N' COMMENT '탈퇴여부',
+  `secede_date` DATETIME NULL COMMENT '탈퇴일시',
+  PRIMARY KEY (`seq`),
+  UNIQUE INDEX `user_idx01` (`username` ASC)
+)
+ENGINE = InnoDB
+COMMENT = '사용자'
+;
+CREATE TABLE `user_authority` (
+  `user_seq` INT NOT NULL COMMENT 'user.seq',
+  `auth_name` VARCHAR(20) NOT NULL COMMENT '권한명',
+  `reg_user_seq` INT NULL COMMENT '등록자 일련번호',
+  `reg_date` DATETIME NOT NULL COMMENT '등록일시',
+  `del_yn` CHAR(1) NOT NULL DEFAULT 'N' COMMENT '삭제여부',
+  `del_user_seq` INT NULL COMMENT '삭제자 일련번호',
+  `del_date` DATETIME NULL COMMENT '삭제일시',
+  PRIMARY KEY (`user_seq`, `auth_name`)
+)
+ENGINE = InnoDB
+COMMENT = '사용자권한'
+;
+CREATE TABLE `user_fcm` (
+  `seq` int(11) NOT NULL COMMENT '일련번호',
+  `user_seq` int(11) NOT NULL COMMENT '사용자일련번호(user.seq)',
+  `fcm_token` varchar(200) NOT NULL COMMENT 'FCM토큰',
+  `app_version` varchar(5) NOT NULL COMMENT '앱버전',
+  `reg_date` datetime NOT NULL COMMENT '등록일시',
+  PRIMARY KEY (`seq`)
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8
+COMMENT='사용자FCM매핑'
+;
+CREATE TABLE `board_notice` (
+  `seq` INT NOT NULL AUTO_INCREMENT COMMENT '일련번호',
+  `title` VARCHAR(500) NOT NULL COMMENT '제목',
+  `content` TEXT NOT NULL COMMENT '내용',
+  `reg_user_seq` INT NULL COMMENT '등록자 일련번호',
+  `reg_date` DATETIME NOT NULL COMMENT '등록일시',
+  `mod_user_seq` INT NULL COMMENT '수정자 일련번호',
+  `mod_date` DATETIME NULL COMMENT '수정일시',
+  `del_yn` CHAR(1) NOT NULL DEFAULT 'N' COMMENT '삭제여부',
+  `del_user_seq` INT NULL COMMENT '삭제자 일련번호',
+  `del_date` DATETIME NULL COMMENT '삭제일시',
+  PRIMARY KEY (`seq`)
+)
+ENGINE = InnoDB
+COMMENT = '공지사항'
+;
+CREATE TABLE `attach_file` (
+  `seq` INT NOT NULL AUTO_INCREMENT COMMENT '일련번호',
+  `group_seq` INT NOT NULL COMMENT '그룹일련번호',
+  `gubun` VARCHAR(10) NOT NULL COMMENT 'notice(공지사항)/ad(광고)/sponsor(광고주)/store(매장)',
+  `org_name` VARCHAR(200) NOT NULL COMMENT '원파일명',
+  `disp_name` VARCHAR(200) NOT NULL COMMENT '출력파일명',
+  `size` INT NOT NULL COMMENT '파일사이즈',
+  `ext` VARCHAR(10) NOT NULL COMMENT '파일확장자',
+  `reg_user_seq` INT NOT NULL COMMENT '등록자 일련번호',
+  `reg_date` DATETIME NOT NULL COMMENT '등록일시',
+  `del_yn` CHAR(1) NOT NULL DEFAULT 'N' COMMENT '삭제여부',
+  `del_user_seq` INT NULL COMMENT '삭제자 일련번호',
+  `del_date` DATETIME NULL COMMENT '삭제일시',
+  PRIMARY KEY (`seq`)
+)
+ENGINE = InnoDB
+COMMENT = '첨부파일'
+;
+CREATE INDEX attach_file_idx01 ON attach_file(group_seq, gubun)
+;
+CREATE TABLE `sponsor` (
+  `seq` INT NOT NULL AUTO_INCREMENT COMMENT '일련번호',
+  `user_seq` INT NULL COMMENT '사용자일련번호(user.seq)',
+  `name` VARCHAR(50) NOT NULL COMMENT '광고주명',
+  `mobile` VARCHAR(200) NOT NULL COMMENT '광고주핸드폰번호',
+  `email` VARCHAR(200) NULL COMMENT '광고주이메일',
+  `memo` TEXT NULL COMMENT '비고',
+  `reg_user_seq` INT NOT NULL COMMENT '등록자 일련번호',
+  `reg_date` DATETIME NOT NULL COMMENT '등록일시',
+  `mod_user_seq` INT NULL COMMENT '수정자 일련번호',
+  `mod_date` DATETIME NULL COMMENT '수정일시',
+  `del_yn` CHAR(1) NOT NULL DEFAULT 'N' COMMENT '삭제여부',
+  `del_user_seq` INT NULL COMMENT '삭제자 일련번호',
+  `del_date` DATETIME NULL COMMENT '삭제일시',
+  PRIMARY KEY (`seq`)
+)
+ENGINE = InnoDB
+COMMENT = '광고주'
+;
+CREATE TABLE `shop` (
+  `seq` INT NOT NULL AUTO_INCREMENT COMMENT '일련번호',
+  `sponsor_seq` INT NOT NULL COMMENT '광고주일련번호',
+  `name` VARCHAR(50) NOT NULL COMMENT '매장명',
+  `tel` VARCHAR(50) NOT NULL COMMENT '매장전화번호',
+  `homepage` VARCHAR(100) NULL COMMENT '매장홈페이지',
+  `reg_user_seq` INT NOT NULL COMMENT '등록자 일련번호',
+  `reg_date` DATETIME NOT NULL COMMENT '등록일시',
+  `mod_user_seq` INT NULL COMMENT '수정자 일련번호',
+  `mod_date` DATETIME NULL COMMENT '수정일시',
+  `del_yn` CHAR(1) NOT NULL DEFAULT 'N' COMMENT '삭제여부',
+  `del_user_seq` INT NULL COMMENT '삭제자 일련번호',
+  `del_date` DATETIME NULL COMMENT '삭제일시',
+  PRIMARY KEY (`seq`)
+)
+ENGINE = InnoDB
+COMMENT = '매장'
+;
+CREATE INDEX shop_idx01 ON shop(sponsor_seq)
+;
+CREATE TABLE `ad` (
+  `seq` INT NOT NULL AUTO_INCREMENT COMMENT '일련번호',
+  `shop_seq` INT NULL COMMENT '매장일련번호',
+  `title` VARCHAR(100) NOT NULL COMMENT '광고타이틀',
+  `copy` VARCHAR(300) NOT NULL COMMENT '광고카피',
+  `way` VARCHAR(10) NULL DEFAULT 'CPM' COMMENT '광고방식. CPC, CPM, PPC, CPS',
+  `unit_price` INT NOT NULL DEFAULT 0 COMMENT '광고단가',
+  `start_date` DATETIME NOT NULL COMMENT '광고시작일시',
+  `end_date` DATETIME NOT NULL COMMENT '광고종료일시',
+  `target_area` VARCHAR(100) NULL COMMENT '타겟지역. 예)경기도 광명시',
+  `target_age` VARCHAR(100) NULL COMMENT '타겟연령',
+  `target_sex` CHAR(1) NOT NULL COMMENT '타겟성별. 남자:M,여자:F',
+  `target_url` VARCHAR(100) NULL COMMENT '타겟URL',
+  `reg_user_seq` INT NOT NULL COMMENT '등록자 일련번호',
+  `reg_date` DATETIME NOT NULL COMMENT '등록일시',
+  `mod_user_seq` INT NULL COMMENT '수정자 일련번호',
+  `mod_date` DATETIME NULL COMMENT '수정일시',
+  `del_yn` CHAR(1) NOT NULL DEFAULT 'N' COMMENT '삭제여부',
+  `del_user_seq` INT NULL COMMENT '삭제자 일련번호',
+  `del_date` DATETIME NULL COMMENT '삭제일시',
+  PRIMARY KEY (`seq`)
+)
+ENGINE = InnoDB
+COMMENT = '광고'
+;
+CREATE INDEX ad_idx01 ON ad(shop_seq)
+;
+CREATE TABLE `address` (
+  `seq` INT NOT NULL AUTO_INCREMENT COMMENT '일련번호',
+  `group_seq` INT NULL COMMENT '그룹일련번호',
+  `gubun` VARCHAR(10) NULL COMMENT 'user/sponsor/shop',
+  `zip_code` CHAR(5) NOT NULL COMMENT '우편번호',
+  `addr1` VARCHAR(100) NOT NULL COMMENT '주소1',
+  `addr2` VARCHAR(100) NULL COMMENT '주소2',
+  `lat` VARCHAR(20) NULL COMMENT '위도',
+  `lng` VARCHAR(20) NULL COMMENT '경도',
+  `reg_user_seq` INT NOT NULL COMMENT '등록자 일련번호',
+  `reg_date` DATETIME NOT NULL COMMENT '등록일시',
+  `mod_user_seq` INT NULL COMMENT '수정자 일련번호',
+  `mod_date` DATETIME NULL COMMENT '수정일시',
+  PRIMARY KEY (`seq`)
+)
+ENGINE = InnoDB
+COMMENT = '주소'
+;
+CREATE UNIQUE INDEX address_idx01 ON address(group_seq, gubun)
+;
+CREATE TABLE `user_uhdb` (
+  `seq` int(11) NOT NULL AUTO_INCREMENT COMMENT '일련번호',
+  `user_seq` int(11) NOT NULL COMMENT '사용자일련번호',
+  `apt_id` varchar(6) DEFAULT NULL COMMENT '아파트아이디',
+  `uhdb_id` varchar(3) DEFAULT NULL COMMENT '무인택배함아이디',
+  `dong` varchar(4) DEFAULT NULL COMMENT '동',
+  `ho` varchar(4) DEFAULT NULL COMMENT '호',
+  `reg_user_seq` int(11) DEFAULT NULL COMMENT '등록자 일련번호',
+  `reg_date` datetime NOT NULL COMMENT '등록일시',
+  `del_yn` char(1) NOT NULL DEFAULT 'N' COMMENT '삭제여부',
+  `del_user_seq` int(11) DEFAULT NULL COMMENT '삭제자 일련번호',
+  `del_date` datetime DEFAULT NULL COMMENT '삭제일시',
+  PRIMARY KEY (`seq`),
+  UNIQUE KEY `user_uhdb_idx01` (`user_seq`)
+)
+ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='사용자-무인택배함-매핑'
+;
+CREATE INDEX user_uhdb_idx01 ON user_uhdb(user_seq, uhdb_key)
+;
+
+
+
+USE common
+;
+CREATE TABLE `common_code` (
+  `code` VARCHAR(30) NOT NULL COMMENT '공통코드',
+  `value` VARCHAR(100) NOT NULL COMMENT '공통코드값',
+  `group_code` INT NULL COMMENT '그룹코드',
+  `depth` INT NOT NULL COMMENT '0:그룹코드/:상세코드',
+  `sort_order` INT NOT NULL COMMENT '정렬순서',
+  `reg_user_seq` INT NULL COMMENT '등록자 일련번호',
+  `reg_date` DATETIME NOT NULL COMMENT '등록일시',
+  `mod_user_seq` INT NULL COMMENT '수정자 일련번호',
+  `mod_date` DATETIME NULL COMMENT '수정일시',
+  `del_yn` CHAR(1) NOT NULL DEFAULT 'N' COMMENT '삭제여부',
+  `del_user_seq` INT NULL COMMENT '삭제자 일련번호',
+  `del_date` DATETIME NULL COMMENT '삭제일시',
+  PRIMARY KEY (`code`)
+)
+ENGINE = InnoDB
+COMMENT = '공통코드'
+;
+
+CREATE TABLE `building_info` (
+  `beopjungdong_code` varchar(10) DEFAULT NULL COMMENT '법정동코드',
+  `sido_name` varchar(40) DEFAULT NULL COMMENT '시도명',
+  `sigungu_name` varchar(40) DEFAULT NULL COMMENT '시군구명',
+  `beopjungeopmyendong_name` varchar(40) DEFAULT NULL COMMENT '법정읍면동명',
+  `beopjungri_name` varchar(40) DEFAULT NULL COMMENT '법정리명',
+  `san_yn` varchar(1) DEFAULT NULL COMMENT '산여부. 0:대지, 1:산',
+  `bunji` int(11) DEFAULT NULL COMMENT '지번본번(번지)',
+  `ho` int(11) DEFAULT NULL COMMENT '지번부번(호)',
+  `road_name_code` varchar(12) DEFAULT NULL COMMENT '도로명코드. 시군구코드(5)+도로명번호(7)',
+  `road_name` varchar(80) DEFAULT NULL COMMENT '도로명',
+  `jiha_yn` varchar(1) DEFAULT NULL COMMENT '지하여부. 0:지상, 1:지하, 2:공중',
+  `building_bonbun` int(11) DEFAULT NULL COMMENT '건물본번',
+  `building_bubun` int(11) DEFAULT NULL COMMENT '건물부번',
+  `building_name` varchar(40) DEFAULT NULL COMMENT '건물명',
+  `detail_building_name` varchar(100) DEFAULT NULL COMMENT '상세건물명',
+  `building_mgt_no` varchar(25) NOT NULL COMMENT '건물관리번호',
+  `eopmyendong_seq` varchar(2) DEFAULT NULL COMMENT '읍면동일련번호',
+  `haengjungdong_code` varchar(10) DEFAULT NULL COMMENT '행정동코드',
+  `haengjungdong_name` varchar(20) DEFAULT NULL COMMENT '행정동명',
+  `zip_code` varchar(5) DEFAULT NULL COMMENT '우편번호. 15.8.1일부로기초구역번호제공',
+  `zip_seq` varchar(3) DEFAULT NULL COMMENT '우편일련번호. 15.8.1일부로공란',
+  `mass_delivery_name` varchar(40) DEFAULT NULL COMMENT '다량배달처명. 15.8.1일부로공란',
+  `move_reason_code` varchar(2) DEFAULT NULL COMMENT '이동사유코드',
+  `disp_date` varchar(8) DEFAULT NULL COMMENT '고시일자. YYYYMMDD',
+  `before_update_road_name` varchar(25) DEFAULT NULL COMMENT '변경전도로명. 미사용',
+  `building_name_per_sigungu` varchar(200) DEFAULT NULL COMMENT '시군구용건물명',
+  `union_housing_yn` varchar(1) DEFAULT NULL COMMENT '공동주택여부. 0:비공동주택, 1:공동주택',
+  `new_zip_code` varchar(5) DEFAULT NULL COMMENT '기초구역번호. 15.8.1일부로사용되는새우편번호',
+  `detail_addr_yn` varchar(1) DEFAULT NULL COMMENT '상세주소부여여부. 0:미부여, 1:부여',
+  `bigo1` varchar(15) DEFAULT NULL,
+  `bigo2` varchar(15) DEFAULT NULL,
+  PRIMARY KEY (`building_mgt_no`)
+)
+ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='건물정보';
+
+CREATE TABLE `jibun` (
+  `beopjungdong_code` varchar(10) DEFAULT NULL COMMENT '법정동코드',
+  `sido_name` varchar(40) DEFAULT NULL,
+  `sigungu_name` varchar(40) DEFAULT NULL,
+  `beopjungeopmyendong_name` varchar(40) DEFAULT NULL,
+  `beopjungri_name` varchar(40) DEFAULT NULL,
+  `san_yn` varchar(1) DEFAULT NULL COMMENT '산여부. 0:대지, 1:산',
+  `bunji` int(11) DEFAULT NULL COMMENT '지번본번(번지)',
+  `ho` int(11) DEFAULT NULL COMMENT '지번부번(호)',
+  `road_name_code` varchar(12) NOT NULL COMMENT '도로명코드. PK1. 시군구코드(5)+도로명번호(7)',
+  `jiha_yn` varchar(1) NOT NULL COMMENT '지하여부. PK2. 0:지상, 1:지하, 2:공중',
+  `building_bonbun` int(11) NOT NULL COMMENT '건물본번. PK3',
+  `building_bubun` int(11) NOT NULL COMMENT '건물부번. PK4',
+  `jibun_seq` int(11) NOT NULL COMMENT '지번일련번호. PK5',
+  `move_reason_code` varchar(2) DEFAULT NULL COMMENT '이동사유코드',
+  PRIMARY KEY (`road_name_code`,`jiha_yn`,`building_bonbun`,`building_bubun`,`jibun_seq`)
+)
+ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='관련지번';
+
+CREATE TABLE `road_name_code` (
+  `sigungu_code` varchar(5) NOT NULL COMMENT '시군구코드',
+  `road_name_no` varchar(7) NOT NULL COMMENT '도로명번호',
+  `road_name` varchar(80) DEFAULT NULL COMMENT '도로명',
+  `road_name_rome` varchar(80) DEFAULT NULL COMMENT '도로명로마자',
+  `eopmyendong_seq` varchar(2) NOT NULL COMMENT '읍면동일련번호',
+  `sido_name` varchar(40) DEFAULT NULL COMMENT '시도명',
+  `sigungu_name` varchar(40) DEFAULT NULL COMMENT '시군구명',
+  `eopmyendong_gubun` varchar(1) DEFAULT NULL COMMENT '읍면동구분. 0:읍면, 1:동, 2:미부여',
+  `eopmyendong_code` varchar(3) DEFAULT NULL COMMENT '읍면동코드. 법정동기준읍면동코드',
+  `eopmyendong_name` varchar(40) DEFAULT NULL COMMENT '읍면동명',
+  `upper_road_name_no` varchar(7) DEFAULT NULL COMMENT '상위도로명번호',
+  `upper_road_name` varchar(80) DEFAULT NULL COMMENT '상위도로명',
+  `use_yn` varchar(1) DEFAULT NULL COMMENT '사용여부. 0:사용, 1:미사용',
+  `update_reason` varchar(1) DEFAULT NULL COMMENT '변경사유. 0:도로명변경, 1:도로명폐지, 2:시도.시군구, 3:읍면동, 4:영문명변경',
+  `update_hist_info` varchar(14) DEFAULT NULL COMMENT '변경이력정보. 시군구코드(5)+도로명번호(7)+읍면동일련번호(2)',
+  `sido_name_rome` varchar(40) DEFAULT NULL COMMENT '시도명로마자',
+  `sigungu_name_rome` varchar(40) DEFAULT NULL COMMENT '시군구명로마자',
+  `eopmyendong_name_rome` varchar(40) DEFAULT NULL COMMENT '읍면동명로마자',
+  `disp_date` varchar(8) DEFAULT NULL COMMENT '고시일자. YYYYMMDD',
+  `end_date` varchar(8) DEFAULT NULL COMMENT '말소일자. YYYYMMDD',
+  PRIMARY KEY (`sigungu_code`,`road_name_no`,`eopmyendong_seq`)
+)
+ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='도로명코드';
+
+
+
+-- 스프링 소셜에서 사용
+/**
+CREATE TABLE UserConnection (
+	userId VARCHAR(255) NOT NULL
+	, providerId VARCHAR(255) NOT NULL
+	, providerUserId VARCHAR(255)
+	, rank INT NOT NULL
+	, displayName VARCHAR(255)
+	, profileUrl VARCHAR(512)
+	, imageUrl VARCHAR(512)
+	, accessToken VARCHAR(512) NOT NULL
+	, secret VARCHAR(512)
+	, refreshToken VARCHAR(512)
+	, expireTime BIGINT
+	, PRIMARY KEY (userId, providerId, providerUserId)
+)
+ENGINE = InnoDB
+COMMENT = '사용자-소셜연결계정'
+;
+CREATE INDEX UserConnectionRank ON UserConnection(userId, providerId, rank)
+;
+*/

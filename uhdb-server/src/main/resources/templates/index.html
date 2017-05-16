@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<!-- xmlns:th, xmlns:sec 등은 선언하지 않아도 되나 노란색 경고가 뜨는 것을 방지하기 위해 -->
+<head>
+<meta charset="utf-8" />
+
+<title th:text="#{page.default.title}"></title><!-- message에서 사용할 경우 ${title}이 아닌 #{title} -->
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+
+<!--<meta name="naver-site-verification" content="" />
+<meta name="keywords" content="" />
+<meta name="description" content="" />-->
+
+<!--<link rel="shortcut icon" type="image/png" href="/static/favicon.ico" th:href="@{/favicon.ico}" />-->
+
+<link type="text/css" rel="stylesheet" href="/webjars/bootstrap/3.3.7/css/bootstrap.min.css" th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap.min.css}" />
+<link type="text/css" rel="stylesheet" href="/webjars/font-awesome/4.7.0/css/font-awesome.min.css" th:href="@{/webjars/font-awesome/4.7.0/css/font-awesome.min.css}" />
+<link type="text/css" rel="stylesheet" href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css" th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}" />
+
+<script type="text/javascript" src="/webjars/jquery/3.2.0/jquery.min.js" th:src="@{/webjars/jquery/3.2.0/jquery.min.js}"></script>
+<script type="text/javascript" src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js" th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
+<script type="text/javascript" src="/webjars/bootstrap/3.3.7/js/bootstrap.min.js" th:src="@{/webjars/bootstrap/3.3.7/js/bootstrap.min.js}"></script>
+<script type="text/javascript" src="/static/js/js-cookie.js" th:src="@{/js/js-cookie.js}"></script>
+
+<script type="text/javascript" th:inline="javascript">
+/*<![CDATA[*/
+
+$(document).ready(function () {
+    $("#btn-logout").click(function() {
+        $("#form-logout").submit();
+        return false;
+	});
+});
+
+/*]]>*/
+</script>
+</head>
+
+<body>
+
+<!--
+	// 주의: SecurityConfig 등에서 web.ignoring().antMatchers 에 선언된 URL은 아래 sec: 속성 등을 사용할 수 없다.
+-->
+
+<div sec:authorize="isAnonymous()">
+    <h2>Not login. [Anonymous]</h2>
+    <br /><a th:href="@{/login}">로그인</a> <a th:href="@{/user/join}">회원가입</a>
+</div>
+
+<div sec:authorize="isRememberMe()">
+	<!-- 웹브라우저를 닫고 로그인없이 다시 접속했을 경우 -->
+    <h2>Login(Remember Me Cookies). [<span sec:authentication="name"></span>]</h2>
+    <br /> Roles: <span sec:authentication="principal.authorities">?</span>
+    <br /><input type="button" id="btn-logout" value="로그아웃" />
+</div>
+
+<div sec:authorize="isFullyAuthenticated()">
+	<!-- 리멤버미가 아닌 로그인창에서 로그인 했을 경우 -->
+    <h2>Login. [<span sec:authentication="name"></span>]</h2>
+	<br /> Roles: <span sec:authentication="principal.authorities">?</span>
+	<br /><input type="button" id="btn-logout" value="로그아웃" />
+</div>
+
+<br />
+<br />
+
+<div sec:authorize="isAuthenticated()"></div>
+
+<p sec:authorize="hasRole('ROLE_USER')">
+    hasRole, Authenticated
+</p>
+<p sec:authorize="hasAuthority('ROLE_ADMIN')">
+    hasAuthority, Authenticated
+</p>
+<p sec:authorize="hasAnyAuthority('ROLE_ADMIN')">
+    hasAnyAuthority, Authenticated
+</p>
+
+<!--
+<div th:if="${#authorization.expression('isAuthenticated()') and #strings.contains(#authentication.principal.authorities, 'ROLE_ADMIN')}">
+    <br /><input type="button" id="btn-logout" value="로그아웃" />
+</div>
+-->
+
+<form id="form-logout" name="form-logout" th:action="@{/logout}" method="post" style="display:none">
+    <!--<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />-->
+</form>
+
+</body>
+
+</html>

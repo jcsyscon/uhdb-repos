@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4" layout:decorate="~{layout/layout}">
+<head>
+<title>회원정보 상세</title>
+<!-- page script -->
+<script type="text/javascript" th:inline="javascript">
+/*<![CDATA[*/
+
+$(document).ready(function() {
+	if ($("#secedeYn").val() == 'Y') {
+		$("#cb-secede-yn").prop("checked", true);
+	}
+
+	$("#cb-secede-yn").click(function() {
+		if ($("#cb-secede-yn").prop("checked")) { // 탈퇴
+			$("#secedeYn").val('Y');
+		}
+		else {
+			$("#secedeYn").val('N');
+		}
+	});
+});
+
+/*]]>*/
+</script>
+</head>
+<body>
+
+  <!--// 본문 영역 -->
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper" layout:fragment="content">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        회원관리
+        <small>회원정보 상세</small>
+      </h1>
+<!--
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="#">Tables</a></li>
+        <li class="active">Data tables</li>
+      </ol>
+-->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-xs-10">
+          <div class="box box-primary">
+            <div class="box-header with-border">
+              <!--<h3 class="box-title"> Hover Data Table</h3>-->
+            </div>
+ 			<form id="form-user-reg" name="form-user-reg" role="form" class="form-horizontal" method="post" action="#" th:action="@{/user/modify/} + ${user.seq}">
+              <div class="box-body">
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">아이디</label>
+                  <div class="col-sm-4">
+                  	<input type="text" class="form-control" id="_username" name="_username" placeholder="" th:value="${user.username}" disabled="disabled" />
+                  </div>
+                </div>
+				<div class="form-group">
+                  <label class="col-sm-2 control-label">이름</label>
+                  <div class="col-sm-4">
+                  	<input type="text" class="form-control" id="_name" name="_name" placeholder="" th:value="${user.getDecName()}" disabled="disabled" />
+                  </div>
+                </div>
+				<div class="form-group">
+                  <label class="col-sm-2 control-label">모바일</label>
+                  <div class="col-sm-4">
+                  	<input type="text" class="form-control" id="_mobile" name="_mobile" placeholder="" th:value="${user.getDecMobile()}" disabled="disabled" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">생년월일</label>
+                  <div class="col-sm-2">
+                  	<input type="text" class="form-control" id="_birthDate" name="_birthDate" placeholder="" th:value="${user.birthDate}" disabled="disabled" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">성별</label>
+                  <div class="col-sm-2">
+                  	<input type="text" class="form-control" id="_sex" name="_sex" placeholder="" th:value="${user.sex}" disabled="disabled" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">알람수신여부</label>
+                  <div class="col-sm-2">
+                  	<input type="text" class="form-control" id="_alarmRecYn" name="_alarmRecYn" placeholder="" th:value="${user.alarmRecYn}" disabled="disabled" />
+                  </div>
+                </div>
+				<div class="form-group">
+                  <label class="col-sm-2 control-label">가입일시</label>
+                  <div class="col-sm-4">
+                  	<input type="text" class="form-control" id="_regDate" name="_regDate" placeholder="" th:value="${#dates.format(user.regDate, 'yyyy-MM-dd HH:mm')}" disabled="disabled" />
+                  </div>
+                </div>
+<!--
+                <div class="form-group">
+                  <label for="exampleInputFile">File input</label>
+                  <input type="file" id="exampleInputFile">
+                  <p class="help-block">Example block-level help text here.</p>
+                </div>
+-->
+				<div class="form-group">
+				  <div class="col-sm-offset-2 col-sm-9">
+	                <div class="checkbox">
+	                  <label>
+	                    <input type="checkbox" id="cb-secede-yn" disabled="disabled" /> 탈퇴 여부
+	                    <input type="hidden" id="secedeYn" name="secedeYn" th:value="${user.secedeYn}" />
+	                    <span th:if="${user.secedeDate} != null" th:text="${#dates.format(user.secedeDate, 'yyyy-MM-dd HH:mm')}"></span>
+	                  </label>
+	                </div>
+				  </div>
+				</div>
+
+              </div>
+              <!-- /.box-body -->
+
+              <div class="box-footer">
+              	<div class="col-sm-offset-2 col-sm-4">
+              		<!--<button type="submit" class="btn btn-primary pull-right">저장</button>-->
+              		<a href="javascript:history.back();" class="btn btn-info pull-right">회원 목록</a>
+              	</div>
+              </div>
+            </form>
+          </div>
+          <!-- /.box -->
+
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  <!-- 본문 영역 //-->
+</body>
+</html>

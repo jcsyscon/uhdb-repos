@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.realsnake.sample.mapper.user.UserMapper">
+
+	<update id="insertUser" parameterType="UserVo" useGeneratedKeys="true" keyProperty="seq">
+	    INSERT /* insertUser, 전강욱(realsnake1975@gmail.com) */ INTO user (
+	    	username
+	        , password
+	        , name
+	        , mobile
+	        , email
+	        , birth_date
+	        , sex
+	        , alarm_rec_yn
+	        , reg_date
+	    ) VALUES (
+	    	#{username}
+	        , #{password}
+	        , #{name}
+	        , #{mobile}
+	        , #{email}
+	        , #{birthDate}
+	        , #{sex}
+	        , #{alarmRecYn}
+	        , NOW()
+	    )
+	</update>
+
+	<sql id="whereClauseOfUser">
+	    <where>
+		    <choose>
+		    	<when test=' pagingHelper.search.startDate != null and !"".equals(pagingHelper.search.startDate) '>
+			    	AND reg_date &gt;= CONCAT(#{pagingHelper.search.startDate}, ' 00:00:00')
+			    	<if test=' pagingHelper.search.endDate != null and !"".equals(pagingHelper.search.endDate) '>
+			    		AND reg_date &lt;= CONCAT(#{pagingHelper.search.endDate}, ' 23:59:59')
+			    	</if>
+		    	</when>
+		    	<otherwise>
+			    	<if test=' pagingHelper.search.endDate != null and !"".equals(pagingHelper.search.endDate) '>
+			    		AND reg_date &lt;= CONCAT(#{pagingHelper.search.endDate}, ' 23:59:59')
+			    	</if>
+		    	</otherwise>
+		    </choose>
+	    	<if test=' pagingHelper.search.keyword != null and !"".equals(pagingHelper.search.keyword) '>
+			    <choose>
+			    	<when test=' "username".equals(pagingHelper.search.item) '>
+						AND username LIKE CONCAT('%', #{pagingHelper.search.keyword}, '%')
+			    	</when>
+			    	<when test=' "name".equals(pagingHelper.search.item) '>
+						AND name = #{pagingHelper.search.keyword}
+			    	</when>
+			    	<when test=' "mobile".equals(pagingHelper.search.item) '>
+						AND mobile = #{pagingHelper.search.keyword}
+			    	</when>
+			    	<when test=' "email".equals(pagingHelper.search.item) '>
+						AND email = #{pagingHelper.search.keyword}
+			    	</when>
+			    	<otherwise>
+						AND (
+							username LIKE CONCAT('%', #{pagingHelper.search.keyword}, '%')
+						)
+			    	</otherwise>
+			    </choose>
+	    	</if>
+	    </where>
+	</sql>
+
+	<sql id="orderClauseOfUser">
+		<if test=' pagingHelper != null and pagingHelper.sortList != null '>
+            <foreach collection="pagingHelper.sortList" item="sort" open="ORDER BY " separator="," close="">
+                ${sort.column} ${sort.ascOrDesc}
+            </foreach>
+        </if>
+	</sql>
+
+	<select id="selectUser" parameterType="UserVo" resultType="UserVo">
+	    SELECT /* selectUserList, 전강욱(realsnake1975@gmail.com) */ seq
+	    , username
+	    , password
+	    , name
+	    , mobile
+	    , email
+        , birth_date
+        , sex
+        , alarm_rec_yn
+	    , reg_date
+	    , secede_yn
+	    , secede_date
+	    FROM user
+	    <where>
+			<choose>
+				<when test=' seq != null and seq > 0 '>AND seq = #{seq}</when>
+				<when test=' username != null and !"".equals(username) '>AND username = #{username}</when>
+				<when test=' email != null and !"".equals(email) '>AND email = #{email}</when>
+				<when test=' mobile != null and !"".equals(mobile) '>AND mobile = #{mobile}</when>
+				<otherwise>AND seq = 0</otherwise>
+			</choose>
+	    </where>
+	</select>
+
+	<select id="selectUserListCount" parameterType="UserDto" resultType="int">
+	    SELECT /* selectUserListCount, 전강욱(realsnake1975@gmail.com) */ COUNT(*)
+	    FROM user
+	    <include refid="whereClauseOfUser" />
+	</select>
+
+	<select id="selectUserList" parameterType="UserDto" resultType="UserVo">
+	    SELECT /* selectUserList, 전강욱(realsnake1975@gmail.com) */ seq
+	    , username
+	    , password
+	    , name
+	    , mobile
+	    , email
+        , birth_date
+        , sex
+        , alarm_rec_yn
+	    , reg_date
+	    , secede_yn
+	    , secede_date
+	    FROM user
+	    <include refid="whereClauseOfUser" />
+	    <include refid="orderClauseOfUser" />
+	    LIMIT #{pagingHelper.startNum}, #{pagingHelper.endNum}
+	</select>
+
+	<update id="updateUser" parameterType="UserVo">
+	    UPDATE /* updateUser, 전강욱(realsnake1975@gmail.com) */ user
+	    <set>
+	    	<if test=' name != null and !"".equals(name) '>, name = #{name}</if>
+	    	<if test=' mobile != null and !"".equals(mobile) '>, mobile = #{mobile}</if>
+	    	<if test=' email != null and !"".equals(email) '>, email = #{email}</if>
+	    	<if test=' birthDate != null and !"".equals(birthDate) '>, birth_date = #{birthDate}</if>
+	    	<if test=' "Y".equals(sex) or "N".equals(sex) '>, sex = #{sex}</if>
+	    	<if test=' "Y".equals(alarmRecYn) or "N".equals(alarmRecYn) '>, alarm_rec_yn = #{alarmRecYn}</if>
+	    </set>
+	    <where>
+			<choose>
+				<when test=' seq != null and seq > 0 '>AND seq = #{seq}</when>
+				<when test=' username != null and !"".equals(username) '>AND username = #{username}</when>
+				<otherwise>AND seq = 0</otherwise>
+			</choose>
+	    </where>
+	</update>
+
+	<!-- 비밀번호 변경 -->
+	<update id="updateUserPassword" parameterType="UserVo">
+	    UPDATE /* updateUserPassword, 전강욱(realsnake1975@gmail.com) */ user
+	    SET password = #{password}
+	    <where>
+			<choose>
+				<when test=' seq != null and seq > 0 '>AND seq = #{seq}</when>
+				<when test=' username != null and !"".equals(username) '>AND username = #{username}</when>
+				<otherwise>AND seq = 0</otherwise>
+			</choose>
+	    </where>
+	</update>
+
+	<!-- 회원탈퇴 -->
+	<update id="secedeUser" parameterType="UserVo">
+	    UPDATE /* secedeUser, 전강욱(realsnake1975@gmail.com) */ user
+	    SET secede_yn = 'Y'
+	    , secede_date = NOW()
+	    <where>
+			<choose>
+				<when test=' seq != null and seq > 0 '>AND seq = #{seq}</when>
+				<when test=' username != null and !"".equals(username) '>AND username = #{username}</when>
+				<otherwise>AND seq = 0</otherwise>
+			</choose>
+	    </where>
+	</update>
+
+	<update id="insertUserAuthority" parameterType="UserAuthorityVo">
+		INSERT INTO /* insertUserAuthority, 전강욱(realsnake1975@gmail.com) */ user_authority (
+			user_seq
+			, auth_name
+			, del_yn
+			, reg_date
+		)
+		VALUES <foreach item="authority" index="index" collection="authorities" separator=","> (
+				#{seq}
+				, #{authority}
+				, 'N'
+				, NOW()
+		) </foreach>
+     </update>
+
+	<update id="deleteUserAuthority" parameterType="UserAuthorityVo">
+		UPDATE /* deleteUserAuthority, 전강욱(realsnake1975@gmail.com) */ user_authority
+		SET del_yn = 'Y'
+		, del_user_seq = #{delUserSeq}
+		, del_date = NOW()
+		WHERE user_seq = #{userSeq}
+			AND auth_name = #{authName}
+     </update>
+
+	<select id="selectUserAuthNameList" parameterType="int" resultType="org.springframework.security.core.authority.SimpleGrantedAuthority">
+	     SELECT /* selectUserAuthNameList, 전강욱(realsnake1975@gmail.com) */ auth_name
+	     FROM user_authority
+	     WHERE user_seq = #{userSeq}
+	     	AND del_yn = 'N'
+	</select>
+
+</mapper>

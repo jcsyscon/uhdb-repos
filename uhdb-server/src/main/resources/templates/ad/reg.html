@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4" layout:decorate="~{layout/layout}">
+<head>
+<title>광고 등록</title>
+<!-- page script -->
+<script type="text/javascript" th:inline="javascript">
+/*<![CDATA[*/
+
+$(document).ready(function() {
+    // Date picker
+    $("#_startDate").datepicker({
+      autoclose: true
+      , format: "yyyymmdd"
+      , language: "kr"
+    });
+    $("#_endDate").datepicker({
+        autoclose: true
+        , format: "yyyymmdd"
+        , language: "kr"
+    });
+
+	$("#targetUrl").inputmask("http://*{1,10}.*{1,10}.*{2,4}");
+
+    $("#form-ad-reg").submit(function() {
+    	var startDateVal = $("#_startDate").val(); // 일단 시간은 생략
+    	var endDateVal = $("#_endDate").val(); // 일단 시간은 생략
+
+    	if (parseInt(endDateVal, 10) <= parseInt(startDateVal, 10)) {
+			alert(" 광고 종료일을 시작일 이후 날짜로 선택하세요. ");
+           	return false;
+    	}
+
+    	$("#startDate").val(startDateVal + "000000");
+    	$("#endDate").val(endDateVal + "235959");
+    });
+});
+
+/*]]>*/
+</script>
+</head>
+<body>
+
+  <!--// 본문 영역 -->
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper" layout:fragment="content">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        광고 관리
+        <small>광고 등록</small>
+      </h1>
+<!--
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="#">Tables</a></li>
+        <li class="active">Data tables</li>
+      </ol>
+-->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-xs-10">
+          <div class="box box-primary">
+            <div class="box-header with-border">
+              <!--<h3 class="box-title"> Hover Data Table</h3>-->
+            </div>
+ 			<form id="form-ad-reg" name="form-ad-reg" enctype="multipart/form-data" role="form" class="form-horizontal" method="post" action="#" th:action="@{/ad/reg}">
+ 			  <input type="hidden" id="shopSeq" name="shopSeq" value="" th:value="${shop.seq}" />
+              <div class="box-body">
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">광고주명</label>
+                  <div class="col-sm-4">
+                  	<input type="text" class="form-control" id="_sponsorName" name="_sponsorName" readonly="readonly" th:value="${sponsor.name}" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">매장명</label>
+                  <div class="col-sm-4">
+                  	<input type="text" class="form-control" id="_shopName" name="_shopName" readonly="readonly" th:value="${shop.name}" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">광고타이틀</label>
+                  <div class="col-sm-9">
+                  	<input type="text" class="form-control" id="title" name="title" placeholder="광고타이틀" required="required" />
+                  </div>
+                </div>
+<!--
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">광고카피</label>
+                  <div class="col-sm-9">
+                  	<input type="text" id="copy" name="copy" class="form-control" placeholder="광고카피" required="required" />
+                  </div>
+                </div>
+-->
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">광고시작일</label>
+				  <div class="col-sm-2">
+					  <div class="input-group date">
+	                  	<div class="input-group-addon">
+	                    	<i class="fa fa-calendar"></i>
+	                  	</div>
+	                  	<input type="text" class="form-control pull-right" id="_startDate" name="_startDate" placeholder="광고시작일" required="required" />
+	                  </div>
+<!--
+					  <div class="input-group">
+	                    <div class="input-group-addon">
+	                      <i class="fa fa-clock-o"></i>
+	                    </div>
+	                    <input type="text" class="form-control timepicker pull-right" id="_startTime" name="_startTime" placeholder="광고시작시간" required="required" />
+	                  </div>
+-->
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">광고종료일</label>
+				  <div class="col-sm-2">
+					  <div class="input-group date">
+	                  	<div class="input-group-addon">
+	                    	<i class="fa fa-calendar"></i>
+	                  	</div>
+	                  	<input type="text" class="form-control pull-right" id="_endDate" name="_endDate" placeholder="광고종료일" required="required" />
+	                  </div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">타겟URL</label>
+                  <div class="col-sm-4">
+                  	<input type="text" id="targetUrl" name="targetUrl" class="form-control" placeholder="타겟 URL" />
+                  </div>
+                </div>
+<!--
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">매장 주소</label>
+                  <div class="col-sm-9">
+					<div class="input-group">
+					  <span class="input-group-addon" style="cursor: pointer;" onclick="execDaumPostcode();"><i class="fa fa-envelope"></i></span>
+					  <input type="text" id="zipCode" name="zipCode" class="form-control" style="width: 120px; cursor: pointer;" placeholder="우편번호 검색" onclick="execDaumPostcode();" readonly="readonly" />
+	              	</div>
+					<input type="text" id="addr1" name="addr1" class="form-control" style="margin-top: 5px;" placeholder="주소" onclick="execDaumPostcode();" readonly="readonly" />
+					<input type="text" id="addr2" name="addr2" class="form-control" style="margin-top: 5px;" placeholder="상세주소" />
+                  </div>
+                </div>
+-->
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">광고 이미지<span class="badge" style="display: none;">0</span></label>
+                  <div class="col-sm-9">
+                  	<!--// 파일업로드 처리 -->
+	                <input type="file" id="attachFile" name="attachFile" onchange="uploadFile(this, 1, 1);" />
+
+					<div class="progress" style="display: none;">
+						<div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">0%</div>
+					</div>
+
+					<ul id="_ul_uploaded_files_area" style="display:none;"></ul>
+					<!-- 파일업로드 처리 //-->
+                  </div>
+                </div>
+<!--
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox"> Check me out
+                  </label>
+                </div>
+-->
+              </div>
+              <!-- /.box-body -->
+
+              <div class="box-footer">
+              	<div class="col-sm-offset-2 col-sm-9">
+              	    <button type="submit" class="btn btn-primary pull-right">저장</button>
+              	</div>
+              </div>
+
+              <input type="hidden" id="startDate" name="startDate" value="" />
+              <input type="hidden" id="endDate" name="endDate" value="" />
+            </form>
+          </div>
+          <!-- /.box -->
+
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+
+	<script type="text/javascript" th:inline="javascript">
+	/*<![CDATA[*/
+		$(function () {
+		    $("[data-mask]").inputmask();
+		});
+	/*]]>*/
+	</script>
+
+  </div>
+  <!-- /.content-wrapper -->
+  <!-- 본문 영역 //-->
+</body>
+</html>

@@ -1,0 +1,428 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.realsnake.sample.mapper.ad.AdMapper">
+
+<!--// 광고주 -->
+	<update id="insertSponsor" parameterType="SponsorVo" useGeneratedKeys="true" keyProperty="seq">
+	    INSERT /* insertSponsor, 전강욱(realsnake1975@gmail.com) */ INTO sponsor (
+	    	user_seq
+	        , name
+	        , mobile
+	        , email
+	        , memo
+	        , reg_user_seq
+	        , reg_date
+	        , del_yn
+	    ) VALUES (
+	    	#{userSeq}
+	        , #{name}
+	        , #{mobile}
+	        , #{email}
+	        , #{memo}
+	        , #{regUserSeq}
+	        , NOW()
+	        , 'N'
+	    )
+	</update>
+
+	<sql id="whereClauseOfSponsor">
+	    <where>
+		    <if test=' loginUser.isAdmin == null or loginUser.isAdmin == false'>AND del_yn = 'N'</if>
+		    <choose>
+		    	<when test=' pagingHelper.search.startDate != null and !"".equals(pagingHelper.search.startDate) '>
+			    	AND reg_date &gt;= CONCAT(#{pagingHelper.search.startDate}, ' 00:00:00')
+			    	<if test=' pagingHelper.search.endDate != null and !"".equals(pagingHelper.search.endDate) '>
+			    		AND reg_date &lt;= CONCAT(#{pagingHelper.search.endDate}, ' 23:59:59')
+			    	</if>
+		    	</when>
+		    	<otherwise>
+			    	<if test=' pagingHelper.search.endDate != null and !"".equals(pagingHelper.search.endDate) '>
+			    		AND reg_date &lt;= CONCAT(#{pagingHelper.search.endDate}, ' 23:59:59')
+			    	</if>
+		    	</otherwise>
+		    </choose>
+	    	<if test=' pagingHelper.search.keyword != null and !"".equals(pagingHelper.search.keyword) '>
+			    <choose>
+			    	<when test=' "name".equals(pagingHelper.search.item) '>
+						AND name LIKE CONCAT('%', #{pagingHelper.search.keyword}, '%')
+			    	</when>
+			    	<when test=' "mobile".equals(pagingHelper.search.item) '>
+						AND mobile LIKE CONCAT('%', #{pagingHelper.search.keyword}, '%')
+			    	</when>
+			    	<when test=' "email".equals(pagingHelper.search.item) '>
+						AND email LIKE CONCAT('%', #{pagingHelper.search.keyword}, '%')
+			    	</when>
+			    	<otherwise>
+						AND (name LIKE CONCAT('%', #{pagingHelper.search.keyword}, '%') OR mobile LIKE CONCAT('%', #{pagingHelper.search.keyword}, '%') OR email LIKE CONCAT('%', #{pagingHelper.search.keyword}, '%'))
+			    	</otherwise>
+			    </choose>
+	    	</if>
+	    </where>
+	</sql>
+
+	<sql id="orderClauseOfSponsor">
+		<if test=' pagingHelper != null and pagingHelper.sortList != null '>
+            <foreach collection="pagingHelper.sortList" item="sort" open="ORDER BY " separator="," close="">
+                ${sort.column} ${sort.ascOrDesc}
+            </foreach>
+        </if>
+	</sql>
+
+	<select id="selectSponsor" parameterType="int" resultType="SponsorVo">
+	    SELECT /* selectSponsor, 전강욱(realsnake1975@gmail.com) */ seq
+    	, user_seq
+        , name
+        , mobile
+        , email
+        , memo
+	    , reg_user_seq
+		, reg_date
+	    , mod_user_seq
+		, mod_date
+		, del_yn
+	    , del_user_seq
+		, del_date
+	    FROM sponsor
+		WHERE seq = #{seq}
+	</select>
+
+	<select id="selectSponsorListCount" parameterType="AdDto" resultType="int">
+	    SELECT /* selectSponsorListCount, 전강욱(realsnake1975@gmail.com) */ COUNT(*)
+	    FROM sponsor
+	    <include refid="whereClauseOfSponsor" />
+	</select>
+
+	<select id="selectSponsorList" parameterType="AdDto" resultType="SponsorVo">
+	    SELECT /* selectSponsorList, 전강욱(realsnake1975@gmail.com) */ seq
+    	, user_seq
+        , name
+        , mobile
+        , email
+        , memo
+	    , reg_user_seq
+		, reg_date
+	    , mod_user_seq
+		, mod_date
+		, del_yn
+	    , del_user_seq
+		, del_date
+	    FROM sponsor
+	    <include refid="whereClauseOfSponsor" />
+	    <include refid="orderClauseOfSponsor" />
+	    LIMIT #{pagingHelper.startNum}, #{pagingHelper.endNum}
+	</select>
+
+	<update id="updateSponsor" parameterType="SponsorVo">
+	    UPDATE /* updateSponsor, 전강욱(realsnake1975@gmail.com) */ sponsor
+	    <set>
+	    	<if test=' name != null and !"".equals(name) '>name = #{name}</if>
+	    	<if test=' mobile != null and !"".equals(mobile) '>, mobile = #{mobile}</if>
+	    	<if test=' email != null and !"".equals(email) '>, email = #{email}</if>
+	    	, mod_user_seq = #{modUserSeq}
+	    	, mod_date = NOW()
+	    </set>
+		WHERE seq = #{seq}
+	</update>
+
+	<update id="deleteSponsor" parameterType="SponsorVo">
+		UPDATE /* deleteSponsor, 전강욱(realsnake1975@gmail.com) */ sponsor
+		SET del_yn = 'Y'
+		, del_user_seq = #{delUserSeq}
+		, del_date = NOW()
+		WHERE seq = #{seq}
+     </update>
+<!-- 광고주 //-->
+
+
+
+<!--// 매장 -->
+	<update id="insertShop" parameterType="ShopVo" useGeneratedKeys="true" keyProperty="seq">
+	    INSERT /* insertShop, 전강욱(realsnake1975@gmail.com) */ INTO shop (
+			sponsor_seq
+			, name
+			, tel
+			, homepage
+	        , reg_user_seq
+	        , reg_date
+	        , del_yn
+	    ) VALUES (
+	    	#{sponsorSeq}
+	        , #{name}
+	        , #{tel}
+	        , #{homepage}
+	        , #{regUserSeq}
+	        , NOW()
+	        , 'N'
+	    )
+	</update>
+
+	<sql id="whereClauseOfShop">
+	    <where>
+		    <if test=' loginUser.isAdmin == null or loginUser.isAdmin == false'>AND del_yn = 'N'</if>
+		    <choose>
+		    	<when test=' pagingHelper.search.startDate != null and !"".equals(pagingHelper.search.startDate) '>
+			    	AND reg_date &gt;= CONCAT(#{pagingHelper.search.startDate}, ' 00:00:00')
+			    	<if test=' pagingHelper.search.endDate != null and !"".equals(pagingHelper.search.endDate) '>
+			    		AND reg_date &lt;= CONCAT(#{pagingHelper.search.endDate}, ' 23:59:59')
+			    	</if>
+		    	</when>
+		    	<otherwise>
+			    	<if test=' pagingHelper.search.endDate != null and !"".equals(pagingHelper.search.endDate) '>
+			    		AND reg_date &lt;= CONCAT(#{pagingHelper.search.endDate}, ' 23:59:59')
+			    	</if>
+		    	</otherwise>
+		    </choose>
+	    	<if test=' pagingHelper.search.keyword != null and !"".equals(pagingHelper.search.keyword) '>
+			    <choose>
+			    	<when test=' "name".equals(pagingHelper.search.item) '>
+						AND name LIKE CONCAT('%', #{pagingHelper.search.keyword}, '%')
+			    	</when>
+			    	<when test=' "tel".equals(pagingHelper.search.item) '>
+						AND tel LIKE CONCAT('%', #{pagingHelper.search.keyword}, '%')
+			    	</when>
+			    	<when test=' "email".equals(pagingHelper.search.item) '>
+						AND homepage LIKE CONCAT('%', #{pagingHelper.search.keyword}, '%')
+			    	</when>
+			    	<otherwise>
+						AND (name LIKE CONCAT('%', #{pagingHelper.search.keyword}, '%') OR tel LIKE CONCAT('%', #{pagingHelper.search.keyword}, '%') OR homepage LIKE CONCAT('%', #{pagingHelper.search.keyword}, '%'))
+			    	</otherwise>
+			    </choose>
+	    	</if>
+	    </where>
+	</sql>
+
+	<sql id="orderClauseOfShop">
+		<if test=' pagingHelper != null and pagingHelper.sortList != null '>
+            <foreach collection="pagingHelper.sortList" item="sort" open="ORDER BY " separator="," close="">
+                ${sort.column} ${sort.ascOrDesc}
+            </foreach>
+        </if>
+	</sql>
+
+	<select id="selectShop" parameterType="int" resultType="ShopVo">
+	    SELECT /* selectShop, 전강욱(realsnake1975@gmail.com) */ seq
+		, sponsor_seq
+		, name
+		, tel
+		, homepage
+	    , reg_user_seq
+		, reg_date
+	    , mod_user_seq
+		, mod_date
+		, del_yn
+	    , del_user_seq
+		, del_date
+	    FROM shop
+		WHERE seq = #{seq}
+	</select>
+
+	<select id="selectShopListCount" parameterType="AdDto" resultType="int">
+	    SELECT /* selectShopListCount, 전강욱(realsnake1975@gmail.com) */ COUNT(*)
+	    FROM shop
+	    <include refid="whereClauseOfShop" />
+	</select>
+
+	<select id="selectShopList" parameterType="AdDto" resultType="ShopVo">
+	    SELECT /* selectShopList, 전강욱(realsnake1975@gmail.com) */ seq
+		, sponsor_seq
+		, name
+		, tel
+		, homepage
+	    , reg_user_seq
+		, reg_date
+	    , mod_user_seq
+		, mod_date
+		, del_yn
+	    , del_user_seq
+		, del_date
+	    FROM shop
+	    <include refid="whereClauseOfShop" />
+	    <include refid="orderClauseOfShop" />
+	    LIMIT #{pagingHelper.startNum}, #{pagingHelper.endNum}
+	</select>
+
+	<update id="updateShop" parameterType="ShopVo">
+	    UPDATE /* updateShop, 전강욱(realsnake1975@gmail.com) */ shop
+	    <set>
+	    	<if test=' sponsorSeq != null and sponsorSeq > 0 '>sponsor_seq = #{sponsorSeq}</if>
+	    	<if test=' name != null and !"".equals(name) '>, name = #{name}</if>
+	    	<if test=' tel != null and !"".equals(tel) '>, tel = #{tel}</if>
+	    	<if test=' homepage != null and !"".equals(homepage) '>, homepage = #{homepage}</if>
+	    	, mod_user_seq = #{modUserSeq}
+	    	, mod_date = NOW()
+	    </set>
+		WHERE seq = #{seq}
+	</update>
+
+	<update id="deleteShop" parameterType="ShopVo">
+		UPDATE /* deleteShop, 전강욱(realsnake1975@gmail.com) */ shop
+		SET del_yn = 'Y'
+		, del_user_seq = #{delUserSeq}
+		, del_date = NOW()
+		WHERE seq = #{seq}
+     </update>
+<!-- 매장 //-->
+
+
+
+<!--// 광고 -->
+	<update id="insertAd" parameterType="AdVo" useGeneratedKeys="true" keyProperty="seq">
+	    INSERT /* insertAd, 전강욱(realsnake1975@gmail.com) */ INTO ad (
+			shop_seq
+			, title
+			, copy
+			, way
+			, unit_price
+			, start_date
+			, end_date
+			, target_area
+			, target_age
+			, target_sex
+			, target_url
+	        , reg_user_seq
+	        , reg_date
+	        , del_yn
+	    ) VALUES (
+	    	#{shopSeq}
+	        , #{title}
+	        , #{copy}
+	        , #{way}
+	        , #{unitPrice}
+	        , #{startDate}
+	        , #{endDate}
+	        , #{targetArea}
+	        , #{targetAge}
+	        , #{targetSex}
+	        , #{targetUrl}
+	        , #{regUserSeq}
+	        , NOW()
+	        , 'N'
+	    )
+	</update>
+
+	<sql id="whereClauseOfAd">
+	    <where>
+		    <if test=' loginUser.isAdmin == null or loginUser.isAdmin == false'>AND del_yn = 'N'</if>
+		    <choose>
+		    	<when test=' pagingHelper.search.startDate != null and !"".equals(pagingHelper.search.startDate) '>
+			    	AND reg_date &gt;= CONCAT(#{pagingHelper.search.startDate}, ' 00:00:00')
+			    	<if test=' pagingHelper.search.endDate != null and !"".equals(pagingHelper.search.endDate) '>
+			    		AND reg_date &lt;= CONCAT(#{pagingHelper.search.endDate}, ' 23:59:59')
+			    	</if>
+		    	</when>
+		    	<otherwise>
+			    	<if test=' pagingHelper.search.endDate != null and !"".equals(pagingHelper.search.endDate) '>
+			    		AND reg_date &lt;= CONCAT(#{pagingHelper.search.endDate}, ' 23:59:59')
+			    	</if>
+		    	</otherwise>
+		    </choose>
+	    	<if test=' pagingHelper.search.keyword != null and !"".equals(pagingHelper.search.keyword) '>
+			    <choose>
+			    	<when test=' "title".equals(pagingHelper.search.item) '>
+						AND title LIKE CONCAT('%', #{pagingHelper.search.keyword}, '%')
+			    	</when>
+			    	<when test=' "copy".equals(pagingHelper.search.item) '>
+						AND copy LIKE CONCAT('%', #{pagingHelper.search.keyword}, '%')
+			    	</when>
+			    	<otherwise>
+						AND (title LIKE CONCAT('%', #{pagingHelper.search.keyword}, '%') OR copy LIKE CONCAT('%', #{pagingHelper.search.keyword}, '%'))
+			    	</otherwise>
+			    </choose>
+	    	</if>
+	    </where>
+	</sql>
+
+	<sql id="orderClauseOfAd">
+		<if test=' pagingHelper != null and pagingHelper.sortList != null '>
+            <foreach collection="pagingHelper.sortList" item="sort" open="ORDER BY " separator="," close="">
+                ${sort.column} ${sort.ascOrDesc}
+            </foreach>
+        </if>
+	</sql>
+
+	<select id="selectAd" parameterType="int" resultType="AdVo">
+	    SELECT /* selectAd, 전강욱(realsnake1975@gmail.com) */ seq
+		, shop_seq
+		, title
+		, copy
+		, way
+		, unit_price
+		, start_date
+		, end_date
+		, target_area
+		, target_age
+		, target_sex
+		, target_url
+	    , reg_user_seq
+		, reg_date
+	    , mod_user_seq
+		, mod_date
+		, del_yn
+	    , del_user_seq
+		, del_date
+	    FROM ad
+		WHERE seq = #{seq}
+	</select>
+
+	<select id="selectAdListCount" parameterType="AdDto" resultType="int">
+	    SELECT /* selectAdListCount, 전강욱(realsnake1975@gmail.com) */ COUNT(*)
+	    FROM ad
+	    <include refid="whereClauseOfAd" />
+	</select>
+
+	<select id="selectAdList" parameterType="AdDto" resultType="AdVo">
+	    SELECT /* selectAdList, 전강욱(realsnake1975@gmail.com) */ seq
+		, shop_seq
+		, title
+		, copy
+		, way
+		, unit_price
+		, start_date
+		, end_date
+		, target_area
+		, target_age
+		, target_sex
+		, target_url
+	    , reg_user_seq
+		, reg_date
+	    , mod_user_seq
+		, mod_date
+		, del_yn
+	    , del_user_seq
+		, del_date
+	    FROM ad
+	    <include refid="whereClauseOfAd" />
+	    <include refid="orderClauseOfAd" />
+	    LIMIT #{pagingHelper.startNum}, #{pagingHelper.endNum}
+	</select>
+
+	<update id="updateAd" parameterType="AdVo">
+	    UPDATE /* updateAd, 전강욱(realsnake1975@gmail.com) */ ad
+	    <set>
+	    	<if test=' shopSeq != null and shopSeq > 0 '>shop_seq = #{shopSeq}</if>
+	    	<if test=' title != null and !"".equals(title) '>, title = #{title}</if>
+	    	<if test=' copy != null and !"".equals(copy) '>, copy = #{copy}</if>
+	    	<if test=' way != null and !"".equals(way) '>, way = #{way}</if>
+	    	<if test=' unitPrice != null and unitPrice > 0 '>unit_price = #{unitPrice}</if>
+	    	<if test=' startDate != null and !"".equals(startDate) '>, start_date = #{startDate}</if>
+	    	<if test=' endDate != null and !"".equals(endDate) '>, end_date = #{endDate}</if>
+	    	<if test=' targetArea != null and !"".equals(targetArea) '>, target_area = #{targetArea}</if>
+	    	<if test=' targetAge != null and !"".equals(targetAge) '>, target_age = #{targetAge}</if>
+	    	<if test=' targetSex != null and !"".equals(targetSex) '>, target_sex = #{targetSex}</if>
+	    	<if test=' targetUrl != null and !"".equals(targetUrl) '>, target_url = #{targetUrl}</if>
+	    	, mod_user_seq = #{modUserSeq}
+	    	, mod_date = NOW()
+	    </set>
+		WHERE seq = #{seq}
+	</update>
+
+	<update id="deleteAd" parameterType="AdVo">
+		UPDATE /* deleteAd, 전강욱(realsnake1975@gmail.com) */ ad
+		SET del_yn = 'Y'
+		, del_user_seq = #{delUserSeq}
+		, del_date = NOW()
+		WHERE seq = #{seq}
+     </update>
+<!-- 광고 //-->
+
+</mapper>
