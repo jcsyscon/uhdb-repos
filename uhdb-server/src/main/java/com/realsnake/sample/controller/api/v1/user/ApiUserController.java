@@ -57,4 +57,86 @@ public class ApiUserController {
         }
     }
 
+
+    /* @formatter:off */
+    /**
+    https://api-sms.cloud.toast.com
+
+
+        [SMS]
+            /sms/v2.0/appKeys/{appKey}/sender/sms
+
+        [Request Body]
+        {
+            "body": "{본문 내용}",
+            "sendNo": "{발신번호}",
+            "recipientList": [{
+                "recipientNo": "{수신번호}"
+            }],
+            "userId": "발송구분자"
+        }
+
+        [응답]
+        {
+          "header": {
+            "isSuccessful": true,
+            "resultCode": 0,
+            "resultMessage": "SUCCESS"
+          },
+          "body": {
+            "data": {
+              "requestId": "0-201607-424541-1",
+              "statusCode": "2",
+              "sendResultList" : [
+                  {
+                      "recipientNo" : {수신번호},
+                      "resultCode" :  0,
+                      "resultMessage" : "SUCCESS"
+                  }
+              ]
+            }
+          }
+        }
+
+
+
+        [LMS]
+            /sms/v2.0/appKeys/{appKey}/sender/mms
+
+        [Request Body]
+        {
+            "title": "{제목}",
+            "body": "{본문 내용}",
+            "sendNo": "{발신번호}",
+            "recipientList": [{
+                "recipientNo": "{수신번호}",
+                "templateParameter": { }
+            }],
+            "userId": ""
+        }
+
+        [응답]
+        {
+          "header": {
+            "isSuccessful": true,
+            "resultCode": 0,
+            "resultMessage": "SUCCESS"
+          },
+          "body": {
+            "data": {
+              "requestId": "0-201607-424541-1",
+              "statusCode": "2",
+              "sendResultList" : [
+                  {
+                      "recipientNo" : {수신번호},
+                      "resultCode" :  0,
+                      "resultMessage" : "SUCCESS"
+                  }
+              ]
+            }
+          }
+        }
+    */
+    /* @formatter:on */
+
 }
