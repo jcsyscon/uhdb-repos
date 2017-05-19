@@ -51,7 +51,7 @@ public class UserVo implements Serializable {
     /** 알람수신여부 */
     private String alarmRecYn;
     /** 등록일시 */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "KST")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private Date regDate;
     /** 탈퇴여부 */
     private String secedeYn = "N";
