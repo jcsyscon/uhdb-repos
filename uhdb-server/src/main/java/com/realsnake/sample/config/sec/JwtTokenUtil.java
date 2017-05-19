@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mobile.device.Device;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -38,6 +40,8 @@ import io.jsonwebtoken.SignatureAlgorithm;
  */
 @Component
 public class JwtTokenUtil {
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     // https://jwt.io/
     // iss: 토큰을 발급한 발급자(Issuer)
@@ -78,6 +82,7 @@ public class JwtTokenUtil {
             username = (String) claims.get(CLAIM_KEY_AUDIENCE);
         } catch (Exception e) {
             // username = null;
+            e.printStackTrace();
         }
         return username;
     }
@@ -168,7 +173,7 @@ public class JwtTokenUtil {
         claims.put(CLAIM_KEY_ISSUER, CLAIM_VALUE_ISSUER);
         claims.put(CLAIM_KEY_AUDIENCE, userDetails.getUsername());
         claims.put(CLAIM_KEY_ISSUEDAT, new Date());
-        return generateToken(claims);
+        return this.generateToken(claims);
     }
 
     public String generateToken(UserDetails userDetails, String jwtId) {
@@ -177,7 +182,7 @@ public class JwtTokenUtil {
         claims.put(CLAIM_KEY_AUDIENCE, userDetails.getUsername());
         claims.put(CLAIM_KEY_ISSUEDAT, new Date());
         claims.put(CLAIM_KEY_JWTID, jwtId);
-        return generateToken(claims);
+        return this.generateToken(claims);
     }
 
     public String generateToken(UserDetails userDetails, Device device) {
@@ -186,10 +191,12 @@ public class JwtTokenUtil {
         claims.put(CLAIM_KEY_AUDIENCE, userDetails.getUsername());
         claims.put(CLAIM_KEY_ISSUEDAT, new Date());
         claims.put(CLAIM_KEY_DEVICE, this.generateDevice(device));
-        return generateToken(claims);
+        return this.generateToken(claims);
     }
 
     private String generateToken(Map<String, Object> claims) {
+        logger.debug(claims.toString());
+
         return Jwts.builder().setClaims(claims).setExpiration(generateExpirationDate()).signWith(SignatureAlgorithm.HS512, SECRET).compact();
     }
 

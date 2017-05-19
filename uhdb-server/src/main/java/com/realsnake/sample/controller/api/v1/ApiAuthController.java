@@ -99,6 +99,7 @@ public class ApiAuthController {
             // Reload password post-security so we can generate token
             LoginUser loginUser = (LoginUser) authentication.getPrincipal();
             final String accessToken = this.jwtTokenUtil.generateToken(loginUser, session.getId());
+            LOGGER.debug("<<accessToken>> {}", accessToken);
 
             return ResponseEntity.ok(new JwtToken(accessToken));
         } catch (Exception e) {

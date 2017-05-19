@@ -73,7 +73,7 @@ public class ApiUhdbController {
                 return ResponseEntity.badRequest().body(null);
             }
         } catch (Exception e) {
-            throw new CommonApiException(ApiResultCode.NOTFOUND_USER, e);
+            throw new CommonApiException(ApiResultCode.COMMON_FAIL, e);
         }
     }
 

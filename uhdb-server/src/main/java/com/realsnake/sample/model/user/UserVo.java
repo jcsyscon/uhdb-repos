@@ -39,10 +39,13 @@ public class UserVo implements Serializable {
     @JsonIgnore
     private String password;
     /** 이름 */
+    @JsonIgnore
     private String name;
     /** 핸드폰번호 */
+    @JsonIgnore
     private String mobile;
     /** 이메일 */
+    @JsonIgnore
     private String email;
     /** 생년월일 */
     private String birthDate;

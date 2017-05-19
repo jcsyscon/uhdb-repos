@@ -21,7 +21,7 @@ import com.realsnake.sample.exception.CommonApiException;
 import com.realsnake.sample.model.common.api.ApiResponse;
 import com.realsnake.sample.util.MobilePagingHelper;
 
-@RestController("ApiV1AdController")
+@RestController("ApiV1NoticeController")
 @RequestMapping(value = "/api/v1/board/notice")
 public class ApiNoticeController {
 
@@ -73,7 +73,7 @@ public class ApiNoticeController {
                 return ResponseEntity.badRequest().body(null);
             }
         } catch (Exception e) {
-            throw new CommonApiException(ApiResultCode.NOTFOUND_USER, e);
+            throw new CommonApiException(ApiResultCode.COMMON_FAIL, e);
         }
     }
 
