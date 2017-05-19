@@ -3,11 +3,23 @@
  */
 package com.realsnake.sample.util;
 
+import java.util.concurrent.CompletableFuture;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.realsnake.sample.model.fcm.FcmReqForm;
 
 /**
  * <pre>
@@ -28,8 +40,10 @@ import org.springframework.web.client.RestTemplate;
 @Component
 public class FcmUtils {
 
-    @SuppressWarnings("unused")
     private final Logger logger = LoggerFactory.getLogger(getClass());
+
+    @Value("${fcm.serverKey}")
+    private String fcmServerKey;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -42,7 +56,7 @@ public class FcmUtils {
     public static final String FCM_CONTENT_TYPE = "Content-Type";
 
     enum FcmContentType {
-        JSON("application/json"), TEXT("application/x-www-form-urlencoded;charset=UTF-8");
+        JSON("application/json;charset=UTF-8"), TEXT("application/x-www-form-urlencoded;charset=UTF-8");
 
         private String value;
 
@@ -63,12 +77,10 @@ public class FcmUtils {
     // 요청 JSON
     {
         "data": {
-            "content": {
-                "title": "5x1"
-                , "text": "This is a Firebase Cloud Messaging Topic Message!"
-            }
-            , "etc": {
-                "ad_url": ""
+            "message": {
+                "title": "푸시알림 제목입니다."
+                , "body": "푸시알림 내용입니다."
+                , "ad_url": null
             }
         }
         , "to": "bk3RNwTe3H0:CI2k_HHwgIpoDKCIZvvDMExUdFQ3P1..."
@@ -89,7 +101,7 @@ public class FcmUtils {
     {
         "ad": {
             "title": ""
-            , "content": ""
+            , "copy": ""
             , "image_url": ""
             , "link": ""
             , "tel": ""
@@ -97,5 +109,32 @@ public class FcmUtils {
     }
     */
     /* @formatter:on */
+
+    private HttpHeaders headers = new HttpHeaders();
+
+    private ObjectMapper mapper = new ObjectMapper();
+
+    @Async
+    public CompletableFuture<String> send(FcmReqForm fcmReqForm) {
+        this.headers.add(FCM_HEADER_KEY, String.format(FCM_HEADER_VALUE, this.fcmServerKey));
+        this.headers.add(FCM_CONTENT_TYPE, FcmContentType.JSON.getValue());
+
+        HttpEntity<String> entity = null;
+        ResponseEntity<String> responseEntity = null;
+
+        try {
+            String fcmReqStr = this.mapper.writeValueAsString(fcmReqForm);
+            logger.debug("<<FCM메시지>> {}", fcmReqStr);
+
+            entity = new HttpEntity<>(fcmReqStr, this.headers);
+            responseEntity = this.restTemplate.exchange(FCM_URL, HttpMethod.POST, entity, String.class);
+
+            return CompletableFuture.completedFuture(responseEntity.getBody());
+        } catch (JsonProcessingException e) {
+            logger.error("<<FCM 오류 발생>> {}", e.getMessage());
+
+            return CompletableFuture.completedFuture(null);
+        }
+    }
 
 }

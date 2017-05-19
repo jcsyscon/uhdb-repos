@@ -1,6 +1,7 @@
 package com.realsnake.sample.controller.sample;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -19,14 +20,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.realsnake.sample.model.fcm.Content;
 import com.realsnake.sample.model.fcm.Data;
 import com.realsnake.sample.model.fcm.FcmReqForm;
+import com.realsnake.sample.model.fcm.Message;
 import com.realsnake.sample.model.sample.SampleDto;
 import com.realsnake.sample.model.sample.SampleVo;
 import com.realsnake.sample.service.common.CommonService;
 import com.realsnake.sample.service.sample.SampleService;
 import com.realsnake.sample.util.EmailSender;
+import com.realsnake.sample.util.FcmUtils;
 import com.realsnake.sample.util.PagingHelper;
 
 @Controller
@@ -52,6 +54,9 @@ public class SampleController {
 
     @Autowired
     private CommonService commonService;
+
+    @Autowired
+    private FcmUtils fcmUtils;
 
     @RequestMapping(value = "/reg")
     public String regSample(Model model, PagingHelper pagingHelper) throws Exception {
@@ -131,9 +136,18 @@ public class SampleController {
 
     @GetMapping(value = "/fcm")
     @ResponseBody
-    public FcmReqForm sampleFcm(HttpServletRequest request, Model model) throws Exception {
-        Content content = new Content("제목입니다.", "내용입니다.");
-        return new FcmReqForm(new Data(content), "FCM 토큰");
+    public String sampleFcm(HttpServletRequest request, Model model) throws Exception {
+        // 유저 푸시키
+        // String fcmToken = "eQlH-IUu9rA:APA91bEwml0h7rAYnoOn9hc4jN_tOlPLQexLNJgLptSn21IYF5S39l5wu-3BeiB_Ax-iqGiMNEz3GX4xuP5C_WMXXY1ISpwxS_Y0GKh_Q02vCNYrFNN7c5FkQHP_0hj1xvKxUdGOK1UA";
+        String fcmToken = "exdNrcEuDEQ:APA91bEOovHnVbtlqYv6mNzAF2PfLsdwNx-gW9lNhb1OuDbr07_rd8XOS9XYmFTBo84E7oRzOtZh3g2tuD4yPrmNL0W9TqykbwNwYo8pcXSEx9AcG3Jk7i5LsFykm5vYX5uY8D9On4FS";
+
+
+        Message message = new Message("제목입니다.", "내용입니다.");
+        FcmReqForm fcmReqForm = new FcmReqForm(new Data(message), fcmToken);
+
+        CompletableFuture<String> result = this.fcmUtils.send(fcmReqForm);
+
+        return result.get();
     }
 
     @GetMapping(value = "/juso/new/{gubun}")

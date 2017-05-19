@@ -31,35 +31,19 @@ public class Data implements Serializable {
     /** SID */
     private static final long serialVersionUID = 3275884604586144493L;
 
-    private Content content;
+    private Message message;
 
-    private Etc etc;
-
-    public Data(Content content) {
+    public Data(Message message) {
         super();
-        this.content = content;
+        this.message = message;
     }
 
-    public Data(Content content, Etc etc) {
-        super();
-        this.content = content;
-        this.etc = etc;
+    public Message getMessage() {
+        return message;
     }
 
-    public Content getContent() {
-        return content;
-    }
-
-    public void setContent(Content content) {
-        this.content = content;
-    }
-
-    public Etc getEtc() {
-        return etc;
-    }
-
-    public void setEtc(Etc etc) {
-        this.etc = etc;
+    public void setMessage(Message message) {
+        this.message = message;
     }
 
 }

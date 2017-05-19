@@ -14,6 +14,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.ibatis.type.Alias;
 import org.springframework.security.core.GrantedAuthority;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.realsnake.sample.constants.CommonConstants;
@@ -50,6 +51,7 @@ public class UserVo implements Serializable {
     /** 알람수신여부 */
     private String alarmRecYn;
     /** 등록일시 */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "KST")
     private Date regDate;
     /** 탈퇴여부 */
     private String secedeYn = "N";

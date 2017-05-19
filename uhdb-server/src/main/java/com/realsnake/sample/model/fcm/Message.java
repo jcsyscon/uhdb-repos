@@ -26,19 +26,21 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  * @version 1.0
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Content implements Serializable {
+public class Message implements Serializable {
 
     /** SID */
     private static final long serialVersionUID = -3654217538876123328L;
 
     private String title;
 
-    private String text;
+    private String body;
 
-    public Content(String title, String text) {
+    private String adUrl;
+
+    public Message(String title, String body) {
         super();
         this.title = title;
-        this.text = text;
+        this.body = body;
     }
 
     public String getTitle() {
@@ -49,12 +51,20 @@ public class Content implements Serializable {
         this.title = title;
     }
 
-    public String getText() {
-        return text;
+    public String getBody() {
+        return body;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setBody(String body) {
+        this.body = body;
+    }
+
+    public String getAdUrl() {
+        return adUrl;
+    }
+
+    public void setAdUrl(String adUrl) {
+        this.adUrl = adUrl;
     }
 
 }
