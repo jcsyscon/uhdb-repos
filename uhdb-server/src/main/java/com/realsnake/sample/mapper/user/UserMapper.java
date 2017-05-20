@@ -64,4 +64,25 @@ public interface UserMapper {
      */
     List<GrantedAuthority> selectUserAuthNameList(int seq);
 
+    /**
+     * user 데이타를 수정한다.
+     *
+     * @param param
+     */
+    void updateUser(UserVo param);
+
+    /**
+     * user 데이타를 수정한다. - 비밀번호 수정
+     *
+     * @param param
+     */
+    void updateUserPassword(UserVo param);
+
+    /**
+     * user 데이타를 수정한다. - 탈퇴
+     *
+     * @param param
+     */
+    void secedeUser(UserVo param);
+
 }

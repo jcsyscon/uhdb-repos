@@ -40,4 +40,10 @@ public interface UserService {
 
     List<UserVo> findUserList(UserDto param) throws Exception;
 
+    void modifyUser(UserVo param) throws Exception;
+
+    void modifyUserPassword(UserVo param) throws Exception;
+
+    void secedeUser(UserVo param) throws Exception;
+
 }

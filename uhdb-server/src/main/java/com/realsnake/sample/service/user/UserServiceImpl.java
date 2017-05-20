@@ -43,7 +43,7 @@ import com.realsnake.sample.util.crypto.BlockCipherUtils;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private UserMapper userMapper;
@@ -61,8 +61,7 @@ public class UserServiceImpl implements UserService {
         param.setName(BlockCipherUtils.encrypt(secretKey, param.getName()));
         param.setMobile(BlockCipherUtils.encrypt(secretKey, param.getMobile()));
 
-        // TODO: 일단 익명권한 부여, 이메일 인증 후 ROLL_USER로 업데이트
-        param.setAuthorities(AuthorityUtils.createAuthorityList(CommonConstants.RollType.ROLL_ANONYMOUS.getValue()));
+        param.setAuthorities(AuthorityUtils.createAuthorityList(CommonConstants.RollType.ROLL_USER.getValue()));
 
         this.userMapper.insertUser(param);
         this.userMapper.insertUserAuthority(param);
@@ -140,6 +139,38 @@ public class UserServiceImpl implements UserService {
 
         param.getPagingHelper().setTotalRecordCount(this.userMapper.selectUserListCount(param));
         return this.userMapper.selectUserList(param);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void modifyUser(UserVo param) throws Exception {
+        // 사용자가 입력한 비밀번호를 해싱(단방향 암호화) 처리
+        String passwordHash = PasswordHash.createHash(param.getPassword());
+        param.setPassword(passwordHash);
+
+        // 사용자의 이름/이메일 등을 암호화
+        // String secretKey = BlockCipherUtils.generateSecretKey(passwordHash);
+        String secretKey = BlockCipherUtils.generateSecretKey(CommonConstants.DEFAULT_AUTH_KEY);
+        param.setName(BlockCipherUtils.encrypt(secretKey, param.getName()));
+        param.setMobile(BlockCipherUtils.encrypt(secretKey, param.getMobile()));
+
+        this.userMapper.updateUser(param);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void modifyUserPassword(UserVo param) throws Exception {
+        // 사용자가 입력한 비밀번호를 해싱(단방향 암호화) 처리
+        String passwordHash = PasswordHash.createHash(param.getPassword());
+        param.setPassword(passwordHash);
+
+        this.userMapper.updateUserPassword(param);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void secedeUser(UserVo param) throws Exception {
+        this.userMapper.secedeUser(param);
     }
 
 }

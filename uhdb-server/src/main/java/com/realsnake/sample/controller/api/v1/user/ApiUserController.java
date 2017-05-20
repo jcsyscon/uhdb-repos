@@ -7,7 +7,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.realsnake.sample.constants.ApiResultCode;
@@ -15,7 +17,7 @@ import com.realsnake.sample.exception.CommonApiException;
 import com.realsnake.sample.model.common.api.ApiResponse;
 import com.realsnake.sample.model.user.UserVo;
 import com.realsnake.sample.service.user.UserService;
-import com.realsnake.sample.util.MobilePagingHelper;
+import com.realsnake.sample.util.RandomKeys;
 
 @RestController("ApiV1UserController")
 @RequestMapping(value = "/api/v1/user")
@@ -26,16 +28,123 @@ public class ApiUserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping(value = "/login")
-    public ApiResponse<?> login(MobilePagingHelper mobilePagingHelper) throws CommonApiException {
-        LOGGER.debug("<<mobilePagingHelper.toString()>>, {}", mobilePagingHelper.toString());
+    /**
+     * 중복체크
+     *
+     * @param type username / email
+     * @param param
+     * @return
+     * @throws Exception
+     */
+    @GetMapping(value = "/double-check/{type}/{param}")
+    public ApiResponse<?> doubleCheckProcessing(@PathVariable("type") String type, @PathVariable("param") String param) throws Exception {
+        try {
+            String result = this.userService.checkDoubleUser(type, param);
 
-        ApiResponse<MobilePagingHelper> apiResponse = new ApiResponse<>();
-        apiResponse.setBody(mobilePagingHelper);
+            ApiResponse<String> apiResponse = new ApiResponse<>();
+            apiResponse.setBody(result);
 
-        return apiResponse;
+            return apiResponse;
+        } catch (Exception e) {
+            throw new CommonApiException(ApiResultCode.COMMON_FAIL, e);
+        }
     }
 
+    /**
+     * 모바일 인증 번호 발송 요청
+     *
+     * @param mobileNumber
+     * @return
+     * @throws CommonApiException
+     */
+    @GetMapping(value = "/mobile-auth-num")
+    public ApiResponse<?> getMobileAuthNum(String mobileNumber) throws CommonApiException {
+        try {
+            String code = String.format("%06d", (int) (Math.random() * 1000000));
+            String randomKey = RandomKeys.make(32);
+
+            // TODO: sms 발송 및 DB 저장
+
+            ApiResponse<String> apiResponse = new ApiResponse<>();
+            apiResponse.setBody(randomKey);
+
+            return apiResponse;
+        } catch (Exception e) {
+            throw new CommonApiException(ApiResultCode.COMMON_FAIL, e);
+        }
+    }
+
+    /**
+     * 모바일 인증 번호 확인
+     *
+     * @param mobileNumber
+     * @return
+     * @throws CommonApiException
+     */
+    @PostMapping(value = "/mobile-auth-num")
+    public ApiResponse<?> checkMobileAuthNum(String code, String randomKey) throws CommonApiException {
+        try {
+            // TODO: DB 조회 및 인증번호 검증
+
+            ApiResponse<String> apiResponse = new ApiResponse<>();
+            // apiResponse.setBody(random);
+
+            return apiResponse;
+        } catch (Exception e) {
+            throw new CommonApiException(ApiResultCode.COMMON_FAIL, e);
+        }
+    }
+
+    /**
+     * 아파트 검색
+     *
+     * @param aptName
+     * @return
+     * @throws CommonApiException
+     */
+    @PostMapping(value = "/search/apt")
+    public ApiResponse<?> searchApt(String aptName) throws CommonApiException {
+        try {
+            // TODO: 아파트 DB 조회
+
+            ApiResponse<String> apiResponse = new ApiResponse<>();
+            // apiResponse.setBody(random);
+
+            return apiResponse;
+        } catch (Exception e) {
+            throw new CommonApiException(ApiResultCode.COMMON_FAIL, e);
+        }
+    }
+
+    /**
+     * 택배함 찾기
+     *
+     * @param aptCode
+     * @param dong
+     * @return
+     * @throws CommonApiException
+     */
+    @PostMapping(value = "/search/uhdb")
+    public ApiResponse<?> searchUhdb(String aptCode, @RequestParam(required = false) String dong) throws CommonApiException {
+        try {
+            // TODO: 무인택배함 조회
+
+            ApiResponse<String> apiResponse = new ApiResponse<>();
+            // apiResponse.setBody(random);
+
+            return apiResponse;
+        } catch (Exception e) {
+            throw new CommonApiException(ApiResultCode.COMMON_FAIL, e);
+        }
+    }
+
+    /**
+     * 회원 정보 조회
+     *
+     * @param seq
+     * @return
+     * @throws CommonApiException
+     */
     @GetMapping(value = "/{seq}")
     public ApiResponse<?> gerUser(@PathVariable("seq") Integer seq) throws CommonApiException {
         try {
@@ -57,6 +166,156 @@ public class ApiUserController {
         }
     }
 
+    /**
+     * 회원 정보 등록
+     *
+     * @param user
+     * @return
+     * @throws CommonApiException
+     */
+    @PostMapping(value = "/join")
+    public ApiResponse<?> regUser(UserVo user) throws CommonApiException {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+            if (authentication == null) {
+                LOGGER.debug("<</auth/refresh>> 인증 실패");
+                throw new CommonApiException(ApiResultCode.NOTFOUND_USER);
+            }
+
+            this.userService.regUser(user);
+
+            ApiResponse<UserVo> apiResponse = new ApiResponse<>();
+            // apiResponse.setBody(user);
+
+            return apiResponse;
+        } catch (Exception e) {
+            throw new CommonApiException(ApiResultCode.COMMON_FAIL, e);
+        }
+    }
+
+    /**
+     * 회원 정보 수정
+     *
+     * @param seq
+     * @param user
+     * @return
+     * @throws CommonApiException
+     */
+    @PostMapping(value = "/modify/{seq}")
+    public ApiResponse<?> modifyUser(@PathVariable("seq") Integer seq, UserVo user) throws CommonApiException {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+            if (authentication == null) {
+                LOGGER.debug("<</auth/refresh>> 인증 실패");
+                throw new CommonApiException(ApiResultCode.NOTFOUND_USER);
+            }
+
+            this.userService.modifyUser(user);
+
+            ApiResponse<UserVo> apiResponse = new ApiResponse<>();
+            // apiResponse.setBody(user);
+
+            return apiResponse;
+        } catch (Exception e) {
+            throw new CommonApiException(ApiResultCode.COMMON_FAIL, e);
+        }
+    }
+
+    /**
+     * 회원 비밀번호 수정
+     *
+     * @param seq
+     * @param user
+     * @return
+     * @throws CommonApiException
+     */
+    @PostMapping(value = "/modify/{seq}/password")
+    public ApiResponse<?> modifyUserPassword(@PathVariable("seq") Integer seq, UserVo user) throws CommonApiException {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+            if (authentication == null) {
+                LOGGER.debug("<</auth/refresh>> 인증 실패");
+                throw new CommonApiException(ApiResultCode.NOTFOUND_USER);
+            }
+
+            this.userService.modifyUserPassword(user);
+
+            ApiResponse<UserVo> apiResponse = new ApiResponse<>();
+            // apiResponse.setBody(user);
+
+            return apiResponse;
+        } catch (Exception e) {
+            throw new CommonApiException(ApiResultCode.COMMON_FAIL, e);
+        }
+    }
+
+    /**
+     * 회원 탈퇴
+     *
+     * @param seq
+     * @param user
+     * @return
+     * @throws CommonApiException
+     */
+    @PostMapping(value = "/secede/{seq}")
+    public ApiResponse<?> secedeUser(@PathVariable("seq") Integer seq) throws CommonApiException {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+            if (authentication == null) {
+                LOGGER.debug("<</auth/refresh>> 인증 실패");
+                throw new CommonApiException(ApiResultCode.NOTFOUND_USER);
+            }
+
+            UserVo user = new UserVo();
+            user.setSeq(seq);
+
+            this.userService.secedeUser(user);
+
+            ApiResponse<UserVo> apiResponse = new ApiResponse<>();
+            // apiResponse.setBody(user);
+
+            return apiResponse;
+        } catch (Exception e) {
+            throw new CommonApiException(ApiResultCode.COMMON_FAIL, e);
+        }
+    }
+
+    /**
+     * 알림설정(수신여부) 수정
+     *
+     * @param seq
+     * @param user
+     * @return
+     * @throws CommonApiException
+     */
+    @PostMapping(value = "/modify/{seq}/alarm-rec-yn")
+    public ApiResponse<?> modifyAlarmRecYn(@PathVariable("seq") Integer seq, String alarmRecYn) throws CommonApiException {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+            if (authentication == null) {
+                LOGGER.debug("<</auth/refresh>> 인증 실패");
+                throw new CommonApiException(ApiResultCode.NOTFOUND_USER);
+            }
+
+            UserVo user = new UserVo();
+            user.setSeq(seq);
+            user.setAlarmRecYn(alarmRecYn);
+
+            this.userService.modifyUser(user);
+
+            ApiResponse<UserVo> apiResponse = new ApiResponse<>();
+            // apiResponse.setBody(user);
+
+            return apiResponse;
+        } catch (Exception e) {
+            throw new CommonApiException(ApiResultCode.COMMON_FAIL, e);
+        }
+    }
 
     /* @formatter:off */
     /**

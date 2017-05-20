@@ -28,8 +28,8 @@ import com.realsnake.sample.config.paging.PagingArgumentResolver;
 public class WebConfig extends WebMvcConfigurerAdapter implements ErrorPageRegistrar {
 
     @Bean
-    public LoginChecker loginCheckInterceptor() {
-        return new LoginChecker();
+    public ApiLoginChecker apiLoginChecker() {
+        return new ApiLoginChecker();
     }
 
     @Bean
@@ -87,7 +87,7 @@ public class WebConfig extends WebMvcConfigurerAdapter implements ErrorPageRegis
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        // registry.addInterceptor(this.getLoginCheckInterceptor());
+        // registry.addInterceptor(this.apiLoginChecker());
         registry.addInterceptor(this.localeChangeInterceptor());
     }
 

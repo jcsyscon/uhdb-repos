@@ -119,7 +119,6 @@ public class ApiAuthController {
     public ResponseEntity<?> refreshAuthToken(HttpServletRequest request) throws CommonApiException {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
             if (authentication == null) {
                 LOGGER.debug("<</auth/refresh>> 인증 실패");
                 throw new CommonApiException(ApiResultCode.NOTFOUND_USER);
