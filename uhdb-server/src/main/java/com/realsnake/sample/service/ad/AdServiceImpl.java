@@ -300,4 +300,24 @@ public class AdServiceImpl implements AdService {
         return this.adMapper.selectAdList(param);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public AdVo findRandomAd(AdDto param) throws Exception {
+        AdVo ad = this.adMapper.selectRandomAd(param);
+
+        // 매장 조회
+        ShopVo shop = this.adMapper.selectShop(ad.getShopSeq());
+        param.setShop(shop);
+        // 스폰서 조회
+        param.setSponsor(this.adMapper.selectSponsor(shop.getSponsorSeq()));
+
+        // 첨부파일 조회
+        AttachFileVo attachFile = new AttachFileVo();
+        attachFile.setGubun(CommonConstants.AttachFileFolderType.AD.getValue());
+        attachFile.setGroupSeq(ad.getSeq());
+        param.setAttachFileList(this.commonMapper.selectAttachFileList(attachFile));
+
+        return ad;
+    }
+
 }

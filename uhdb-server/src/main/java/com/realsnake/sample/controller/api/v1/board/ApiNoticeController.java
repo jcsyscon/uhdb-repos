@@ -5,6 +5,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +34,13 @@ public class ApiNoticeController {
         LOGGER.debug("<<mobilePagingHelper.toString()>>, {}", mobilePagingHelper.toString());
 
         try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+            if (authentication == null) {
+                LOGGER.debug("<<ApiNoticeController.getNoticeList>> 인증 실패");
+                throw new CommonApiException(ApiResultCode.NOTFOUND_USER);
+            }
+
             List<NoticeVo> noticeList = this.noticeService.findNoticeList(param);
 
             ApiResponse<List<NoticeVo>> apiResponse = new ApiResponse<>();
@@ -46,6 +55,13 @@ public class ApiNoticeController {
     @GetMapping(value = "/{seq}")
     public ApiResponse<?> getNotice(@PathVariable("seq") Integer seq) throws CommonApiException {
         try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+            if (authentication == null) {
+                LOGGER.debug("<<ApiNoticeController.getNotice>> 인증 실패");
+                throw new CommonApiException(ApiResultCode.NOTFOUND_USER);
+            }
+
             NoticeVo notice = this.noticeService.findNotice(seq);
 
             ApiResponse<NoticeVo> apiResponse = new ApiResponse<>();

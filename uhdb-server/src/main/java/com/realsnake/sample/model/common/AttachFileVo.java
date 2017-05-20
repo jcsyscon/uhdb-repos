@@ -39,6 +39,8 @@ public class AttachFileVo implements Serializable {
     private Integer fileSeq;
     /** notice(공지사항)/ad(광고)/sponsor(광고주)/store(매장) */
     private String gubun;
+    /** 광고의 경우 시작(start)/종료(end)/배너(banner)/팝업(popup)/푸시(push) */
+    private String subGubun;
     /** 그룹 일련번호 */
     private Integer groupSeq;
     private String path;
@@ -69,6 +71,14 @@ public class AttachFileVo implements Serializable {
 
     public void setGubun(String gubun) {
         this.gubun = gubun;
+    }
+
+    public String getSubGubun() {
+        return subGubun;
+    }
+
+    public void setSubGubun(String subGubun) {
+        this.subGubun = subGubun;
     }
 
     public Integer getGroupSeq() {

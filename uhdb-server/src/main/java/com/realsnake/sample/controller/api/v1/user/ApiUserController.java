@@ -151,7 +151,7 @@ public class ApiUserController {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
             if (authentication == null) {
-                LOGGER.debug("<</auth/refresh>> 인증 실패");
+                LOGGER.debug("<<ApiUserController.getUser>> 인증 실패");
                 throw new CommonApiException(ApiResultCode.NOTFOUND_USER);
             }
 
@@ -176,13 +176,6 @@ public class ApiUserController {
     @PostMapping(value = "/join")
     public ApiResponse<?> regUser(UserVo user) throws CommonApiException {
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-            if (authentication == null) {
-                LOGGER.debug("<</auth/refresh>> 인증 실패");
-                throw new CommonApiException(ApiResultCode.NOTFOUND_USER);
-            }
-
             this.userService.regUser(user);
 
             ApiResponse<UserVo> apiResponse = new ApiResponse<>();
@@ -208,7 +201,7 @@ public class ApiUserController {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
             if (authentication == null) {
-                LOGGER.debug("<</auth/refresh>> 인증 실패");
+                LOGGER.debug("<<ApiUserController.modifyUser>> 인증 실패");
                 throw new CommonApiException(ApiResultCode.NOTFOUND_USER);
             }
 
@@ -237,7 +230,7 @@ public class ApiUserController {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
             if (authentication == null) {
-                LOGGER.debug("<</auth/refresh>> 인증 실패");
+                LOGGER.debug("<<ApiUserController.modifyUserPassword>> 인증 실패");
                 throw new CommonApiException(ApiResultCode.NOTFOUND_USER);
             }
 
@@ -266,7 +259,7 @@ public class ApiUserController {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
             if (authentication == null) {
-                LOGGER.debug("<</auth/refresh>> 인증 실패");
+                LOGGER.debug("<<ApiUserController.secedeUser>> 인증 실패");
                 throw new CommonApiException(ApiResultCode.NOTFOUND_USER);
             }
 
@@ -298,7 +291,7 @@ public class ApiUserController {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
             if (authentication == null) {
-                LOGGER.debug("<</auth/refresh>> 인증 실패");
+                LOGGER.debug("<<ApiUserController.modifyAlarmRecYn>> 인증 실패");
                 throw new CommonApiException(ApiResultCode.NOTFOUND_USER);
             }
 

@@ -423,6 +423,31 @@
 		, del_date = NOW()
 		WHERE seq = #{seq}
      </update>
+
+	<select id="selectRandomAd" parameterType="adDto" resultType="AdVo">
+	    SELECT /* selectAd, 전강욱(realsnake1975@gmail.com) */ seq
+		, shop_seq
+		, title
+		, copy
+		, way
+		, unit_price
+		, start_date
+		, end_date
+		, target_area
+		, target_age
+		, target_sex
+		, target_url
+	    , reg_user_seq
+		, reg_date
+	    , mod_user_seq
+		, mod_date
+		, del_yn
+	    , del_user_seq
+		, del_date
+	    FROM ad
+	    ORDER BY RAND()
+		LIMIT 1
+	</select>
 <!-- 광고 //-->
 
 </mapper>

@@ -59,4 +59,6 @@ public interface AdMapper {
 
     List<AdVo> selectAdList(AdDto param);
 
+    AdVo selectRandomAd(AdDto param);
+
 }

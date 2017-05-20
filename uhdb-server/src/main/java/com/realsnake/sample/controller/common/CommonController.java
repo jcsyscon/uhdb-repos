@@ -296,6 +296,7 @@ public class CommonController {
      * @throws UnsupportedEncodingException
      * @throws IOException
      */
+    @SuppressWarnings("unused")
     private void viewImage(String path, String name, HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException, IOException {
         OutputStream os = null;
         FileInputStream fis = null;

@@ -80,7 +80,7 @@ public class FcmUtils {
             "message": {
                 "title": "푸시알림 제목입니다."
                 , "body": "푸시알림 내용입니다."
-                , "ad_url": null
+                , "adUrl": null
             }
         }
         , "to": "bk3RNwTe3H0:CI2k_HHwgIpoDKCIZvvDMExUdFQ3P1..."
@@ -102,7 +102,7 @@ public class FcmUtils {
         "ad": {
             "title": ""
             , "copy": ""
-            , "image_url": ""
+            , "imageUrl": ""
             , "link": ""
             , "tel": ""
         }

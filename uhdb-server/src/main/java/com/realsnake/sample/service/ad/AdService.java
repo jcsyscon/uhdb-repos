@@ -53,4 +53,6 @@ public interface AdService {
 
     List<AdVo> findAdList(AdDto param) throws Exception;
 
+    AdVo findRandomAd(AdDto param) throws Exception;
+
 }

@@ -141,6 +141,21 @@ public interface CommonConstants {
         }
     }
 
+    /** 광고 이미지 유형 - 시작(start)/종료(end)/배너(banner)/팝업(popup)/푸시(push) */
+    enum AdImageType {
+        START("start"), END("end"), BANNER("banner"), POPUP("popup"), PUSH("push");
+
+        private String value;
+
+        AdImageType(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+    }
+
     /** 주소 유형 */
     enum AddressType {
         USER("user"), SHOP("shop"), SPONSOR("sponsor");
