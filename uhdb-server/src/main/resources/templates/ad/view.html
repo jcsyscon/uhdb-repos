@@ -19,7 +19,7 @@ $(document).ready(function() {
         , language: "kr"
     });
 
-	$("#targetUrl").inputmask("http://*{1,10}.*{1,10}.*{2,4}");
+	// $("#targetUrl").inputmask("http://*{1,10}.*{1,10}.*{2,4}");
 
     $("#form-ad-reg").submit(function() {
     	var startDateVal = $("#_startDate").val(); // 일단 시간은 생략
@@ -59,6 +59,200 @@ $(document).ready(function() {
 		}
 	});
 });
+
+var gAttachFilePushCount = 0;
+var gAttachFileStartCount = 0;
+var gAttachFileEndCount = 0;
+var gAttachFileBannerCount = 0;
+var gAttachFilePopupCount = 0;
+
+/**
+ * 파일 업로드 - 광고용(ad 에서 사용)
+ * - 광고 이미지 유형(gubun) - 시작(start)/종료(end)/배너(banner)/팝업(popup)/푸시(push)
+ */
+function uploadFile4Ad(el, maxCount, maxSize, gubun) {
+	if (!maxCount) { maxCount = 1; }
+	if (!maxSize) { maxSize = 1; }
+
+	var uploadedFileCount = $("#_ul_uploaded_files_area-" + gubun.toLowerCase() + " li").length;
+
+	var $this = $(el);
+
+	if (uploadedFileCount >= maxCount) {
+		alert(" 이미지 첨부는 " + maxCount + "개까지 가능합니다! ");
+		$this.clearFields();
+		return;
+	}
+
+    var ext = $this.val().split('.').pop().toLowerCase();
+    if ($.inArray(ext, ['gif', 'png', 'jpg', 'jpeg']) == -1) {
+		alert(" 이미지는 'gif', 'png', 'jpg', 'jpeg' 파일만 업로드할 수 있습니다! ");
+		$this.clearFields();
+		return;
+    }
+
+	var browserVersion = getBrowserVersion();
+
+	var $progress = $("#progress-" + gubun.toLowerCase());
+	var $progressBar = $("#progress-bar-" + gubun.toLowerCase());
+	$progress.show();
+
+    // ajaxSubmit Option
+    var options = {
+        beforeSubmit : function() {
+            var percentVal = "0%";
+            $progressBar.css("width", percentVal);
+            $progressBar.text(percentVal);
+
+            $("#_ul_uploaded_files_area-" + gubun.toLowerCase()).show();
+        }
+	    , uploadProgress: function(event, position, total, percentComplete) {
+	    	if (browserVersion > 9) {
+		        var percentVal = percentComplete + '%';
+	            $progressBar.css("width", percentVal);
+	            $progressBar.text(percentVal);
+	    	}
+	    }
+        , success : function(fileInfoJson, statusText, xhr, $form) {
+        	if ("success" != statusText) {
+        		alert(" 이미지 업로드에 실패하였습니다! ");
+        		return;
+        	}
+
+			var fileSize = fileInfoJson.size;
+			var fileSizeCheck = fileSize / 1024;
+
+			if (fileSizeCheck > maxSize) {
+				alert(" " + maxSize + "MB 이하의 파일만 업로드 가능합니다. ");
+				return;
+			}
+
+        	var filePath = fileInfoJson.path;
+			var fileName = fileInfoJson.name; // 저장된 파일명
+			var fileOrgName = fileInfoJson.orgName;
+			var fileExt = fileInfoJson.ext;
+
+        	uploadedFileCount++;
+        	var attachFileCount = 0;
+
+        	if (gubun.toLowerCase() == "push") {
+            	gAttachFilePushCount++;
+            	attachFileCount = gAttachFilePushCount;
+        	}
+        	else if (gubun.toLowerCase() == "start") {
+        		gAttachFileStartCount++;
+        		attachFileCount = gAttachFileStartCount;
+        	}
+        	else if (gubun.toLowerCase() == "end") {
+        		gAttachFileEndCount++;
+        		attachFileCount = gAttachFileEndCount;
+        	}
+        	else if (gubun.toLowerCase() == "banner") {
+        		gAttachFileBannerCount++;
+        		attachFileCount = gAttachFileBannerCount;
+        	}
+        	else if (gubun.toLowerCase() == "popup") {
+        		gAttachFilePopupCount++;
+        		attachFileCount = gAttachFilePopupCount;
+        	}
+
+        	var tempHtml = $("#_ul_uploaded_files_area-" + gubun.toLowerCase()).html();
+			tempHtml += "<li style=\"padding-top:5px;\">";
+			/**
+			tempHtml += "<span id=\"_span_file_name" + uploadedFileCount "\">" + fileName + "</span>";
+			tempHtml += "<span id=\"_span_file_size" + uploadedFileCount + "\">(사이즈)</span>";
+			*/
+			tempHtml += "<span>" + fileOrgName + "</span> ";
+			tempHtml += "<span>(" + numberWithCommas(fileSize) + "KB)</span> &nbsp; ";
+			tempHtml += "<button type=\"button\" class=\"btn btn-xs btn-danger\" onclick=\"deleteUploadedTempFile(this, '" + gubun + "');\">삭제</button>";
+			// tempHtml += "<input type=\"hidden\" id=\"uploadedFile" + gubun + attachFileCount + "\" name=\"uploadedFiles" + gubun + "[" + (attachFileCount-1) + "]\" value=\"" + filePath + "/" + fileName + "\" />";
+			tempHtml += "<input type=\"hidden\" id=\"uploadedFile" + gubun + "\" name=\"uploadedFile" + gubun + "\" value=\"" + filePath + "/" + fileName + "\" />";
+			tempHtml += "</li>";
+
+        	$("#_ul_uploaded_files_area-" + gubun.toLowerCase()).html(tempHtml);
+        	// $badge.text(uploadedFileCount);
+        }
+        , error : function(e) {
+        	// alert(e);
+        }
+        , complete : function(xhr) {
+        	// alert(xhr.responseText);
+        	$progress.hide();
+        }
+        , dataType : "json" // 응답타입 json이 아니라 text(IE9에서 JSON 데이타를 다운로드함)
+        , url : "/common/file/ad/" + gubun.toLowerCase() + "/temp/upload"
+    };
+
+	var orgAction = $("form").attr("action");
+    $("form").ajaxSubmit(options);
+	$("form").attr("action", orgAction);
+	$this.clearFields();
+}
+/**
+ * 임시 업로드 파일 삭제(화면상에서)
+ */
+function deleteUploadedTempFile(el, gubun) {
+	var $this = $(el);
+	var $parentNode = $this.parent();
+
+	$parentNode.remove();
+
+	var uploadedFileCount = $("#_ul_uploaded_files_area-" + gubun.toLowerCase() + " li").length;
+	uploadedFileCount--;
+
+	if (uploadedFileCount == 0) {
+        $("#_ul_uploaded_files_area-" + gubun.toLowerCase()).hide();
+	}
+}
+/**
+ * 첨부 파일 삭제
+ */
+function deleteUploadedFile(el, seq, gubun) {
+    if (confirm(" 선택한 첨부파일을 삭제하시겠습니까? ")) {
+        $.ajax({
+            type: "POST"
+            , url: "/common/file/remove/" + seq
+            , contentType: "text/html; charset=utf-8"
+            , success: function(data) {
+				if ("OK" == data) {
+					var $this = $(el);
+					var $parentNode = $this.parent();
+
+					$parentNode.remove();
+
+					var uploadedFileCount = $("#_ul_uploaded_files_area-" + gubun.toLowerCase() + " li").length;
+
+					if (uploadedFileCount == 0) {
+				        $("#_ul_uploaded_files_area-" + gubun.toLowerCase()).hide();
+					}
+				}
+            }
+            , error: function (jqXHR, textStatus, errorThrown) {
+            	alert(" 첨부파일 삭제 중 오류가 발생하였습니다! ");
+
+            	if (window.console && console.log) {
+                    console.log(errorThrown);
+                    console.log(textStatus);
+            	}
+            }
+        });
+    }
+}
+function deleteUploadedFilePush(el, seq) {
+	deleteUploadedFile(el, seq, "Push");
+}
+function deleteUploadedFileStart(el, seq) {
+	deleteUploadedFile(el, seq, "Start");
+}
+function deleteUploadedFileEnd(el, seq) {
+	deleteUploadedFile(el, seq, "End");
+}
+function deleteUploadedFileBanner(el, seq) {
+	deleteUploadedFile(el, seq, "Banner");
+}
+function deleteUploadedFilePopup(el, seq) {
+	deleteUploadedFile(el, seq, "Popup");
+}
 
 /*]]>*/
 </script>
@@ -137,24 +331,25 @@ $(document).ready(function() {
                 <div class="form-group">
                   <label class="col-sm-2 control-label">타겟URL</label>
                   <div class="col-sm-4">
-                  	<input type="text" id="targetUrl" name="targetUrl" class="form-control" placeholder="타겟 URL" th:value="${ad.targetUrl}" />
+                  	<input type="text" id="targetUrl" name="targetUrl" class="form-control" placeholder="타겟 URL" th:value="${ad.targetUrl}" data-inputmask="'alias': 'url'" data-mask />
                   </div>
                 </div>
+
                 <div class="form-group">
-                  <label class="col-sm-2 control-label">광고 이미지<span class="badge" style="display: none;">0</span></label>
+                  <label class="col-sm-2 control-label">광고 푸시 이미지<span class="badge-push" style="display: none;">0</span></label>
                   <div class="col-sm-9">
                   	<!--// 파일업로드 처리 -->
-	                <input type="file" id="attachFile" name="attachFile" onchange="uploadFile(this, 1, 1);" style="margin-bottom:5px;" />
+	                <input type="file" id="attachFilePush" name="attachFilePush" onchange="uploadFile4Ad(this, 1, 1, 'Push');" style="margin-bottom:5px;" />
 
-					<div class="progress" style="display: none;">
-						<div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">0%</div>
+					<div id="progress-push" class="progress" style="display: none;">
+						<div id="progress-bar-push" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">0%</div>
 					</div>
 
-					<ul id="_ul_uploaded_files_area">
-						<li style="padding-top: 5px;" th:if="${not #lists.isEmpty(attachFileList)}" th:each="attachFile,iterStat : ${attachFileList}">
+					<ul id="_ul_uploaded_files_area-push" th:if="${not #lists.isEmpty(attachFileList)}">
+						<li style="padding-top: 5px;" th:each="attachFile,iterStat : ${attachFileList}" th:if="${ attachFile.subGubun eq 'push' }">
 							<span th:id="'span_file_name_' + ${attachFile.fileSeq}" th:text="${attachFile.orgName}">파일명</span>
 							<span th:text="'(' + ${#numbers.formatInteger(attachFile.size, 3, 'COMMA')} + 'KB)'">파일사이즈</span> &nbsp;
-							<button class="btn btn-xs btn-danger" th:onclick="'deleteUploadedFile(this, ' + ${attachFile.fileSeq} + ')'" type="button">삭제</button>
+							<button class="btn btn-xs btn-danger" th:onclick="'deleteUploadedFilePush(this, ' + ${attachFile.fileSeq} + ')'" type="button">삭제</button>
 							<a class="btn btn-xs btn-info" data-toggle="modal" data-target="#image-view-modal" th:data-target="'#image-view-modal-' + ${attachFile.fileSeq}">보기</a>
 
 					        <div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" id="image-view-modal" th:id="'image-view-modal-' + ${attachFile.fileSeq}">
@@ -181,13 +376,180 @@ $(document).ready(function() {
 					          <!-- /.modal-dialog -->
 					        </div>
 					        <!-- /.modal -->
+						</li>
+					</ul>
+					<!-- 파일업로드 처리 //-->
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">광고 시작 이미지<span class="badge-start" style="display: none;">0</span></label>
+                  <div class="col-sm-9">
+                  	<!--// 파일업로드 처리 -->
+	                <input type="file" id="attachFileStart" name="attachFileStart" onchange="uploadFile4Ad(this, 1, 1, 'Start');" style="margin-bottom:5px;" />
+
+					<div id="progress-start" class="progress" style="display: none;">
+						<div id="progress-bar-start" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">0%</div>
+					</div>
+
+					<ul id="_ul_uploaded_files_area-start" th:if="${not #lists.isEmpty(attachFileList)}">
+						<li style="padding-top: 5px;" th:each="attachFile,iterStat : ${attachFileList}" th:if="${ attachFile.subGubun eq 'start' }">
+							<span th:id="'span_file_name_' + ${attachFile.fileSeq}" th:text="${attachFile.orgName}">파일명</span>
+							<span th:text="'(' + ${#numbers.formatInteger(attachFile.size, 3, 'COMMA')} + 'KB)'">파일사이즈</span> &nbsp;
+							<button class="btn btn-xs btn-danger" th:onclick="'deleteUploadedFileStart(this, ' + ${attachFile.fileSeq} + ')'" type="button">삭제</button>
+							<a class="btn btn-xs btn-info" data-toggle="modal" data-target="#image-view-modal" th:data-target="'#image-view-modal-' + ${attachFile.fileSeq}">보기</a>
+
+					        <div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" id="image-view-modal" th:id="'image-view-modal-' + ${attachFile.fileSeq}">
+					          <div class="modal-dialog">
+					            <div class="modal-content">
+					              <div class="modal-header">
+					                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					                	<span aria-hidden="true"></span>&times;
+					                </button>
+					                <h4 class="modal-title" th:text="${attachFile.orgName}"></h4>
+					              </div>
+					              <div class="modal-body">
+					                <img th:src="@{/common/file/} + ${attachFile.fileSeq}" onerror="alert('no-image');" class="img-responsive" />
+					              </div>
+					            </div>
+					            <!-- /.modal-content -->
+					          </div>
+					          <!-- /.modal-dialog -->
+					        </div>
+					        <!-- /.modal -->
 
 						</li>
 					</ul>
 					<!-- 파일업로드 처리 //-->
-
                   </div>
                 </div>
+
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">광고 종료 이미지<span class="badge-end" style="display: none;">0</span></label>
+                  <div class="col-sm-9">
+                  	<!--// 파일업로드 처리 -->
+	                <input type="file" id="attachFileEnd" name="attachFileEnd" onchange="uploadFile4Ad(this, 1, 1, 'End');" style="margin-bottom:5px;" />
+
+					<div id="progress-end" class="progress" style="display: none;">
+						<div id="progress-bar-end" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">0%</div>
+					</div>
+
+					<ul id="_ul_uploaded_files_area-end" th:if="${not #lists.isEmpty(attachFileList)}">
+						<li style="padding-top: 5px;" th:each="attachFile,iterStat : ${attachFileList}" th:if="${ attachFile.subGubun eq 'end' }">
+							<span th:id="'span_file_name_' + ${attachFile.fileSeq}" th:text="${attachFile.orgName}">파일명</span>
+							<span th:text="'(' + ${#numbers.formatInteger(attachFile.size, 3, 'COMMA')} + 'KB)'">파일사이즈</span> &nbsp;
+							<button class="btn btn-xs btn-danger" th:onclick="'deleteUploadedFileEnd(this, ' + ${attachFile.fileSeq} + ')'" type="button">삭제</button>
+							<a class="btn btn-xs btn-info" data-toggle="modal" data-target="#image-view-modal" th:data-target="'#image-view-modal-' + ${attachFile.fileSeq}">보기</a>
+
+					        <div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" id="image-view-modal" th:id="'image-view-modal-' + ${attachFile.fileSeq}">
+					          <div class="modal-dialog">
+					            <div class="modal-content">
+					              <div class="modal-header">
+					                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					                	<span aria-hidden="true"></span>&times;
+					                </button>
+					                <h4 class="modal-title" th:text="${attachFile.orgName}"></h4>
+					              </div>
+					              <div class="modal-body">
+					                <img th:src="@{/common/file/} + ${attachFile.fileSeq}" onerror="alert('no-image');" class="img-responsive" />
+					              </div>
+					            </div>
+					            <!-- /.modal-content -->
+					          </div>
+					          <!-- /.modal-dialog -->
+					        </div>
+					        <!-- /.modal -->
+
+						</li>
+					</ul>
+					<!-- 파일업로드 처리 //-->
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">광고 배너 이미지<span class="badge-banner" style="display: none;">0</span></label>
+                  <div class="col-sm-9">
+                  	<!--// 파일업로드 처리 -->
+	                <input type="file" id="attachFileBanner" name="attachFileBanner" onchange="uploadFile4Ad(this, 1, 1, 'Banner');" style="margin-bottom:5px;" />
+
+					<div id="progress-banner" class="progress" style="display: none;">
+						<div id="progress-bar-banner" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">0%</div>
+					</div>
+
+					<ul id="_ul_uploaded_files_area-banner" th:if="${not #lists.isEmpty(attachFileList)}">
+						<li style="padding-top: 5px;" th:each="attachFile,iterStat : ${attachFileList}" th:if="${ attachFile.subGubun eq 'banner' }">
+							<span th:id="'span_file_name_' + ${attachFile.fileSeq}" th:text="${attachFile.orgName}">파일명</span>
+							<span th:text="'(' + ${#numbers.formatInteger(attachFile.size, 3, 'COMMA')} + 'KB)'">파일사이즈</span> &nbsp;
+							<button class="btn btn-xs btn-danger" th:onclick="'deleteUploadedFileBanner(this, ' + ${attachFile.fileSeq} + ')'" type="button">삭제</button>
+							<a class="btn btn-xs btn-info" data-toggle="modal" data-target="#image-view-modal" th:data-target="'#image-view-modal-' + ${attachFile.fileSeq}">보기</a>
+
+					        <div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" id="image-view-modal" th:id="'image-view-modal-' + ${attachFile.fileSeq}">
+					          <div class="modal-dialog">
+					            <div class="modal-content">
+					              <div class="modal-header">
+					                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					                	<span aria-hidden="true"></span>&times;
+					                </button>
+					                <h4 class="modal-title" th:text="${attachFile.orgName}"></h4>
+					              </div>
+					              <div class="modal-body">
+					                <img th:src="@{/common/file/} + ${attachFile.fileSeq}" onerror="alert('no-image');" class="img-responsive" />
+					              </div>
+					            </div>
+					            <!-- /.modal-content -->
+					          </div>
+					          <!-- /.modal-dialog -->
+					        </div>
+					        <!-- /.modal -->
+
+						</li>
+					</ul>
+					<!-- 파일업로드 처리 //-->
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">광고 팝업 이미지<span class="badge-popup" style="display: none;">0</span></label>
+                  <div class="col-sm-9">
+                  	<!--// 파일업로드 처리 -->
+	                <input type="file" id="attachFilePopup" name="attachFilePopup" onchange="uploadFile4Ad(this, 1, 1, 'Popup');" style="margin-bottom:5px;" />
+
+					<div id="progress-popup" class="progress" style="display: none;">
+						<div id="progress-bar-popup" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">0%</div>
+					</div>
+
+					<ul id="_ul_uploaded_files_area-popup" th:if="${not #lists.isEmpty(attachFileList)}">
+						<li style="padding-top: 5px;" th:each="attachFile,iterStat : ${attachFileList}" th:if="${ attachFile.subGubun eq 'popup' }">
+							<span th:id="'span_file_name_' + ${attachFile.fileSeq}" th:text="${attachFile.orgName}">파일명</span>
+							<span th:text="'(' + ${#numbers.formatInteger(attachFile.size, 3, 'COMMA')} + 'KB)'">파일사이즈</span> &nbsp;
+							<button class="btn btn-xs btn-danger" th:onclick="'deleteUploadedFilePopup(this, ' + ${attachFile.fileSeq} + ')'" type="button">삭제</button>
+							<a class="btn btn-xs btn-info" data-toggle="modal" data-target="#image-view-modal" th:data-target="'#image-view-modal-' + ${attachFile.fileSeq}">보기</a>
+
+					        <div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" id="image-view-modal" th:id="'image-view-modal-' + ${attachFile.fileSeq}">
+					          <div class="modal-dialog">
+					            <div class="modal-content">
+					              <div class="modal-header">
+					                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					                	<span aria-hidden="true"></span>&times;
+					                </button>
+					                <h4 class="modal-title" th:text="${attachFile.orgName}"></h4>
+					              </div>
+					              <div class="modal-body">
+					                <img th:src="@{/common/file/} + ${attachFile.fileSeq}" onerror="alert('no-image');" class="img-responsive" />
+					              </div>
+					            </div>
+					            <!-- /.modal-content -->
+					          </div>
+					          <!-- /.modal-dialog -->
+					        </div>
+					        <!-- /.modal -->
+
+						</li>
+					</ul>
+					<!-- 파일업로드 처리 //-->
+                  </div>
+                </div>
+
                 <div class="form-group">
                   <label class="col-sm-2 control-label">등록일시</label>
                   <div class="col-sm-2">

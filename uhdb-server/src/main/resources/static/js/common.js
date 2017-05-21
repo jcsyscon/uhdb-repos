@@ -579,11 +579,12 @@ function deleteUploadedTempFile(el) {
 
 	$parentNode.remove();
 
-	var $badge = $(".badge");
-	var uploadedFileCount = parseInt($badge.text(), 10);
+//	var $badge = $(".badge");
+//	var uploadedFileCount = parseInt($badge.text(), 10);
+	var uploadedFileCount = $("#_ul_uploaded_files_area li").length;
 	uploadedFileCount--;
 
-	$badge.text(uploadedFileCount);
+//	$badge.text(uploadedFileCount);
 
 	if (uploadedFileCount == 0) {
         $("#_ul_uploaded_files_area").hide();

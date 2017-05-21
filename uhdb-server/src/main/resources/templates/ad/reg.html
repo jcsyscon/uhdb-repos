@@ -19,7 +19,7 @@ $(document).ready(function() {
         , language: "kr"
     });
 
-	$("#targetUrl").inputmask("http://*{1,10}.*{1,10}.*{2,4}");
+	// $("#targetUrl").inputmask("http://*{1,10}.*{1,10}.*{2,4}");
 
     $("#form-ad-reg").submit(function() {
     	var startDateVal = $("#_startDate").val(); // 일단 시간은 생략
@@ -30,10 +30,179 @@ $(document).ready(function() {
            	return false;
     	}
 
+    	if (!$("#uploadedFilePush").val()) {
+			alert(" 광고 푸시 이미지를 등록하세요. ");
+    		return false;
+    	}
+    	if (!$("#uploadedFileStart").val()) {
+			alert(" 광고 시작 이미지를 등록하세요. ");
+    		return false;
+    	}
+    	if (!$("#uploadedFileEnd").val()) {
+			alert(" 광고 종료 이미지를 등록하세요. ");
+    		return false;
+    	}
+    	if (!$("#uploadedFileBanner").val()) {
+			alert(" 광고 배너 이미지를 등록하세요. ");
+    		return false;
+    	}
+    	if (!$("#uploadedFilePopup").val()) {
+			alert(" 광고 팝업 이미지를 등록하세요. ");
+    		return false;
+    	}
+
     	$("#startDate").val(startDateVal + "000000");
     	$("#endDate").val(endDateVal + "235959");
     });
 });
+
+var gAttachFilePushCount = 0;
+var gAttachFileStartCount = 0;
+var gAttachFileEndCount = 0;
+var gAttachFileBannerCount = 0;
+var gAttachFilePopupCount = 0;
+
+/**
+ * 파일 업로드 - 광고용(ad 에서 사용)
+ * - 광고 이미지 유형(gubun) - 시작(start)/종료(end)/배너(banner)/팝업(popup)/푸시(push)
+ */
+function uploadFile4Ad(el, maxCount, maxSize, gubun) {
+	if (!maxCount) { maxCount = 1; }
+	if (!maxSize) { maxSize = 1; }
+
+	var uploadedFileCount = $("#_ul_uploaded_files_area-" + gubun.toLowerCase() + " li").length;
+
+	var $this = $(el);
+
+	if (uploadedFileCount >= maxCount) {
+		alert(" 이미지 첨부는 " + maxCount + "개까지 가능합니다! ");
+		$this.clearFields();
+		return;
+	}
+
+    var ext = $this.val().split('.').pop().toLowerCase();
+    if ($.inArray(ext, ['gif', 'png', 'jpg', 'jpeg']) == -1) {
+		alert(" 이미지는 'gif', 'png', 'jpg', 'jpeg' 파일만 업로드할 수 있습니다! ");
+		$this.clearFields();
+		return;
+    }
+
+	var browserVersion = getBrowserVersion();
+
+	var $progress = $("#progress-" + gubun.toLowerCase());
+	var $progressBar = $("#progress-bar-" + gubun.toLowerCase());
+	$progress.show();
+
+    // ajaxSubmit Option
+    var options = {
+        beforeSubmit : function() {
+            var percentVal = "0%";
+            $progressBar.css("width", percentVal);
+            $progressBar.text(percentVal);
+
+            $("#_ul_uploaded_files_area-" + gubun.toLowerCase()).show();
+        }
+	    , uploadProgress: function(event, position, total, percentComplete) {
+	    	if (browserVersion > 9) {
+		        var percentVal = percentComplete + '%';
+	            $progressBar.css("width", percentVal);
+	            $progressBar.text(percentVal);
+	    	}
+	    }
+        , success : function(fileInfoJson, statusText, xhr, $form) {
+        	if ("success" != statusText) {
+        		alert(" 이미지 업로드에 실패하였습니다! ");
+        		return;
+        	}
+
+			var fileSize = fileInfoJson.size;
+			var fileSizeCheck = fileSize / 1024;
+
+			if (fileSizeCheck > maxSize) {
+				alert(" " + maxSize + "MB 이하의 파일만 업로드 가능합니다. ");
+				return;
+			}
+
+        	var filePath = fileInfoJson.path;
+			var fileName = fileInfoJson.name; // 저장된 파일명
+			var fileOrgName = fileInfoJson.orgName;
+			var fileExt = fileInfoJson.ext;
+
+        	uploadedFileCount++;
+        	var attachFileCount = 0;
+
+        	if (gubun.toLowerCase() == "push") {
+            	gAttachFilePushCount++;
+            	attachFileCount = gAttachFilePushCount;
+        	}
+        	else if (gubun.toLowerCase() == "start") {
+        		gAttachFileStartCount++;
+        		attachFileCount = gAttachFileStartCount;
+        	}
+        	else if (gubun.toLowerCase() == "end") {
+        		gAttachFileEndCount++;
+        		attachFileCount = gAttachFileEndCount;
+        	}
+        	else if (gubun.toLowerCase() == "banner") {
+        		gAttachFileBannerCount++;
+        		attachFileCount = gAttachFileBannerCount;
+        	}
+        	else if (gubun.toLowerCase() == "popup") {
+        		gAttachFilePopupCount++;
+        		attachFileCount = gAttachFilePopupCount;
+        	}
+
+        	var tempHtml = $("#_ul_uploaded_files_area-" + gubun.toLowerCase()).html();
+			tempHtml += "<li style=\"padding-top:5px;\">";
+			/**
+			tempHtml += "<span id=\"_span_file_name" + uploadedFileCount "\">" + fileName + "</span>";
+			tempHtml += "<span id=\"_span_file_size" + uploadedFileCount + "\">(사이즈)</span>";
+			*/
+			tempHtml += "<span>" + fileOrgName + "</span> ";
+			tempHtml += "<span>(" + numberWithCommas(fileSize) + "KB)</span> &nbsp; ";
+			tempHtml += "<button type=\"button\" class=\"btn btn-xs btn-danger\" onclick=\"deleteUploadedTempFile(this, '" + gubun + "');\">삭제</button>";
+			// tempHtml += "<input type=\"hidden\" id=\"uploadedFile" + gubun + attachFileCount + "\" name=\"uploadedFiles" + gubun + "[" + (attachFileCount-1) + "]\" value=\"" + filePath + "/" + fileName + "\" />";
+			tempHtml += "<input type=\"hidden\" id=\"uploadedFile" + gubun + "\" name=\"uploadedFile" + gubun + "\" value=\"" + filePath + "/" + fileName + "\" />";
+			tempHtml += "</li>";
+
+        	$("#_ul_uploaded_files_area-" + gubun.toLowerCase()).html(tempHtml);
+        	// $badge.text(uploadedFileCount);
+        }
+        , error : function(e) {
+        	// alert(e);
+        }
+        , complete : function(xhr) {
+        	// alert(xhr.responseText);
+        	$progress.hide();
+        }
+        , dataType : "json" // 응답타입 json이 아니라 text(IE9에서 JSON 데이타를 다운로드함)
+        , url : "/common/file/ad/" + gubun.toLowerCase() + "/temp/upload"
+    };
+
+	var orgAction = $("form").attr("action");
+    $("form").ajaxSubmit(options);
+	$("form").attr("action", orgAction);
+	$this.clearFields();
+}
+/**
+ * 임시 업로드 파일 삭제(화면상에서)
+ */
+function deleteUploadedTempFile(el, gubun) {
+	var $this = $(el);
+	var $parentNode = $this.parent();
+
+	$parentNode.remove();
+
+	var $badge = $("#badge-" + gubun.toLowerCase());
+	var uploadedFileCount = parseInt($badge.text(), 10);
+	uploadedFileCount--;
+
+	$badge.text(uploadedFileCount);
+
+	if (uploadedFileCount == 0) {
+        $("#_ul_uploaded_files_area-" + gubun.toLowerCase()).hide();
+	}
+}
 
 /*]]>*/
 </script>
@@ -128,7 +297,7 @@ $(document).ready(function() {
                 <div class="form-group">
                   <label class="col-sm-2 control-label">타겟URL</label>
                   <div class="col-sm-4">
-                  	<input type="text" id="targetUrl" name="targetUrl" class="form-control" placeholder="타겟 URL" />
+                  	<input type="text" id="targetUrl" name="targetUrl" class="form-control" placeholder="타겟 URL" data-inputmask="'alias': 'url'" data-mask />
                   </div>
                 </div>
 <!--
@@ -144,17 +313,74 @@ $(document).ready(function() {
                   </div>
                 </div>
 -->
+				<!--  /** 광고 이미지 유형 - 시작(start)/종료(end)/배너(banner)/팝업(popup)/푸시(push) */ -->
                 <div class="form-group">
-                  <label class="col-sm-2 control-label">광고 이미지<span class="badge" style="display: none;">0</span></label>
+                  <label class="col-sm-2 control-label">광고 푸시 이미지<span id="badge-push" class="badge" style="display: none;">0</span></label>
                   <div class="col-sm-9">
                   	<!--// 파일업로드 처리 -->
-	                <input type="file" id="attachFile" name="attachFile" onchange="uploadFile(this, 1, 1);" />
+	                <input type="file" id="attachFilePush" name="attachFilePush" onchange="uploadFile4Ad(this, 1, 1, 'Push');" />
 
-					<div class="progress" style="display: none;">
-						<div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">0%</div>
+					<div id="progress-push" class="progress" style="display: none;">
+						<div id="progress-bar-push" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">0%</div>
 					</div>
 
-					<ul id="_ul_uploaded_files_area" style="display:none;"></ul>
+					<ul id="_ul_uploaded_files_area-push" style="display:none;"></ul>
+					<!-- 파일업로드 처리 //-->
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">광고 시작 이미지<span id="badge-start" class="badge" style="display: none;">0</span></label>
+                  <div class="col-sm-9">
+                  	<!--// 파일업로드 처리 -->
+	                <input type="file" id="attachFileStart" name="attachFileStart" onchange="uploadFile4Ad(this, 1, 1, 'Start');" />
+
+					<div id="progress-start" class="progress" style="display: none;">
+						<div id="progress-bar-start" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">0%</div>
+					</div>
+
+					<ul id="_ul_uploaded_files_area-start" style="display:none;"></ul>
+					<!-- 파일업로드 처리 //-->
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">광고 종료 이미지<span id="badge-end" class="badge" style="display: none;">0</span></label>
+                  <div class="col-sm-9">
+                  	<!--// 파일업로드 처리 -->
+	                <input type="file" id="attachFileEnd" name="attachFileEnd" onchange="uploadFile4Ad(this, 1, 1, 'End');" />
+
+					<div id="progress-end" class="progress" style="display: none;">
+						<div id="progress-bar-end" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">0%</div>
+					</div>
+
+					<ul id="_ul_uploaded_files_area-end" style="display:none;"></ul>
+					<!-- 파일업로드 처리 //-->
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">광고 배너 이미지<span id="badge-banner" class="badge" style="display: none;">0</span></label>
+                  <div class="col-sm-9">
+                  	<!--// 파일업로드 처리 -->
+	                <input type="file" id="attachFileBanner" name="attachFileBanner" onchange="uploadFile4Ad(this, 1, 1, 'Banner');" />
+
+					<div id="progress-banner" class="progress" style="display: none;">
+						<div id="progress-bar-banner" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">0%</div>
+					</div>
+
+					<ul id="_ul_uploaded_files_area-banner" style="display:none;"></ul>
+					<!-- 파일업로드 처리 //-->
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">광고 팝업 이미지<span id="badge-popup" class="badge" style="display: none;">0</span></label>
+                  <div class="col-sm-9">
+                  	<!--// 파일업로드 처리 -->
+	                <input type="file" id="attachFilePopup" name="attachFilePopup" onchange="uploadFile4Ad(this, 1, 1, 'Popup');" />
+
+					<div id="progress-popup" class="progress" style="display: none;">
+						<div id="progress-bar-popup" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">0%</div>
+					</div>
+
+					<ul id="_ul_uploaded_files_area-popup" style="display:none;"></ul>
 					<!-- 파일업로드 처리 //-->
                   </div>
                 </div>

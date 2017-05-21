@@ -62,7 +62,8 @@
 
 	<sql id="orderClauseOfSponsor">
 		<if test=' pagingHelper != null and pagingHelper.sortList != null '>
-            <foreach collection="pagingHelper.sortList" item="sort" open="ORDER BY " separator="," close="">
+			ORDER BY
+            <foreach collection="pagingHelper.sortList" item="sort" open="" separator="," close="">
                 ${sort.column} ${sort.ascOrDesc}
             </foreach>
         </if>
@@ -193,7 +194,8 @@
 
 	<sql id="orderClauseOfShop">
 		<if test=' pagingHelper != null and pagingHelper.sortList != null '>
-            <foreach collection="pagingHelper.sortList" item="sort" open="ORDER BY " separator="," close="">
+			ORDER BY
+            <foreach collection="pagingHelper.sortList" item="sort" open="" separator="," close="">
                 ${sort.column} ${sort.ascOrDesc}
             </foreach>
         </if>
@@ -334,7 +336,8 @@
 
 	<sql id="orderClauseOfAd">
 		<if test=' pagingHelper != null and pagingHelper.sortList != null '>
-            <foreach collection="pagingHelper.sortList" item="sort" open="ORDER BY " separator="," close="">
+			ORDER BY
+            <foreach collection="pagingHelper.sortList" item="sort" open="" separator="," close="">
                 ${sort.column} ${sort.ascOrDesc}
             </foreach>
         </if>

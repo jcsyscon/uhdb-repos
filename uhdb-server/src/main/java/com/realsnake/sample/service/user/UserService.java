@@ -8,6 +8,8 @@ package com.realsnake.sample.service.user;
 import java.util.List;
 
 import com.realsnake.sample.model.user.UserDto;
+import com.realsnake.sample.model.user.UserFcmVo;
+import com.realsnake.sample.model.user.UserUhdbVo;
 import com.realsnake.sample.model.user.UserVo;
 
 /**
@@ -45,5 +47,11 @@ public interface UserService {
     void modifyUserPassword(UserVo param) throws Exception;
 
     void secedeUser(UserVo param) throws Exception;
+
+    void regUserFromMobile(UserVo user, UserUhdbVo userUhdb, UserFcmVo userFcm) throws Exception;
+
+    void modifyUserUhdb(UserUhdbVo userUhdb) throws Exception;
+
+    void modifyUserFcm(UserFcmVo userFcm) throws Exception;
 
 }

@@ -70,7 +70,7 @@ public class CommonController {
      * @author shavrani 2016.05.31
      */
     @RequestMapping(value = "/common/editor/image/temp/upload", method = RequestMethod.POST)
-    public @ResponseBody String editorImageUpload(@RequestParam(value = "upload", required = false) MultipartFile img) {
+    public @ResponseBody String editorImageUpload(@RequestParam(value = "upload", required = true) MultipartFile img) {
         deleteOldTempFiles();
 
         String originalFileName = img.getOriginalFilename();
@@ -153,7 +153,7 @@ public class CommonController {
      * @param upload
      */
     @RequestMapping(value = "/common/editor/image/temp/dialog-upload", method = RequestMethod.POST)
-    public void editorImageUploadForCk(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "upload", required = false) MultipartFile upload) {
+    public void editorImageUploadForCk(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "upload", required = true) MultipartFile upload) {
         PrintWriter printWriter = null;
         response.setCharacterEncoding("utf-8");
         response.setContentType("text/html;charset=utf-8");
@@ -210,7 +210,7 @@ public class CommonController {
     // find acceptable representation 오류 발생
     @PostMapping(value = "/common/file/temp/upload")
     @ResponseBody
-    public AttachFileVo uploadBoardTempFile(@RequestParam(value = "attachFile", required = false) MultipartFile attachFile) throws JsonProcessingException {
+    public AttachFileVo uploadBoardTempFile(@RequestParam(value = "attachFile", required = true) MultipartFile attachFile) throws JsonProcessingException {
         this.deleteOldTempFiles();
 
         String originalFileName = attachFile.getOriginalFilename();
@@ -284,6 +284,71 @@ public class CommonController {
         } catch (Exception e) {
             return "NOK";
         }
+    }
+
+    /**
+     * 광고 푸시 이미지 파일을 임시 저장 폴더에 업로드한다.<br />
+     *
+     * @param attachFilePush
+     * @return
+     * @throws JsonProcessingException
+     */
+    @PostMapping(value = "/common/file/ad/push/temp/upload")
+    @ResponseBody
+    public AttachFileVo uploadBoardTempFile4AdPush(@RequestParam(value = "attachFilePush", required = true) MultipartFile attachFilePush) throws JsonProcessingException {
+        return this.uploadBoardTempFile(attachFilePush);
+    }
+
+    /**
+     * 광고 시작 이미지 파일을 임시 저장 폴더에 업로드한다.<br />
+     *
+     * @param attachFileStart
+     * @return
+     * @throws JsonProcessingException
+     */
+    @PostMapping(value = "/common/file/ad/start/temp/upload")
+    @ResponseBody
+    public AttachFileVo uploadBoardTempFile4AdStart(@RequestParam(value = "attachFileStart", required = true) MultipartFile attachFileStart) throws JsonProcessingException {
+        return this.uploadBoardTempFile(attachFileStart);
+    }
+
+    /**
+     * 광고 종료 이미지 파일을 임시 저장 폴더에 업로드한다.<br />
+     *
+     * @param attachFileEnd
+     * @return
+     * @throws JsonProcessingException
+     */
+    @PostMapping(value = "/common/file/ad/end/temp/upload")
+    @ResponseBody
+    public AttachFileVo uploadBoardTempFile4AdEnd(@RequestParam(value = "attachFileEnd", required = true) MultipartFile attachFileEnd) throws JsonProcessingException {
+        return this.uploadBoardTempFile(attachFileEnd);
+    }
+
+    /**
+     * 광고 배너 이미지 파일을 임시 저장 폴더에 업로드한다.<br />
+     *
+     * @param attachFileBanner
+     * @return
+     * @throws JsonProcessingException
+     */
+    @PostMapping(value = "/common/file/ad/banner/temp/upload")
+    @ResponseBody
+    public AttachFileVo uploadBoardTempFile4AdBanner(@RequestParam(value = "attachFileBanner", required = true) MultipartFile attachFileBanner) throws JsonProcessingException {
+        return this.uploadBoardTempFile(attachFileBanner);
+    }
+
+    /**
+     * 광고 팝업 이미지 파일을 임시 저장 폴더에 업로드한다.<br />
+     *
+     * @param attachFilePopup
+     * @return
+     * @throws JsonProcessingException
+     */
+    @PostMapping(value = "/common/file/ad/popup/temp/upload")
+    @ResponseBody
+    public AttachFileVo uploadBoardTempFile4AdPopup(@RequestParam(value = "attachFilePopup", required = true) MultipartFile attachFilePopup) throws JsonProcessingException {
+        return this.uploadBoardTempFile(attachFilePopup);
     }
 
     /**

@@ -57,12 +57,13 @@ public class RestAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String authToken = request.getHeader(this.jwtTokenHeader);
+        String accessToken = request.getHeader(this.jwtTokenHeader);
 
-        if (StringUtils.isNotBlank(authToken)) {
+        if (StringUtils.isNotBlank(accessToken)) {
             // authToken.startsWith("Bearer ")
             // String authToken = header.substring(7);
-            String username = this.jwtTokenUtil.getUsernameFromToken(authToken);
+            logger.debug("<<x-access-token>> {}", accessToken);
+            String username = this.jwtTokenUtil.getUsernameFromToken(accessToken);
 
             logger.debug("<<checking authentication the user>> {}", username);
 
@@ -71,7 +72,7 @@ public class RestAuthenticationFilter extends OncePerRequestFilter {
                 UserDetails userDetails = this.authService.loadUserByUsername(username);
 
                 // For simple validation it is completely sufficient to just check the token integrity. You don't have to call the database compellingly. Again it's up to you.
-                if (this.jwtTokenUtil.validateToken(authToken, userDetails)) {
+                if (this.jwtTokenUtil.validateToken(accessToken, userDetails)) {
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     logger.debug("<<authenticated user>> {}, setting security context", username);

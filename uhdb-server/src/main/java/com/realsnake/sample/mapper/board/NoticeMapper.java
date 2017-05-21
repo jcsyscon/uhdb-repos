@@ -29,4 +29,8 @@ public interface NoticeMapper {
 
     List<NoticeVo> selectNoticeList(BoardDto param);
 
+    int selectNoticeListCount4Mobile(BoardDto param);
+
+    List<NoticeVo> selectNoticeList4Mobile(BoardDto param);
+
 }

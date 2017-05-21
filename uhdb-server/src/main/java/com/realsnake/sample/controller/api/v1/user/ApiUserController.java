@@ -1,5 +1,8 @@
 package com.realsnake.sample.controller.api.v1.user;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.realsnake.sample.constants.ApiResultCode;
 import com.realsnake.sample.exception.CommonApiException;
 import com.realsnake.sample.model.common.api.ApiResponse;
+import com.realsnake.sample.model.user.UserFcmVo;
+import com.realsnake.sample.model.user.UserUhdbVo;
 import com.realsnake.sample.model.user.UserVo;
 import com.realsnake.sample.service.user.UserService;
 import com.realsnake.sample.util.RandomKeys;
@@ -57,16 +62,19 @@ public class ApiUserController {
      * @return
      * @throws CommonApiException
      */
-    @GetMapping(value = "/mobile-auth-num")
+    @PostMapping(value = "/mobile-auth-num")
     public ApiResponse<?> getMobileAuthNum(String mobileNumber) throws CommonApiException {
         try {
             String code = String.format("%06d", (int) (Math.random() * 1000000));
             String randomKey = RandomKeys.make(32);
 
             // TODO: sms 발송 및 DB 저장
+            Map<String, String> codeAndKey = new HashMap<String, String>();
+            codeAndKey.put("code", code);
+            codeAndKey.put("key", randomKey);
 
-            ApiResponse<String> apiResponse = new ApiResponse<>();
-            apiResponse.setBody(randomKey);
+            ApiResponse<Map<String, String>> apiResponse = new ApiResponse<>();
+            apiResponse.setBody(codeAndKey);
 
             return apiResponse;
         } catch (Exception e) {
@@ -75,19 +83,22 @@ public class ApiUserController {
     }
 
     /**
-     * 모바일 인증 번호 확인
+     * 모바일 인증 번호 검증
      *
      * @param mobileNumber
      * @return
      * @throws CommonApiException
      */
-    @PostMapping(value = "/mobile-auth-num")
-    public ApiResponse<?> checkMobileAuthNum(String code, String randomKey) throws CommonApiException {
+    @PostMapping(value = "/mobile-auth-num/check")
+    public ApiResponse<?> checkMobileAuthNum(String code, String key) throws CommonApiException {
         try {
             // TODO: DB 조회 및 인증번호 검증
 
             ApiResponse<String> apiResponse = new ApiResponse<>();
-            // apiResponse.setBody(random);
+            apiResponse.setBody("OK");
+
+
+            // apiResponse.setBody("NOK");
 
             return apiResponse;
         } catch (Exception e) {
@@ -119,13 +130,13 @@ public class ApiUserController {
     /**
      * 택배함 찾기
      *
-     * @param aptCode
+     * @param aptId
      * @param dong
      * @return
      * @throws CommonApiException
      */
     @PostMapping(value = "/search/uhdb")
-    public ApiResponse<?> searchUhdb(String aptCode, @RequestParam(required = false) String dong) throws CommonApiException {
+    public ApiResponse<?> searchUhdb(String aptId, @RequestParam(required = false) String dong) throws CommonApiException {
         try {
             // TODO: 무인택배함 조회
 
@@ -174,9 +185,9 @@ public class ApiUserController {
      * @throws CommonApiException
      */
     @PostMapping(value = "/join")
-    public ApiResponse<?> regUser(UserVo user) throws CommonApiException {
+    public ApiResponse<?> regUser(UserVo user, UserUhdbVo userUhdb, UserFcmVo userFcm) throws CommonApiException {
         try {
-            this.userService.regUser(user);
+            this.userService.regUserFromMobile(user, userUhdb, userFcm);
 
             ApiResponse<UserVo> apiResponse = new ApiResponse<>();
             // apiResponse.setBody(user);
@@ -206,6 +217,36 @@ public class ApiUserController {
             }
 
             this.userService.modifyUser(user);
+
+            ApiResponse<UserVo> apiResponse = new ApiResponse<>();
+            // apiResponse.setBody(user);
+
+            return apiResponse;
+        } catch (Exception e) {
+            throw new CommonApiException(ApiResultCode.COMMON_FAIL, e);
+        }
+    }
+
+    /**
+     * 회원 정보 수정 - 택배함 수정
+     *
+     * @param seq
+     * @param userUhdb
+     * @return
+     * @throws CommonApiException
+     */
+    @PostMapping(value = "/modify/{seq}/uhdb")
+    public ApiResponse<?> modifyUserUhdb(@PathVariable("seq") Integer seq, UserUhdbVo userUhdb) throws CommonApiException {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+            if (authentication == null) {
+                LOGGER.debug("<<ApiUserController.modifyUser>> 인증 실패");
+                throw new CommonApiException(ApiResultCode.NOTFOUND_USER);
+            }
+
+            userUhdb.setUserSeq(seq);
+            this.userService.modifyUserUhdb(userUhdb);
 
             ApiResponse<UserVo> apiResponse = new ApiResponse<>();
             // apiResponse.setBody(user);
@@ -249,7 +290,6 @@ public class ApiUserController {
      * 회원 탈퇴
      *
      * @param seq
-     * @param user
      * @return
      * @throws CommonApiException
      */
@@ -281,7 +321,7 @@ public class ApiUserController {
      * 알림설정(수신여부) 수정
      *
      * @param seq
-     * @param user
+     * @param alarmRecYn
      * @return
      * @throws CommonApiException
      */
@@ -300,6 +340,36 @@ public class ApiUserController {
             user.setAlarmRecYn(alarmRecYn);
 
             this.userService.modifyUser(user);
+
+            ApiResponse<UserVo> apiResponse = new ApiResponse<>();
+            // apiResponse.setBody(user);
+
+            return apiResponse;
+        } catch (Exception e) {
+            throw new CommonApiException(ApiResultCode.COMMON_FAIL, e);
+        }
+    }
+
+    /**
+     * 회원 정보 수정 - FCM토큰 수정
+     *
+     * @param seq
+     * @param userFcm
+     * @return
+     * @throws CommonApiException
+     */
+    @PostMapping(value = "/modify/{seq}/fcm-token")
+    public ApiResponse<?> modifyUserFcm(@PathVariable("seq") Integer seq, UserFcmVo userFcm) throws CommonApiException {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+            if (authentication == null) {
+                LOGGER.debug("<<ApiUserController.modifyUser>> 인증 실패");
+                throw new CommonApiException(ApiResultCode.NOTFOUND_USER);
+            }
+
+            userFcm.setUserSeq(seq);
+            this.userService.modifyUserFcm(userFcm);
 
             ApiResponse<UserVo> apiResponse = new ApiResponse<>();
             // apiResponse.setBody(user);

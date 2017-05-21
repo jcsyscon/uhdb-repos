@@ -8,7 +8,7 @@
 
 $(document).ready(function() {
 	$("#tel").inputmask("9{1,4}-9{3,4}-9{4}");
-	$("#homepage").inputmask("http://*{1,10}.*{1,10}.*{2,4}");
+	// $("#homepage").inputmask("http://*{1,10}.*{1,10}.*{2,4}");
 
 	if ($("#delYn").val() == 'Y') {
 		$("#name").prop("disabled", true);
@@ -91,7 +91,7 @@ $(document).ready(function() {
                 <div class="form-group">
                   <label class="col-sm-2 control-label">홈페이지</label>
                   <div class="col-sm-4">
-                  	<input type="text" id="homepage" name="homepage" class="form-control" placeholder="홈페이지" th:value="${shop.homepage}" />
+                  	<input type="text" id="homepage" name="homepage" class="form-control" placeholder="홈페이지" th:value="${shop.homepage}" data-inputmask="'alias': 'url'" data-mask />
                   </div>
                 </div>
                 <div class="form-group">

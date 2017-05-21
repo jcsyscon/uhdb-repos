@@ -8,6 +8,7 @@ package com.realsnake.sample.service.ad;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,7 +90,7 @@ public class AdServiceImpl implements AdService {
         param.getPagingHelper().setSortList(sortList);
         // TODO: 페이징이 필요할 시 페이징 처리
 
-        param.getPagingHelper().setTotalRecordCount(this.adMapper.selectSponsorListCount(param));
+        param.getPagingHelper().setTotalCount(this.adMapper.selectSponsorListCount(param));
         return this.adMapper.selectSponsorList(param);
     }
 
@@ -204,7 +205,7 @@ public class AdServiceImpl implements AdService {
         param.getPagingHelper().setSortList(sortList);
         // TODO: 페이징이 필요할 시 페이징 처리
 
-        param.getPagingHelper().setTotalRecordCount(this.adMapper.selectShopListCount(param));
+        param.getPagingHelper().setTotalCount(this.adMapper.selectShopListCount(param));
         return this.adMapper.selectShopList(param);
     }
 
@@ -220,12 +221,37 @@ public class AdServiceImpl implements AdService {
 
         Integer groupSeq = ad.getSeq();
 
+        this.saveAdAttachFile(loginSeq, groupSeq, param.getUploadedFilePush(), CommonConstants.AdImageType.PUSH);
+        this.saveAdAttachFile(loginSeq, groupSeq, param.getUploadedFileStart(), CommonConstants.AdImageType.START);
+        this.saveAdAttachFile(loginSeq, groupSeq, param.getUploadedFileEnd(), CommonConstants.AdImageType.END);
+        this.saveAdAttachFile(loginSeq, groupSeq, param.getUploadedFileBanner(), CommonConstants.AdImageType.BANNER);
+        this.saveAdAttachFile(loginSeq, groupSeq, param.getUploadedFilePopup(), CommonConstants.AdImageType.POPUP);
+    }
+
+    /**
+     * 광고 첨부파일을 저장한다.
+     *
+     * @param loginSeq
+     * @param groupSeq
+     * @param fullFilePath
+     * @param adImageType
+     * @throws Exception
+     */
+    private void saveAdAttachFile(Integer loginSeq, Integer groupSeq, String fullFilePath, CommonConstants.AdImageType adImageType) throws Exception {
+        if (StringUtils.isEmpty(fullFilePath)) {
+            return;
+        }
+
+        String[] temps = new String[1];
+        temps[0] = fullFilePath;
+
         // <!-- 첨부파일 저장
-        List<AttachFileVo> attachFileList = this.commonService.moveUploadedFile(param.getUploadedFiles(), groupSeq, CommonConstants.AttachFileFolderType.AD.getValue());
+        List<AttachFileVo> attachFileList = this.commonService.moveUploadedFile(temps, groupSeq, CommonConstants.AttachFileFolderType.AD.getValue());
 
         if (attachFileList != null && !attachFileList.isEmpty()) {
             for (AttachFileVo attachFile : attachFileList) {
                 attachFile.setGubun(CommonConstants.AttachFileFolderType.AD.getValue());
+                attachFile.setSubGubun(adImageType.getValue());
                 attachFile.setGroupSeq(groupSeq);
                 attachFile.setRegUserSeq(loginSeq);
                 this.commonMapper.insertAttachFile(attachFile);
@@ -248,18 +274,11 @@ public class AdServiceImpl implements AdService {
 
             Integer groupSeq = ad.getSeq();
 
-            // <!-- 첨부파일 저장
-            List<AttachFileVo> attachFileList = this.commonService.moveUploadedFile(param.getUploadedFiles(), groupSeq, CommonConstants.AttachFileFolderType.AD.getValue());
-
-            if (attachFileList != null && !attachFileList.isEmpty()) {
-                for (AttachFileVo attachFile : attachFileList) {
-                    attachFile.setGubun(CommonConstants.AttachFileFolderType.AD.getValue());
-                    attachFile.setGroupSeq(groupSeq);
-                    attachFile.setRegUserSeq(loginSeq);
-                    this.commonMapper.insertAttachFile(attachFile);
-                }
-            }
-            // 첨부파일 저장 -->
+            this.saveAdAttachFile(loginSeq, groupSeq, param.getUploadedFilePush(), CommonConstants.AdImageType.PUSH);
+            this.saveAdAttachFile(loginSeq, groupSeq, param.getUploadedFileStart(), CommonConstants.AdImageType.START);
+            this.saveAdAttachFile(loginSeq, groupSeq, param.getUploadedFileEnd(), CommonConstants.AdImageType.END);
+            this.saveAdAttachFile(loginSeq, groupSeq, param.getUploadedFileBanner(), CommonConstants.AdImageType.BANNER);
+            this.saveAdAttachFile(loginSeq, groupSeq, param.getUploadedFilePopup(), CommonConstants.AdImageType.POPUP);
         }
     }
 
@@ -296,7 +315,7 @@ public class AdServiceImpl implements AdService {
         param.getPagingHelper().setSortList(sortList);
         // TODO: 페이징이 필요할 시 페이징 처리
 
-        param.getPagingHelper().setTotalRecordCount(this.adMapper.selectAdListCount(param));
+        param.getPagingHelper().setTotalCount(this.adMapper.selectAdListCount(param));
         return this.adMapper.selectAdList(param);
     }
 

@@ -41,9 +41,9 @@ public class ApiNoticeController {
                 throw new CommonApiException(ApiResultCode.NOTFOUND_USER);
             }
 
-            List<NoticeVo> noticeList = this.noticeService.findNoticeList(param);
+            List<NoticeVo> noticeList = this.noticeService.findNoticeList4Mobile(param);
 
-            ApiResponse<List<NoticeVo>> apiResponse = new ApiResponse<>();
+            ApiResponse<List<NoticeVo>> apiResponse = new ApiResponse<>(mobilePagingHelper.getNextPageToken(), mobilePagingHelper.getPageSize());
             apiResponse.setBody(noticeList);
 
             return apiResponse;

@@ -52,7 +52,8 @@
 
 	<sql id="orderClauseOfNotice">
 		<if test=' pagingHelper != null and pagingHelper.sortList != null '>
-            <foreach collection="pagingHelper.sortList" item="sort" open="ORDER BY " separator="," close="">
+			ORDER BY
+            <foreach collection="pagingHelper.sortList" item="sort" open="" separator="," close="">
                 ${sort.column} ${sort.ascOrDesc}
             </foreach>
         </if>
@@ -114,5 +115,71 @@
 		, del_date = NOW()
 		WHERE seq = #{seq}
      </update>
+
+
+
+	<sql id="whereClauseOfNotice4Mobile">
+	    <where>
+			seq &lt; #{mobilePagingHelper.nextPageToken}
+		    <if test=' loginUser.isAdmin == null or loginUser.isAdmin == false'>AND del_yn = 'N'</if>
+		    <choose>
+		    	<when test=' mobilePagingHelper.search.startDate != null and !"".equals(mobilePagingHelper.search.startDate) '>
+			    	AND reg_date &gt;= CONCAT(#{mobilePagingHelper.search.startDate}, ' 00:00:00')
+			    	<if test=' mobilePagingHelper.search.endDate != null and !"".equals(mobilePagingHelper.search.endDate) '>
+			    		AND reg_date &lt;= CONCAT(#{mobilePagingHelper.search.endDate}, ' 23:59:59')
+			    	</if>
+		    	</when>
+		    	<otherwise>
+			    	<if test=' mobilePagingHelper.search.endDate != null and !"".equals(mobilePagingHelper.search.endDate) '>
+			    		AND reg_date &lt;= CONCAT(#{mobilePagingHelper.search.endDate}, ' 23:59:59')
+			    	</if>
+		    	</otherwise>
+		    </choose>
+	    	<if test=' mobilePagingHelper.search.keyword != null and !"".equals(mobilePagingHelper.search.keyword) '>
+			    <choose>
+			    	<when test=' "title".equals(mobilePagingHelper.search.item) '>
+						AND title LIKE CONCAT('%', #{mobilePagingHelper.search.keyword}, '%')
+			    	</when>
+			    	<when test=' "content".equals(mobilePagingHelper.search.item) '>
+						AND content LIKE CONCAT('%', #{mobilePagingHelper.search.keyword}, '%')
+			    	</when>
+			    	<otherwise>
+						AND (title LIKE CONCAT('%', #{mobilePagingHelper.search.keyword}, '%') OR content LIKE CONCAT('%', #{mobilePagingHelper.search.keyword}, '%'))
+			    	</otherwise>
+			    </choose>
+	    	</if>
+	    </where>
+	</sql>
+
+	<sql id="orderClauseOfNotice4Mobile">
+		<if test=' mobilePagingHelper != null and mobilePagingHelper.sortList != null '>
+            <foreach collection="mobilePagingHelper.sortList" item="sort" open="ORDER BY " separator="," close="">
+                ${sort.column} ${sort.ascOrDesc}
+            </foreach>
+        </if>
+	</sql>
+
+	<select id="selectNoticeListCount4Mobile" parameterType="BoardDto" resultType="int">
+	    SELECT /* selectNoticeListCount, 전강욱(realsnake1975@gmail.com) */ COUNT(*)
+	    FROM board_notice
+	    <include refid="whereClauseOfNotice4Mobile" />
+	</select>
+
+	<select id="selectNoticeList4Mobile" parameterType="BoardDto" resultType="NoticeVo">
+	    SELECT /* selectNoticeList, 전강욱(realsnake1975@gmail.com) */ seq
+	    , title
+	    , content
+	    , reg_user_seq
+		, reg_date
+	    , mod_user_seq
+		, mod_date
+		, del_yn
+	    , del_user_seq
+		, del_date
+	    FROM board_notice
+	    <include refid="whereClauseOfNotice4Mobile" />
+	    <include refid="orderClauseOfNotice4Mobile" />
+	    LIMIT 0, #{mobilePagingHelper.pageSize}
+	</select>
 
 </mapper>

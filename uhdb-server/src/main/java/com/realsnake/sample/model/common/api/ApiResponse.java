@@ -33,6 +33,11 @@ public class ApiResponse<T> implements Serializable {
         this.footer = new ApiResponseFooter(nextPageToken, pageSize);
     }
 
+    public ApiResponse(int nextPageToken, int pageSize) {
+        this.header = new ApiResponseHeader();
+        this.footer = new ApiResponseFooter(nextPageToken, pageSize);
+    }
+
     public ApiResponseHeader getHeader() {
         return header;
     }

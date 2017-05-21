@@ -23,7 +23,7 @@ public class MobilePaging implements Serializable {
 
     /** 마지막 게시글 수 */
     // @JsonView({PostView.FaqList.class, PostView.SystemNoticeList.class, PostView.GroupList.class, PostView.EventList.class, CommentView.CommentList.class})
-    private Long nextPageToken;
+    private Integer nextPageToken;
     /** 한 페이지 당 게시물 개수 */
     // @JsonView({PostView.FaqList.class, PostView.SystemNoticeList.class, PostView.GroupList.class, PostView.EventList.class, CommentView.CommentList.class})
     private int pageSize = 20;
@@ -31,11 +31,11 @@ public class MobilePaging implements Serializable {
     // @JsonView({PostView.FaqList.class, PostView.SystemNoticeList.class, PostView.GroupList.class, PostView.EventList.class, CommentView.CommentList.class})
     private long totalCount;
 
-    public Long getNextPageToken() {
+    public Integer getNextPageToken() {
         return nextPageToken;
     }
 
-    public void setNextPageToken(Long nextPageToken) {
+    public void setNextPageToken(Integer nextPageToken) {
         this.nextPageToken = nextPageToken;
     }
 

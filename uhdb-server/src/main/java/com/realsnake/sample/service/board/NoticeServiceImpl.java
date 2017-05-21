@@ -81,8 +81,36 @@ public class NoticeServiceImpl implements NoticeService {
         param.getPagingHelper().setSortList(sortList);
         // TODO: 페이징이 필요할 시 페이징 처리
 
-        param.getPagingHelper().setTotalRecordCount(this.noticeMapper.selectNoticeListCount(param));
+        param.getPagingHelper().setTotalCount(this.noticeMapper.selectNoticeListCount(param));
         return this.noticeMapper.selectNoticeList(param);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<NoticeVo> findNoticeList4Mobile(BoardDto param) throws Exception {
+        if (param.getMobilePagingHelper().getSortList() == null || param.getMobilePagingHelper().getSortList().isEmpty()) {
+            Sort sort = new Sort();
+            sort.setColumn("seq");
+            sort.setAscOrDesc(CommonConstants.SortType.DESC.getValue());
+
+            List<Sort> sortList = new ArrayList<>();
+            sortList.add(sort);
+
+            param.getMobilePagingHelper().setSortList(sortList);
+        }
+
+        param.getMobilePagingHelper().setTotalCount(this.noticeMapper.selectNoticeListCount4Mobile(param));
+        List<NoticeVo> noticeList = this.noticeMapper.selectNoticeList4Mobile(param);
+
+        int nextPageToken = 0;
+
+        if (noticeList != null && !noticeList.isEmpty()) {
+            nextPageToken = noticeList.get(noticeList.size() - 1).getSeq();
+        }
+
+        param.getMobilePagingHelper().setNextPageToken(nextPageToken);
+
+        return noticeList;
     }
 
 }

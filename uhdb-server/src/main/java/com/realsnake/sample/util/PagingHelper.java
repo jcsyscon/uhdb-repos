@@ -75,7 +75,7 @@ public class PagingHelper extends Paging {
      * @return
      */
     public long getListStartNum() {
-        this.listStartNum = super.getTotalRecordCount() - (super.getPageSize() * (super.getPageNum() - 1));
+        this.listStartNum = super.getTotalCount() - (super.getPageSize() * (super.getPageNum() - 1));
         return this.listStartNum;
     }
 
@@ -85,7 +85,7 @@ public class PagingHelper extends Paging {
      * @return
      */
     public int getTotalPageNum() {
-        this.totalPageNum = (int) (Math.ceil((double) super.getTotalRecordCount() / (double) super.getPageSize()));
+        this.totalPageNum = (int) (Math.ceil((double) super.getTotalCount() / (double) super.getPageSize()));
         return this.totalPageNum;
     }
 

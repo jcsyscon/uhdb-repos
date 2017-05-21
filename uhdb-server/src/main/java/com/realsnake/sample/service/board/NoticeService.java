@@ -30,4 +30,6 @@ public interface NoticeService {
 
     List<NoticeVo> findNoticeList(BoardDto param) throws Exception;
 
+    List<NoticeVo> findNoticeList4Mobile(BoardDto param) throws Exception;
+
 }

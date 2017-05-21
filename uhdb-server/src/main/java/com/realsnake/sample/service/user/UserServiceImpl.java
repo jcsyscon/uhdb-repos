@@ -20,6 +20,8 @@ import com.realsnake.sample.constants.CommonConstants;
 import com.realsnake.sample.mapper.user.UserMapper;
 import com.realsnake.sample.model.common.Sort;
 import com.realsnake.sample.model.user.UserDto;
+import com.realsnake.sample.model.user.UserFcmVo;
+import com.realsnake.sample.model.user.UserUhdbVo;
 import com.realsnake.sample.model.user.UserVo;
 import com.realsnake.sample.util.PasswordHash;
 import com.realsnake.sample.util.crypto.BlockCipherUtils;
@@ -137,7 +139,7 @@ public class UserServiceImpl implements UserService {
         param.getPagingHelper().setSortList(sortList);
         // TODO: 페이징이 필요할 시 페이징 처리
 
-        param.getPagingHelper().setTotalRecordCount(this.userMapper.selectUserListCount(param));
+        param.getPagingHelper().setTotalCount(this.userMapper.selectUserListCount(param));
         return this.userMapper.selectUserList(param);
     }
 
@@ -171,6 +173,52 @@ public class UserServiceImpl implements UserService {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void secedeUser(UserVo param) throws Exception {
         this.userMapper.secedeUser(param);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void regUserFromMobile(UserVo user, UserUhdbVo userUhdb, UserFcmVo userFcm) throws Exception {
+        // 사용자가 입력한 비밀번호를 해싱(단방향 암호화) 처리
+        String passwordHash = PasswordHash.createHash(user.getPassword());
+        user.setPassword(passwordHash);
+
+        // 사용자의 이름/이메일 등을 암호화
+        // String secretKey = BlockCipherUtils.generateSecretKey(passwordHash);
+        String secretKey = BlockCipherUtils.generateSecretKey(CommonConstants.DEFAULT_AUTH_KEY);
+        user.setName(BlockCipherUtils.encrypt(secretKey, user.getName()));
+        user.setMobile(BlockCipherUtils.encrypt(secretKey, user.getMobile()));
+
+        user.setAuthorities(AuthorityUtils.createAuthorityList(CommonConstants.RollType.ROLL_USER.getValue()));
+
+        this.userMapper.insertUser(user);
+        this.userMapper.insertUserAuthority(user);
+
+        userUhdb.setUserSeq(user.getSeq());
+        userUhdb.setRegUserSeq(user.getSeq());
+
+        this.userMapper.insertUserUhdb(userUhdb);
+
+        userFcm.setUserSeq(user.getSeq());
+        this.userMapper.insertUserFcm(userFcm);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void modifyUserUhdb(UserUhdbVo userUhdb) throws Exception {
+        userUhdb.setDelUserSeq(userUhdb.getUserSeq());
+        userUhdb.setRegUserSeq(userUhdb.getUserSeq());
+
+        this.userMapper.deleteUserUhdb(userUhdb);
+        this.userMapper.insertUserUhdb(userUhdb);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void modifyUserFcm(UserFcmVo userFcm) throws Exception {
+        userFcm.setDelUserSeq(userFcm.getUserSeq());
+
+        this.userMapper.deleteUserFcm(userFcm);
+        this.userMapper.insertUserFcm(userFcm);
     }
 
 }

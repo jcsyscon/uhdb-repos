@@ -51,7 +51,8 @@
 
 	<sql id="orderClauseOfSample">
 		<if test=' pagingHelper != null and pagingHelper.sortList != null '>
-            <foreach collection="pagingHelper.sortList" item="sort" open="ORDER BY " separator="," close="">
+			ORDER BY
+            <foreach collection="pagingHelper.sortList" item="sort" open="" separator="," close="">
                 ${sort.column} ${sort.ascOrDesc}
             </foreach>
         </if>

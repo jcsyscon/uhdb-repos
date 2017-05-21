@@ -67,7 +67,8 @@
 
 	<sql id="orderClauseOfUser">
 		<if test=' pagingHelper != null and pagingHelper.sortList != null '>
-            <foreach collection="pagingHelper.sortList" item="sort" open="ORDER BY " separator="," close="">
+			ORDER BY
+            <foreach collection="pagingHelper.sortList" item="sort" open="" separator="," close="">
                 ${sort.column} ${sort.ascOrDesc}
             </foreach>
         </if>
@@ -198,6 +199,117 @@
 	     FROM user_authority
 	     WHERE user_seq = #{userSeq}
 	     	AND del_yn = 'N'
+	</select>
+
+
+
+	<update id="insertUserUhdb" parameterType="UserUhdbVo" useGeneratedKeys="true" keyProperty="seq">
+	    INSERT /* insertUserUhdb, 전강욱(realsnake1975@gmail.com) */ INTO user_uhdb (
+	    	user_seq
+	        , apt_id
+	        , uhdb_id
+	        , dong
+	        , ho
+	        , reg_user_seq
+	        , reg_date
+	        , del_yn
+	    ) VALUES (
+	    	#{userSeq}
+	        , #{aptId}
+	        , #{uhdbId}
+	        , #{dong}
+	        , #{ho}
+	        , #{regUserSeq}
+	        , NOW()
+	        , 'N'
+	    )
+	</update>
+
+	<update id="deleteUserUhdb" parameterType="UserUhdbVo">
+	    UPDATE /* deleteUserUhdb, 전강욱(realsnake1975@gmail.com) */ INTO user_uhdb
+	    SET del_user_seq = #{delUserSeq}
+	    , del_yn = 'Y'
+	    , del_date = NOW()
+	    <where>
+			<choose>
+				<when test=' seq != null and seq > 0 '>AND seq = #{seq}</when>
+				<when test=' userSeq != null and userSeq > 0 '>AND user_seq = #{userSeq}</when>
+				<otherwise>AND seq = 0</otherwise>
+			</choose>
+	    </where>
+	</update>
+
+	<select id="selectUserUhdb" parameterType="UserUhdbVo" resultType="UserUhdbVo">
+	    SELECT /* selectUserUhdb, 전강욱(realsnake1975@gmail.com) */ seq
+    	user_seq
+        , apt_id
+        , uhdb_id
+        , dong
+        , ho
+        , reg_user_seq
+        , reg_date
+        , del_yn
+        , del_user_seq
+        , del_yn
+	    FROM user_uhdb
+	    <where>
+			<choose>
+				<when test=' seq != null and seq > 0 '>AND seq = #{seq}</when>
+				<when test=' userSeq != null and userSeq > 0 '>AND user_seq = #{userSeq} AND del_yn = 'N'</when>
+				<otherwise>AND seq = 0</otherwise>
+			</choose>
+	    </where>
+	</select>
+
+
+
+	<update id="insertUserFcm" parameterType="UserFcmVo" useGeneratedKeys="true" keyProperty="seq">
+	    INSERT /* insertUserFcm, 전강욱(realsnake1975@gmail.com) */ INTO user_fcm (
+	    	user_seq
+	        , fcm_token
+	        , app_version
+	        , reg_date
+	        , del_yn
+	    ) VALUES (
+	    	#{userSeq}
+	        , #{fcmToken}
+	        , #{appVersion}
+	        , NOW()
+	        , 'N'
+	    )
+	</update>
+
+	<update id="deleteUserFcm" parameterType="UserFcmVo">
+	    UPDATE /* deleteUserFcm, 전강욱(realsnake1975@gmail.com) */ INTO user_fcm
+	    SET del_user_seq = #{delUserSeq}
+	    , del_yn = 'Y'
+	    , del_date = NOW()
+	    <where>
+			<choose>
+				<when test=' seq != null and seq > 0 '>AND seq = #{seq}</when>
+				<when test=' userSeq != null and userSeq > 0 '>AND user_seq = #{userSeq}</when>
+				<otherwise>AND seq = 0</otherwise>
+			</choose>
+	    </where>
+	</update>
+
+	<select id="selectUserFcm" parameterType="UserFcmVo" resultType="UserFcmVo">
+	    SELECT /* selectUserFcm, 전강욱(realsnake1975@gmail.com) */ seq
+    	user_seq
+        , fcm_token
+        , app_version
+        , reg_date
+        , del_yn
+        , del_user_seq
+        , del_yn
+	    FROM user_fcm
+	    <where>
+			<choose>
+				<when test=' seq != null and seq > 0 '>AND seq = #{seq}</when>
+				<when test=' userSeq != null and userSeq > 0 '>AND user_seq = #{userSeq} AND del_yn = 'N'</when>
+				<otherwise>AND seq = 0</otherwise>
+			</choose>
+	    </where>
 	</select>
 
 </mapper>

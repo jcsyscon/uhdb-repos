@@ -36,6 +36,10 @@ public class UserFcmVo implements Serializable {
     /** 등록일시 */
     private Date regDate;
 
+    private String delYn = "N";
+    private Integer delUserSeq;
+    private Date delDate;
+
     public Integer getSeq() {
         return seq;
     }
@@ -74,6 +78,30 @@ public class UserFcmVo implements Serializable {
 
     public void setRegDate(Date regDate) {
         this.regDate = regDate;
+    }
+
+    public String getDelYn() {
+        return delYn;
+    }
+
+    public Integer getDelUserSeq() {
+        return delUserSeq;
+    }
+
+    public Date getDelDate() {
+        return delDate;
+    }
+
+    public void setDelYn(String delYn) {
+        this.delYn = delYn;
+    }
+
+    public void setDelUserSeq(Integer delUserSeq) {
+        this.delUserSeq = delUserSeq;
+    }
+
+    public void setDelDate(Date delDate) {
+        this.delDate = delDate;
     }
 
     @Override

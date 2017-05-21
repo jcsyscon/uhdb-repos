@@ -39,7 +39,7 @@ public class Paging implements Serializable {
     /** 한 페이지 당 목록 수 */
     private int pageSize;
     /** 전체 목록 수 */
-    private long totalRecordCount;
+    private long totalCount;
 
     /** 페이징(DB Query할 목록의) 끝 번호 */
     private int startNum;
@@ -72,12 +72,12 @@ public class Paging implements Serializable {
         this.pageSize = pageSize;
     }
 
-    public long getTotalRecordCount() {
-        return totalRecordCount;
+    public long getTotalCount() {
+        return totalCount;
     }
 
-    public void setTotalRecordCount(long totalRecordCount) {
-        this.totalRecordCount = totalRecordCount;
+    public void setTotalCount(long totalCount) {
+        this.totalCount = totalCount;
     }
 
     public int getStartNum() {

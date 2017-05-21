@@ -9,6 +9,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.springframework.security.core.GrantedAuthority;
 
 import com.realsnake.sample.model.user.UserDto;
+import com.realsnake.sample.model.user.UserFcmVo;
+import com.realsnake.sample.model.user.UserUhdbVo;
 import com.realsnake.sample.model.user.UserVo;
 
 /**
@@ -84,5 +86,47 @@ public interface UserMapper {
      * @param param
      */
     void secedeUser(UserVo param);
+
+    /**
+     * user_uhdb에 데이타를 입력한다.
+     *
+     * @param param
+     */
+    void insertUserUhdb(UserUhdbVo param);
+
+    /**
+     * user_uhdb 데이타를 삭제한다(del_yn=Y).
+     *
+     * @param param
+     */
+    void deleteUserUhdb(UserUhdbVo param);
+
+    /**
+     * user_uhdb 데이타를 조회한다.
+     *
+     * @param param
+     */
+    UserUhdbVo selectUserUhdb(UserUhdbVo param);
+
+    /**
+     * user_fcm에 데이타를 입력한다.
+     *
+     * @param param
+     */
+    void insertUserFcm(UserFcmVo param);
+
+    /**
+     * user_fcm 데이타를 삭제한다(del_yn=Y).
+     *
+     * @param param
+     */
+    void deleteUserFcm(UserFcmVo param);
+
+    /**
+     * user_fcm 데이타를 조회한다.
+     *
+     * @param param
+     */
+    UserFcmVo selectUserFcm(UserFcmVo param);
 
 }

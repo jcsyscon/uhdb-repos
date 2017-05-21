@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import com.realsnake.sample.model.common.CommonDto;
 import com.realsnake.sample.model.user.LoginUser;
+import com.realsnake.sample.util.MobilePagingHelper;
 import com.realsnake.sample.util.PagingHelper;
 
 /**
@@ -44,10 +45,14 @@ public class CommonAdvice {
 
         Object params[] = joinPoint.getArgs();
 
+        MobilePagingHelper mobilePagingHelper = null;
         PagingHelper pagingHelper = null;
         CommonDto commonDto = null;
 
         for (Object param : params) {
+            if (MobilePagingHelper.class.isAssignableFrom(param.getClass())) {
+                mobilePagingHelper = (MobilePagingHelper) param;
+            }
             if (PagingHelper.class.isAssignableFrom(param.getClass())) {
                 pagingHelper = (PagingHelper) param;
             }
@@ -65,6 +70,10 @@ public class CommonAdvice {
 
             if (pagingHelper != null) {
                 commonDto.setPagingHelper(pagingHelper);
+            }
+
+            if (mobilePagingHelper != null) {
+                commonDto.setMobilePagingHelper(mobilePagingHelper);
             }
         }
     }

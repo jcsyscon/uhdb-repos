@@ -52,10 +52,21 @@ public class MobilePagingArgumentResolver implements HandlerMethodArgumentResolv
                 MobilePagingHelper mobilePagingHelper = new MobilePagingHelper();
 
                 /////////////////////////////////////////////////////////////////////////// 페이징 조건 ///////////////////////////////////////////////////////////////////////////
+                int nextPageToken = Integer.MAX_VALUE;
+
+                if (StringUtils.isNumeric(request.getParameter("nextPageToken"))) {
+                    nextPageToken = Integer.valueOf(request.getParameter("nextPageToken"));
+
+                    if (nextPageToken < 1) {
+                        nextPageToken = Integer.MAX_VALUE;
+                    }
+                }
+                mobilePagingHelper.setNextPageToken(nextPageToken);
+
                 int pageSize = CommonConstants.DEFAULT_PAGE_SIZE;
 
-                if (StringUtils.isNumeric(request.getParameter("count"))) {
-                    pageSize = Integer.valueOf(request.getParameter("count"));
+                if (StringUtils.isNumeric(request.getParameter("pageSize"))) {
+                    pageSize = Integer.valueOf(request.getParameter("pageSize"));
 
                     if (pageSize < 20) {
                         pageSize = 20;

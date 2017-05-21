@@ -12,6 +12,7 @@ import org.apache.ibatis.type.Alias;
 
 import com.realsnake.sample.constants.CommonConstants;
 import com.realsnake.sample.model.user.LoginUser;
+import com.realsnake.sample.util.MobilePagingHelper;
 import com.realsnake.sample.util.PagingHelper;
 
 /**
@@ -37,7 +38,9 @@ public class CommonDto implements Serializable {
     private static final long serialVersionUID = 4026539935212986947L;
 
     /** 페이징 */
-    private Paging pagingHelper;
+    private PagingHelper pagingHelper;
+    /** 모바일 페이징 */
+    private MobilePagingHelper mobilePagingHelper;
     /** 로그인 사용자 */
     private LoginUser loginUser;
     /** 파일업로드(풀파일경로). 모든 파일업로드에서 사용하며 이름까지 동일하다. */
@@ -46,7 +49,7 @@ public class CommonDto implements Serializable {
     private List<AddressVo> addressList;
     private List<AttachFileVo> attachFileList;
 
-    public Paging getPagingHelper() {
+    public PagingHelper getPagingHelper() {
         if (pagingHelper == null) {
             pagingHelper = new PagingHelper();
             pagingHelper.setStartNum(0);
@@ -56,8 +59,22 @@ public class CommonDto implements Serializable {
         return pagingHelper;
     }
 
-    public void setPagingHelper(Paging pagingHelper) {
+    public void setPagingHelper(PagingHelper pagingHelper) {
         this.pagingHelper = pagingHelper;
+    }
+
+    public MobilePagingHelper getMobilePagingHelper() {
+        if (mobilePagingHelper == null) {
+            mobilePagingHelper = new MobilePagingHelper();
+            mobilePagingHelper.setNextPageToken(Integer.MAX_VALUE);
+            mobilePagingHelper.setPageSize(CommonConstants.DEFAULT_PAGE_SIZE);
+        }
+
+        return mobilePagingHelper;
+    }
+
+    public void setMobilePagingHelper(MobilePagingHelper mobilePagingHelper) {
+        this.mobilePagingHelper = mobilePagingHelper;
     }
 
     public LoginUser getLoginUser() {

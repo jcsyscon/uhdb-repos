@@ -76,7 +76,7 @@ public class ApiAdController {
      * @return
      * @throws CommonApiException
      */
-    @GetMapping(value = "/{gubun}")
+    @GetMapping(value = "/gubun/{gubun}")
     public ApiResponse<?> getAdPerGubun(@PathVariable("gubun") String gubun, AdDto param) throws CommonApiException {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

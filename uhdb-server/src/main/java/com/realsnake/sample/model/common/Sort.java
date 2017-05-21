@@ -36,7 +36,7 @@ public class Sort implements Serializable {
     /** 정렬칼럼명 */
     private String column;
     /** ASC 또는 DESC */
-    private String ascOrDesc;
+    private String ascOrDesc = "DESC";
 
     public String getColumn() {
         return column;

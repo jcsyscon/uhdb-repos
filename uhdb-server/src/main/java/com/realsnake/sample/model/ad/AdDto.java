@@ -39,6 +39,12 @@ public class AdDto extends CommonDto implements Serializable {
     private ShopVo shop;
     private AdVo ad;
 
+    private String uploadedFilePush;
+    private String uploadedFileStart;
+    private String uploadedFileEnd;
+    private String uploadedFileBanner;
+    private String uploadedFilePopup;
+
     public SponsorVo getSponsor() {
         return sponsor;
     }
@@ -61,6 +67,46 @@ public class AdDto extends CommonDto implements Serializable {
 
     public void setAd(AdVo ad) {
         this.ad = ad;
+    }
+
+    public String getUploadedFilePush() {
+        return uploadedFilePush;
+    }
+
+    public String getUploadedFileStart() {
+        return uploadedFileStart;
+    }
+
+    public String getUploadedFileEnd() {
+        return uploadedFileEnd;
+    }
+
+    public String getUploadedFileBanner() {
+        return uploadedFileBanner;
+    }
+
+    public String getUploadedFilePopup() {
+        return uploadedFilePopup;
+    }
+
+    public void setUploadedFilePush(String uploadedFilePush) {
+        this.uploadedFilePush = uploadedFilePush;
+    }
+
+    public void setUploadedFileStart(String uploadedFileStart) {
+        this.uploadedFileStart = uploadedFileStart;
+    }
+
+    public void setUploadedFileEnd(String uploadedFileEnd) {
+        this.uploadedFileEnd = uploadedFileEnd;
+    }
+
+    public void setUploadedFileBanner(String uploadedFileBanner) {
+        this.uploadedFileBanner = uploadedFileBanner;
+    }
+
+    public void setUploadedFilePopup(String uploadedFilePopup) {
+        this.uploadedFilePopup = uploadedFilePopup;
     }
 
     @Override
