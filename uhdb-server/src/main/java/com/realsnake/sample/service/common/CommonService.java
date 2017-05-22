@@ -14,6 +14,7 @@ import com.realsnake.sample.model.common.CommonCodeVo;
 import com.realsnake.sample.model.common.CommonDto;
 import com.realsnake.sample.model.common.JibunVo;
 import com.realsnake.sample.model.common.RoadNameCodeVo;
+import com.realsnake.sample.model.common.SendVo;
 
 /**
  * <pre>
@@ -62,5 +63,9 @@ public interface CommonService {
 
     void regJuso(String filterParam) throws Exception;
     // www.juso.go.kr의 주소 데이터 처리 -->
+
+    void regSendLog(SendVo param);
+
+    Boolean compareAuthMobileCode(String code, String key);
 
 }

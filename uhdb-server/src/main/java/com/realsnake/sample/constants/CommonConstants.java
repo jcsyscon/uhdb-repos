@@ -171,4 +171,19 @@ public interface CommonConstants {
         }
     }
 
+    /** 푸시/SMS 발송 유형 - 인증번호발송: sms-auth-number, 무인택배함정보: sms-uhdb, 가입권유: sms-apply, 가입권유: push-uhdb, 푸시광고: push-ad */
+    enum SendType {
+        SMS_AUTH_NUMBER("sms-auth-number"), SMS_UHDB("sms-uhdb"), SMS_APPLY("sms-apply"), PUSH_UHDB("push-uhdb"), PUSH_AD("push-ad");
+
+        private String value;
+
+        SendType(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+    }
+
 }

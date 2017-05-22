@@ -14,6 +14,7 @@ import com.realsnake.sample.model.common.CommonCodeVo;
 import com.realsnake.sample.model.common.CommonDto;
 import com.realsnake.sample.model.common.JibunVo;
 import com.realsnake.sample.model.common.RoadNameCodeVo;
+import com.realsnake.sample.model.common.SendVo;
 
 /**
  * @author 전강욱(realsnake1975@gmail.com) <br />
@@ -55,5 +56,9 @@ public interface CommonMapper {
     int insertJibun(JibunVo param);
 
     int insertRoadNameCode(RoadNameCodeVo param);
+
+    int insertSendLog(SendVo param);
+
+    SendVo selectSendLog(String param);
 
 }

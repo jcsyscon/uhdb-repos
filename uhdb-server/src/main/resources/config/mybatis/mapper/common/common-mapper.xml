@@ -449,4 +449,54 @@
 	</update>
 <!-- 도로명 등 주소 //-->
 
+	<update id="insertSendLog" parameterType="SendVo" useGeneratedKeys="true" keyProperty="seq">
+	    INSERT /* insertSendLog, 전강욱(realsnake1975@gmail.com) */ INTO send_log (
+	    	gubun
+	    	, uhdb_log_seq
+	    	, user_seq
+	        , mobile
+	        , fcm_token
+	        , send_message
+	        , send_date
+	        , result_message_Id
+	        , result_message
+	        , google_fcm_token
+	        , success_yn
+	        , etc
+	    ) VALUES (
+		    #{gubun}
+		    , #{uhdbLogSeq}
+		    , #{userSeq}
+		    , #{mobile}
+		    , #{fcmToken}
+		    , #{sendMessage}
+		    , NOW()
+		    , #{resultMessageId}
+		    , #{resultMessage}
+		    , #{googleFcmToken}
+		    , #{successYn}
+		    , #{etc}
+	    )
+	</update>
+
+	<select id="selectSendLog" parameterType="string" resultType="SendVo">
+	    SELECT /* selectCommonCodeList, 전강욱(realsnake1975@gmail.com) */ seq
+    	, gubun
+    	, uhdb_log_seq
+    	, user_seq
+        , mobile
+        , fcm_token
+        , send_message
+        , send_date
+        , result_message_Id
+        , result_message
+        , google_fcm_token
+        , success_yn
+        , etc
+	    FROM send_log
+	    WHERE etc = #{etc}
+	    ORDER BY seq DESC
+	    LIMIT 1
+	</select>
+
 </mapper>

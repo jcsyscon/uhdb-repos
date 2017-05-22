@@ -15,11 +15,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.realsnake.sample.model.fcm.FcmReqForm;
 
 /**
  * <pre>
@@ -48,32 +46,17 @@ public class SmsUtils {
     @Value("${sms.api.userId}")
     private String smsApiUserId;
 
+    @Value("${sms.sender}")
+    private String smsSender;
+
     @Autowired
     private RestTemplate restTemplate;
 
-    // 사용 포트: 5228, 5229, 5230
+    public static final String SMS_URL = "https://apis.aligo.in/";
 
-    /** POST 방식 */
-    public static final String FCM_URL = "https://fcm.googleapis.com/fcm/send";
+    public static final String SMS_CONTENT_TYPE = "Content-Type";
 
-    public static final String FCM_CONTENT_TYPE = "Content-Type";
-
-    enum FcmContentType {
-        JSON("application/json;charset=UTF-8"), TEXT("application/x-www-form-urlencoded;charset=UTF-8");
-
-        private String value;
-
-        FcmContentType(String value) {
-            this.value = value;
-        }
-
-        public String getValue() {
-            return value;
-        }
-    }
-
-    public static final String FCM_HEADER_KEY = "Authorization";
-    public static final String FCM_HEADER_VALUE = "key=%s";
+    public static final String SMS_CONTENT_TYPE_VALUE = "application/x-www-form-urlencoded;charset=UTF-8";
 
     /* @formatter:off */
 /**
@@ -119,26 +102,36 @@ UNKNOWN -900    알려지지 않은 에러
 
     private HttpHeaders headers = new HttpHeaders();
 
-    private ObjectMapper mapper = new ObjectMapper();
+    // private ObjectMapper mapper = new ObjectMapper();
 
+    /**
+     * SMS를 발송한다.
+     *
+     * @param receiver
+     * @param msg
+     * @return
+     */
     @Async
-    public CompletableFuture<String> send(FcmReqForm fcmReqForm) {
-        // this.headers.add(FCM_HEADER_KEY, String.format(FCM_HEADER_VALUE, this.fcmServerKey));
-        this.headers.add(FCM_CONTENT_TYPE, FcmContentType.JSON.getValue());
+    public CompletableFuture<String> send(String receiver, String msg) {
+        this.headers.add(SMS_CONTENT_TYPE, SMS_CONTENT_TYPE_VALUE);
 
-        HttpEntity<String> entity = null;
+        HttpEntity<MultiValueMap<String, String>> entity = null;
         ResponseEntity<String> responseEntity = null;
 
         try {
-            String fcmReqStr = this.mapper.writeValueAsString(fcmReqForm);
-            logger.debug("<<FCM메시지>> {}", fcmReqStr);
+            MultiValueMap<String, String> paramMap = new LinkedMultiValueMap<>();
+            paramMap.add("userid", this.smsApiUserId);
+            paramMap.add("key", this.smsApiKey);
+            paramMap.add("sender", this.smsSender);
+            paramMap.add("receiver", receiver);
+            paramMap.add("msg", msg);
 
-            entity = new HttpEntity<>(fcmReqStr, this.headers);
-            responseEntity = this.restTemplate.exchange(FCM_URL, HttpMethod.POST, entity, String.class);
+            entity = new HttpEntity<>(paramMap, this.headers);
+            responseEntity = this.restTemplate.exchange(SMS_URL, HttpMethod.POST, entity, String.class);
 
             return CompletableFuture.completedFuture(responseEntity.getBody());
-        } catch (JsonProcessingException e) {
-            logger.error("<<FCM 오류 발생>> {}", e.getMessage());
+        } catch (Exception e) {
+            logger.error("<<SMS 오류 발생>> {}", e.getMessage());
 
             return CompletableFuture.completedFuture(null);
         }

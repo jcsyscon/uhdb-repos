@@ -14,6 +14,7 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.realsnake.sample.constants.CommonConstants;
 import com.realsnake.sample.mapper.common.CommonMapper;
 import com.realsnake.sample.model.common.AddressVo;
@@ -32,6 +35,7 @@ import com.realsnake.sample.model.common.CommonCodeVo;
 import com.realsnake.sample.model.common.CommonDto;
 import com.realsnake.sample.model.common.JibunVo;
 import com.realsnake.sample.model.common.RoadNameCodeVo;
+import com.realsnake.sample.model.common.SendVo;
 import com.realsnake.sample.util.Locations;
 import com.realsnake.sample.util.Locations.LatLng;
 
@@ -354,6 +358,76 @@ public class CommonServiceImpl implements CommonService {
         }
 
         return attachFileList;
+    }
+
+    private ObjectMapper objectMapper = new ObjectMapper();
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void regSendLog(SendVo param) {
+        try {
+            JsonNode rootNode = this.objectMapper.readTree(param.getResultMessage());
+
+            if (param.getGubun().startsWith("push")) {
+                /* @formatter:off */
+//                {
+//                    "multicast_id": 4971780928683762760,
+//                    "success": 1,
+//                    "failure": 0,
+//                    "canonical_ids": 0,
+//                    "results": [
+//                      {
+//                        "message_id": "0:1495459899707536%22f8f4e3f9fd7ecd"
+//                      }
+//                    ]
+//                  }
+                /* @formatter:on */
+
+                JsonNode nodeSuccess = rootNode.get("success");
+
+                if (nodeSuccess.asInt() > 0) {
+                    param.setSuccessYn("Y");
+                }
+            } else if (param.getGubun().startsWith("sms")) {
+                /* @formatter:off */
+//                {
+//                    "result_code": -101,
+//                    "message": "인증오류입니다.-IP"
+//                }
+                /* @formatter:on */
+
+
+                param.setResultMessage(StringEscapeUtils.unescapeJson(param.getResultMessage()));
+
+                JsonNode nodeResultCode = rootNode.get("result_code");
+                param.setResultMessageId(String.valueOf(nodeResultCode.asInt()));
+
+                if (nodeResultCode.asInt() == 1) {
+                    param.setSuccessYn("Y");
+                }
+            }
+
+            logger.debug("<<SendVo>> {}", param);
+            this.commonMapper.insertSendLog(param);
+        } catch (Exception e) {
+            logger.error("<<발송로그 저장 중 오류>> {}", e.getMessage());
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Boolean compareAuthMobileCode(String code, String key) {
+        try {
+            SendVo send = this.commonMapper.selectSendLog(key);
+
+            if (send.getSendMessage().contains(code)) {
+                return true;
+            }
+        } catch (Exception e) {
+            logger.error("<<모바일 인증코드 비교 중 오류>> {}", e.getMessage());
+        }
+
+        return false;
     }
 
 }

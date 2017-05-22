@@ -2,6 +2,7 @@ package com.realsnake.sample.controller.api.v1.user;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,13 +17,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.realsnake.sample.constants.ApiResultCode;
+import com.realsnake.sample.constants.CommonConstants;
 import com.realsnake.sample.exception.CommonApiException;
+import com.realsnake.sample.model.common.SendVo;
 import com.realsnake.sample.model.common.api.ApiResponse;
 import com.realsnake.sample.model.user.UserFcmVo;
 import com.realsnake.sample.model.user.UserUhdbVo;
 import com.realsnake.sample.model.user.UserVo;
+import com.realsnake.sample.service.common.CommonService;
 import com.realsnake.sample.service.user.UserService;
 import com.realsnake.sample.util.RandomKeys;
+import com.realsnake.sample.util.SmsUtils;
 
 @RestController("ApiV1UserController")
 @RequestMapping(value = "/api/v1/user")
@@ -32,6 +37,12 @@ public class ApiUserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private CommonService commonService;
+
+    @Autowired
+    private SmsUtils smsUtils;
 
     /**
      * 중복체크
@@ -68,10 +79,21 @@ public class ApiUserController {
             String code = String.format("%06d", (int) (Math.random() * 1000000));
             String randomKey = RandomKeys.make(32);
 
-            // TODO: sms 발송 및 DB 저장
             Map<String, String> codeAndKey = new HashMap<String, String>();
             codeAndKey.put("code", code);
             codeAndKey.put("key", randomKey);
+
+            // SMS 발송
+            String message = String.format("모바일 인증 번호는 [%s]입니다.", code);
+            CompletableFuture<String> result = this.smsUtils.send(mobileNumber, message);
+            // 발송 로그 저장
+            SendVo send = new SendVo();
+            send.setGubun(CommonConstants.SendType.SMS_AUTH_NUMBER.getValue());
+            send.setMobile(mobileNumber);
+            send.setSendMessage(message);
+            send.setResultMessage(result.get());
+            send.setEtc(randomKey);
+            this.commonService.regSendLog(send);
 
             ApiResponse<Map<String, String>> apiResponse = new ApiResponse<>();
             apiResponse.setBody(codeAndKey);
@@ -92,13 +114,13 @@ public class ApiUserController {
     @PostMapping(value = "/mobile-auth-num/check")
     public ApiResponse<?> checkMobileAuthNum(String code, String key) throws CommonApiException {
         try {
-            // TODO: DB 조회 및 인증번호 검증
-
             ApiResponse<String> apiResponse = new ApiResponse<>();
-            apiResponse.setBody("OK");
 
-
-            // apiResponse.setBody("NOK");
+            if (this.commonService.compareAuthMobileCode(code, key)) {
+                apiResponse.setBody("OK");
+            } else {
+                apiResponse.setBody("NOK");
+            }
 
             return apiResponse;
         } catch (Exception e) {

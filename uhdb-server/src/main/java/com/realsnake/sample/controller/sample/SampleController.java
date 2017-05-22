@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.realsnake.sample.constants.CommonConstants;
+import com.realsnake.sample.model.common.SendVo;
 import com.realsnake.sample.model.fcm.Data;
 import com.realsnake.sample.model.fcm.FcmReqForm;
 import com.realsnake.sample.model.fcm.Message;
@@ -30,6 +32,7 @@ import com.realsnake.sample.service.sample.SampleService;
 import com.realsnake.sample.util.EmailSender;
 import com.realsnake.sample.util.FcmUtils;
 import com.realsnake.sample.util.PagingHelper;
+import com.realsnake.sample.util.SmsUtils;
 
 @Controller
 @RequestMapping(value = "/sample")
@@ -57,6 +60,9 @@ public class SampleController {
 
     @Autowired
     private FcmUtils fcmUtils;
+
+    @Autowired
+    private SmsUtils smsUtils;
 
     @RequestMapping(value = "/reg")
     public String regSample(Model model, PagingHelper pagingHelper) throws Exception {
@@ -146,6 +152,29 @@ public class SampleController {
         FcmReqForm fcmReqForm = new FcmReqForm(new Data(message), fcmToken);
 
         CompletableFuture<String> result = this.fcmUtils.send(fcmReqForm);
+
+        SendVo send = new SendVo();
+        send.setGubun(CommonConstants.SendType.PUSH_AD.getValue());
+        send.setMobile("01057147515");
+        send.setFcmToken(fcmToken);
+        send.setSendMessage(fcmReqForm.toString());
+        send.setResultMessage(result.get());
+        this.commonService.regSendLog(send);
+
+        return result.get();
+    }
+
+    @GetMapping(value = "/sms")
+    @ResponseBody
+    public String sampleSms(HttpServletRequest request, Model model, String mobileNumber) throws Exception {
+        CompletableFuture<String> result = this.smsUtils.send(mobileNumber, "SMS 발송 테스트입니다.");
+
+        SendVo send = new SendVo();
+        send.setGubun(CommonConstants.SendType.SMS_APPLY.getValue());
+        send.setMobile(mobileNumber);
+        send.setSendMessage("SMS 발송 테스트입니다.");
+        send.setResultMessage(result.get());
+        this.commonService.regSendLog(send);
 
         return result.get();
     }
