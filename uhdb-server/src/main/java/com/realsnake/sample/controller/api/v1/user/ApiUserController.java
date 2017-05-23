@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -166,9 +167,16 @@ public class ApiUserController {
      * @return
      * @throws CommonApiException
      */
-    @PostMapping(value = "{seq}/uhdb/list")
+    @GetMapping(value = "{seq}/uhdb/list")
     public ApiResponse<?> getAptUhdbUserList(@PathVariable("seq") Integer seq) throws CommonApiException {
         try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+            if (authentication == null) {
+                LOGGER.debug("<<ApiUserController.getUser>> 인증 실패");
+                throw new CommonApiException(ApiResultCode.NOTFOUND_USER);
+            }
+
             List<Map<String, Object>> mapList = this.uhdbService.findAptUhdbUserList(seq);
 
             ApiResponse<List<Map<String, Object>>> apiResponse = new ApiResponse<>();
@@ -189,7 +197,7 @@ public class ApiUserController {
      * @throws CommonApiException
      */
     @PostMapping(value = "/search/uhdb")
-    public ApiResponse<?> searchUhdb(String aptId, @RequestParam(required = false) String dong) throws CommonApiException {
+    public ApiResponse<?> searchUhdb(String aptId, @RequestParam(required = false, defaultValue = StringUtils.EMPTY) String dong) throws CommonApiException {
         try {
             UhdbVo uhdb = new UhdbVo();
             uhdb.setAptId(aptId);
