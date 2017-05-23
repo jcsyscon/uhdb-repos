@@ -312,4 +312,65 @@
 	    </where>
 	</select>
 
+
+<!-- 아파트 - 아파트명 검색
+SELECT `tb_ap0101`.`insdt`,
+    `tb_ap0101`.`userid`,
+    `tb_ap0101`.`upddt`,
+    `tb_ap0101`.`aptid`,
+    `tb_ap0101`.`aptnm`,
+    `tb_ap0101`.`aptsnm`,
+    `tb_ap0101`.`aptpswd`,
+    `tb_ap0101`.`zipcd`,
+    `tb_ap0101`.`city`,
+    `tb_ap0101`.`sigu`,
+    `tb_ap0101`.`addr1`,
+    `tb_ap0101`.`addr2`,
+    `tb_ap0101`.`inst_cnt`,
+    `tb_ap0101`.`inst_stdt`,
+    `tb_ap0101`.`inst_endt`,
+    `tb_ap0101`.`contract_gb`,
+    `tb_ap0101`.`contract_dt`,
+    `tb_ap0101`.`cancel_dt`,
+    `tb_ap0101`.`mgr_nm`,
+    `tb_ap0101`.`mgr_telno`,
+    `tb_ap0101`.`mgr_handphone`,
+    `tb_ap0101`.`mgr_fax`,
+    `tb_ap0101`.`remote_ctl_yn`,
+    `tb_ap0101`.`pgm_type`
+FROM `uhdb`.`tb_ap0101`
+;
+-->
+<!-- 무인택배함
+SELECT `tb_ap0102`.`insdt`,
+    `tb_ap0102`.`userid`,
+    `tb_ap0102`.`upddt`,
+    `tb_ap0102`.`aptid`,
+    `tb_ap0102`.`aptposi`,
+    `tb_ap0102`.`aptPosiNm`,
+    `tb_ap0102`.`instdt`,
+    `tb_ap0102`.`co_gb`,
+    `tb_ap0102`.`sayeob`,
+    `tb_ap0102`.`pgm_type`,
+    `tb_ap0102`.`os_type`,
+    `tb_ap0102`.`router_gb`,
+    `tb_ap0102`.`router_ip`,
+    `tb_ap0102`.`vpn_yn`,
+    `tb_ap0102`.`box_ctl_posi`,
+    `tb_ap0102`.`box_start`,
+    `tb_ap0102`.`box_cnt`,
+    `tb_ap0102`.`box_col_cnt`,
+    `tb_ap0102`.`teamview_id`,
+    `tb_ap0102`.`nfc_yn`,
+    `tb_ap0102`.`card_yn`,
+    `tb_ap0102`.`jaha_yn`,
+    `tb_ap0102`.`bigo`,
+    `tb_ap0102`.`router_id`,
+    `tb_ap0102`.`gongin_ip`,
+    `tb_ap0102`.`portfw`,
+    `tb_ap0102`.`box_open`,
+    `tb_ap0102`.`TaekBaeKey`
+FROM `uhdb`.`tb_ap0102`
+;
+-->
 </mapper>
