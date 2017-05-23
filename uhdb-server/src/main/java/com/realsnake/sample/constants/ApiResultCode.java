@@ -14,9 +14,9 @@ public enum ApiResultCode {
         this.message = message;
     }
 
-    private final String code;
+    private String code;
 
-    private final String message;
+    private String message;
 
     public String getCode() {
         return code;

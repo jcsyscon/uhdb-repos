@@ -186,4 +186,37 @@ public interface CommonConstants {
         }
     }
 
+    enum SafeFuncType {
+        /* @formatter:off */
+        SAFE_FUNC_10("10", "택배보관(택배기사)")
+        , SAFE_FUNC_20("20", "택배수령(고객)")
+        , SAFE_FUNC_30("30", "택배발송요청(고객)")
+        , SAFE_FUNC_40("40", "택배수령(택배기사)")
+        , SAFE_FUNC_50("50", "택배반품반송요청(고객)")
+        ;
+        /* @formatter:on */
+
+        SafeFuncType(String code, String value) {
+            this.code = code;
+            this.value = value;
+        }
+
+        private String code;
+
+        private String value;
+
+        public String getCode() {
+            return code;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("Code:%s, Value:%s", getCode(), getValue());
+        }
+    }
+
 }

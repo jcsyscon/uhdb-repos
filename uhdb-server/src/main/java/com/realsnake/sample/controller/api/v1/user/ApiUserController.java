@@ -1,6 +1,7 @@
 package com.realsnake.sample.controller.api.v1.user;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -21,10 +22,13 @@ import com.realsnake.sample.constants.CommonConstants;
 import com.realsnake.sample.exception.CommonApiException;
 import com.realsnake.sample.model.common.SendVo;
 import com.realsnake.sample.model.common.api.ApiResponse;
+import com.realsnake.sample.model.uhdb.AptVo;
+import com.realsnake.sample.model.uhdb.UhdbVo;
 import com.realsnake.sample.model.user.UserFcmVo;
 import com.realsnake.sample.model.user.UserUhdbVo;
 import com.realsnake.sample.model.user.UserVo;
 import com.realsnake.sample.service.common.CommonService;
+import com.realsnake.sample.service.uhdb.UhdbService;
 import com.realsnake.sample.service.user.UserService;
 import com.realsnake.sample.util.RandomKeys;
 import com.realsnake.sample.util.SmsUtils;
@@ -37,6 +41,9 @@ public class ApiUserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UhdbService uhdbService;
 
     @Autowired
     private CommonService commonService;
@@ -138,10 +145,34 @@ public class ApiUserController {
     @PostMapping(value = "/search/apt")
     public ApiResponse<?> searchApt(String aptName) throws CommonApiException {
         try {
-            // TODO: 아파트 DB 조회
+            AptVo apt = new AptVo();
+            apt.setAptNm(aptName);
 
-            ApiResponse<String> apiResponse = new ApiResponse<>();
-            // apiResponse.setBody(random);
+            List<AptVo> aptList = this.uhdbService.findAptList(apt);
+
+            ApiResponse<List<AptVo>> apiResponse = new ApiResponse<>();
+            apiResponse.setBody(aptList);
+
+            return apiResponse;
+        } catch (Exception e) {
+            throw new CommonApiException(ApiResultCode.COMMON_FAIL, e);
+        }
+    }
+
+    /**
+     * 사용자-택배함 목록
+     *
+     * @param aptName
+     * @return
+     * @throws CommonApiException
+     */
+    @PostMapping(value = "{seq}/uhdb/list")
+    public ApiResponse<?> getAptUhdbUserList(@PathVariable("seq") Integer seq) throws CommonApiException {
+        try {
+            List<Map<String, Object>> mapList = this.uhdbService.findAptUhdbUserList(seq);
+
+            ApiResponse<List<Map<String, Object>>> apiResponse = new ApiResponse<>();
+            apiResponse.setBody(mapList);
 
             return apiResponse;
         } catch (Exception e) {
@@ -160,10 +191,14 @@ public class ApiUserController {
     @PostMapping(value = "/search/uhdb")
     public ApiResponse<?> searchUhdb(String aptId, @RequestParam(required = false) String dong) throws CommonApiException {
         try {
-            // TODO: 무인택배함 조회
+            UhdbVo uhdb = new UhdbVo();
+            uhdb.setAptId(aptId);
+            uhdb.setAptPosiNm(dong);
 
-            ApiResponse<String> apiResponse = new ApiResponse<>();
-            // apiResponse.setBody(random);
+            List<UhdbVo> uhdbList = this.uhdbService.findUhdbList(uhdb);
+
+            ApiResponse<List<UhdbVo>> apiResponse = new ApiResponse<>();
+            apiResponse.setBody(uhdbList);
 
             return apiResponse;
         } catch (Exception e) {
@@ -401,86 +436,5 @@ public class ApiUserController {
             throw new CommonApiException(ApiResultCode.COMMON_FAIL, e);
         }
     }
-
-    /* @formatter:off */
-    /**
-    https://api-sms.cloud.toast.com
-
-
-        [SMS]
-            /sms/v2.0/appKeys/{appKey}/sender/sms
-
-        [Request Body]
-        {
-            "body": "{본문 내용}",
-            "sendNo": "{발신번호}",
-            "recipientList": [{
-                "recipientNo": "{수신번호}"
-            }],
-            "userId": "발송구분자"
-        }
-
-        [응답]
-        {
-          "header": {
-            "isSuccessful": true,
-            "resultCode": 0,
-            "resultMessage": "SUCCESS"
-          },
-          "body": {
-            "data": {
-              "requestId": "0-201607-424541-1",
-              "statusCode": "2",
-              "sendResultList" : [
-                  {
-                      "recipientNo" : {수신번호},
-                      "resultCode" :  0,
-                      "resultMessage" : "SUCCESS"
-                  }
-              ]
-            }
-          }
-        }
-
-
-
-        [LMS]
-            /sms/v2.0/appKeys/{appKey}/sender/mms
-
-        [Request Body]
-        {
-            "title": "{제목}",
-            "body": "{본문 내용}",
-            "sendNo": "{발신번호}",
-            "recipientList": [{
-                "recipientNo": "{수신번호}",
-                "templateParameter": { }
-            }],
-            "userId": ""
-        }
-
-        [응답]
-        {
-          "header": {
-            "isSuccessful": true,
-            "resultCode": 0,
-            "resultMessage": "SUCCESS"
-          },
-          "body": {
-            "data": {
-              "requestId": "0-201607-424541-1",
-              "statusCode": "2",
-              "sendResultList" : [
-                  {
-                      "recipientNo" : {수신번호},
-                      "resultCode" :  0,
-                      "resultMessage" : "SUCCESS"
-                  }
-              ]
-            }
-          }
-        }
-    */
-    /* @formatter:on */
 
 }

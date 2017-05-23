@@ -1,25 +1,23 @@
 package com.realsnake.sample.controller.api.v1.uhdb;
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.realsnake.sample.config.sec.JwtToken;
-import com.realsnake.sample.config.sec.JwtTokenUtil;
 import com.realsnake.sample.constants.ApiResultCode;
 import com.realsnake.sample.exception.CommonApiException;
 import com.realsnake.sample.model.common.api.ApiResponse;
-import com.realsnake.sample.util.MobilePagingHelper;
+import com.realsnake.sample.model.uhdb.AptVo;
+import com.realsnake.sample.model.uhdb.UhdbLogVo;
+import com.realsnake.sample.model.uhdb.UhdbVo;
+import com.realsnake.sample.service.uhdb.UhdbService;
 
 @RestController("ApiV1UhdbController")
 @RequestMapping(value = "/api/v1/uhdb")
@@ -28,53 +26,86 @@ public class ApiUhdbController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ApiUhdbController.class);
 
     @Autowired
-    private JwtTokenUtil jwtTokenUtil;
-
-    @Value("${jwt.token.header}")
-    private String jwtTokenHeader;
-
-    @GetMapping(value = "/login")
-    public ApiResponse<?> login(MobilePagingHelper mobilePagingHelper) throws CommonApiException {
-        LOGGER.debug("<<mobilePagingHelper.toString()>>, {}", mobilePagingHelper.toString());
-
-        ApiResponse<MobilePagingHelper> apiResponse = new ApiResponse<>();
-        apiResponse.setBody(mobilePagingHelper);
-
-        return apiResponse;
-    }
+    private UhdbService uhdbService;
 
     /**
-     * Access 토큰(JWT, x-access-token) 갱신 요청<br />
-     * RestAuthenticationFilter에서 먼저 토큰 인증 과정을 거치게 됨
+     * 아파트 조회
      *
-     * @param request
+     * @param aptId
      * @return
      * @throws CommonApiException
      */
-    @PostMapping(value = "/auth/refresh")
-    public ResponseEntity<?> refreshAuthToken(HttpServletRequest request) throws CommonApiException {
+    @GetMapping(value = "/apt/{aptId}")
+    public ApiResponse<?> getApt(@PathVariable("aptId") String aptId) throws CommonApiException {
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            AptVo param = new AptVo();
+            param.setAptId(aptId);
 
-            if (authentication == null) {
-                LOGGER.debug("<</auth/refresh>> 인증 실패");
-                throw new CommonApiException(ApiResultCode.NOTFOUND_USER);
+            List<AptVo> aptList = this.uhdbService.findAptList(param);
+            AptVo apt = null;
+            if (aptList != null && !aptList.isEmpty()) {
+                apt = aptList.get(0);
             }
 
-            String accessToken = request.getHeader(this.jwtTokenHeader);
-            String username = authentication.getName(); // this.jwtTokenUtil.getUsernameFromToken(accessToken);
-            LOGGER.debug("<</auth/refresh>> username: {}", username);
+            ApiResponse<AptVo> apiResponse = new ApiResponse<>();
+            apiResponse.setBody(apt);
 
-            if (this.jwtTokenUtil.canTokenBeRefreshed(accessToken)) {
-                final String refreshToken = this.jwtTokenUtil.refreshToken(accessToken);
-                // TODO: accessToken 폐기
-                return ResponseEntity.ok(new JwtToken(refreshToken));
-            } else {
-                return ResponseEntity.badRequest().body(null);
-            }
+            return apiResponse;
         } catch (Exception e) {
             throw new CommonApiException(ApiResultCode.COMMON_FAIL, e);
         }
+    }
+
+    /**
+     * 택배함 조회
+     *
+     * @param aptId
+     * @param uhdbId
+     * @return
+     * @throws CommonApiException
+     */
+    @PostMapping(value = "/{aptId}/{uhdbId}")
+    public ApiResponse<?> searchUhdb(@PathVariable("aptId") String aptId, @PathVariable("aptId") String uhdbId) throws CommonApiException {
+        try {
+            UhdbVo param = new UhdbVo();
+            param.setAptId(aptId);
+            param.setAptPosi(uhdbId);
+
+            List<UhdbVo> uhdbList = this.uhdbService.findUhdbList(param);
+            UhdbVo uhdb = null;
+            if (uhdbList != null && !uhdbList.isEmpty()) {
+                uhdb = uhdbList.get(0);
+            }
+
+            ApiResponse<UhdbVo> apiResponse = new ApiResponse<>();
+            apiResponse.setBody(uhdb);
+
+            return apiResponse;
+        } catch (Exception e) {
+            throw new CommonApiException(ApiResultCode.COMMON_FAIL, e);
+        }
+    }
+
+    @PostMapping(value = "/modify/{safeFunc}")
+    public String modifyUhdbLog(@PathVariable("safeFunc") String safeFunc, UhdbLogVo param) {
+        String result = "NOK";
+
+        try {
+            /**
+             * Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+             *
+             * if (authentication == null) { LOGGER.debug("<<ApiNoticeController.getNoticeList>> 인증 실패"); throw new CommonApiException(ApiResultCode.NOTFOUND_USER); }
+             */
+
+            param.setSafeFunc(safeFunc);
+
+            this.uhdbService.modifyUhdbLog(param);
+            result = "OK";
+        } catch (Exception e) {
+            LOGGER.error("<<modifyUhdbLog, 무인택배함 사용 기록 수정 중 오류>>", e);
+        }
+
+        return result;
     }
 
 }

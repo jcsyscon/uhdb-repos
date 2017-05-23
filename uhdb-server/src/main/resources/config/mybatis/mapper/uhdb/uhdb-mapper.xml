@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.realsnake.sample.mapper.uhdb.UhdbMapper">
+
+	<select id="selectAptList" parameterType="AptVo" resultType="AptVo">
+		SELECT /* selectAptList, 전강욱(realsnake1975@gmail.com) */ aptid AS apt_id,
+	    aptnm AS apt_nm,
+	    aptsnm AS apts_nm,
+	    zipcd AS zip_cd,
+	    city,
+	    sigu,
+	    addr1,
+	    addr2,
+	    inst_cnt
+		FROM tb_ap0101
+	    <where>
+			<choose>
+				<when test=' aptId != null and !"".equals(aptId) '>AND aptid = #{aptId}</when>
+				<when test=' aptNm != null and !"".equals(aptNm) '>AND (aptnm LIKE CONCAT('%', #{aptNm}, '%') OR aptsnm LIKE CONCAT('%', #{aptNm}, '%'))</when>
+				<otherwise>AND aptid = '@@@@@@'</otherwise>
+			</choose>
+	    </where>
+	</select>
+
+	<select id="selectUhdbList" parameterType="UhdbVo" resultType="UhdbVo">
+		SELECT /* selectUhdbList, 전강욱(realsnake1975@gmail.com) */ aptid AS apt_id,
+	    aptposi AS apt_posi,
+	    aptPosiNm AS apt_posi_nm,
+	    router_ip,
+	    router_id,
+	    gongin_ip,
+	    portfw AS port_fw
+		FROM tb_ap0102
+	    <where>
+			<choose>
+				<when test=' aptId != null and !"".equals(aptId) '>AND aptid = #{aptId}
+					<if test=' aptPosiNm != null and !"".equals(aptPosiNm) '>AND aptPosiNm LIKE CONCAT('%', #{aptPosiNm}, '%')</if>
+				</when>
+				<otherwise>AND aptid = '@@@@@@'</otherwise>
+			</choose>
+	    </where>
+	</select>
+
+	<update id="updateUhdbLog" parameterType="UhdbLogVo">
+		UPDATE /* updateUhdbLog, 전강욱(realsnake1975@gmail.com) */ tb_bx0201
+		<set>
+	    	<choose>
+	    		<when test=' safeFunc != null and !"".equals(safeFunc) '>safefunc = #{safeFunc}</when>
+	    		<otherwise>safefunc = NULL</otherwise>
+	    	</choose>
+	    	<if test=' "Y".equals(useYn) or "N".equals(useYn) '>, useyn = #{useYn}</if>
+	    	<choose>
+	    		<when test=' stDt != null '>, sd_dt = NOW()</when>
+	    		<otherwise>, sd_dt = NULL</otherwise>
+	    	</choose>
+	    	<choose>
+	    		<when test=' enDt != null '>, en_dt = NOW()</when>
+	    		<otherwise>, en_dt = NULL</otherwise>
+	    	</choose>
+	    	<choose>
+	    		<when test=' dong != null and !"".equals(dong) '>, dong = #{dong}</when>
+	    		<otherwise>, dong = NULL</otherwise>
+	    	</choose>
+	    	<choose>
+	    		<when test=' ho != null and !"".equals(ho) '>, ho = #{ho}</when>
+	    		<otherwise>, ho = NULL</otherwise>
+	    	</choose>
+	    	<choose>
+	    		<when test=' amtgb != null and !"".equals(amtgb) '>, amtgb = #{amtGb}</when>
+	    		<otherwise>, amtgb = NULL</otherwise>
+	    	</choose>
+	    	<choose>
+	    		<when test=' amt != null and amtgb > 0 '>, amt = #{amt}</when>
+	    		<otherwise>, amt = 0</otherwise>
+	    	</choose>
+	    	<choose>
+	    		<when test=' taekbaeHandphone != null and !"".equals(taekbaeHandphone) '>, taekbae_handphone = #{taekbaeHandphone}</when>
+	    		<otherwise>, taekbae_handphone = NULL</otherwise>
+	    	</choose>
+	    	<choose>
+	    		<when test=' taekbaePswd != null and !"".equals(taekbaePswd) '>, taekbae_pswd = #{taekbaePswd}</when>
+	    		<otherwise>, taekbae_pswd = NULL</otherwise>
+	    	</choose>
+	    	<choose>
+	    		<when test=' handphone != null and !"".equals(handphone) '>, handphone = #{handphone}</when>
+	    		<otherwise>, handphone = NULL</otherwise>
+	    	</choose>
+	    	<choose>
+	    		<when test=' taekbae != null and !"".equals(taekbae) '>, taekbae = #{taekbae}</when>
+	    		<otherwise>, taekbae = NULL</otherwise>
+	    	</choose>
+	    	<choose>
+	    		<when test=' pswd != null and !"".equals(pswd) '>, pswd = #{pswd}</when>
+	    		<otherwise>, pswd = NULL</otherwise>
+	    	</choose>
+			, upddt = NOW()
+		</set>
+		WHERE aptid = #{aptId}
+			AND aptposi = #{aptPosi}
+			AND boxno = #{boxNo}
+	</update>
+
+	<sql id="whereClauseOfUhdbLog">
+	    <where>
+		    <choose>
+		    	<when test=' pagingHelper.search.startDate != null and !"".equals(pagingHelper.search.startDate) '>
+			    	AND reg_date &gt;= CONCAT(#{pagingHelper.search.startDate}, ' 00:00:00')
+			    	<if test=' pagingHelper.search.endDate != null and !"".equals(pagingHelper.search.endDate) '>
+			    		AND reg_date &lt;= CONCAT(#{pagingHelper.search.endDate}, ' 23:59:59')
+			    	</if>
+		    	</when>
+		    	<otherwise>
+			    	<if test=' pagingHelper.search.endDate != null and !"".equals(pagingHelper.search.endDate) '>
+			    		AND reg_date &lt;= CONCAT(#{pagingHelper.search.endDate}, ' 23:59:59')
+			    	</if>
+		    	</otherwise>
+		    </choose>
+	    	<if test=' pagingHelper.search.keyword != null and !"".equals(pagingHelper.search.keyword) '>
+			    <choose>
+			    	<when test=' "username".equals(pagingHelper.search.item) '>
+						AND username LIKE CONCAT('%', #{pagingHelper.search.keyword}, '%')
+			    	</when>
+			    	<when test=' "name".equals(pagingHelper.search.item) '>
+						AND name = #{pagingHelper.search.keyword}
+			    	</when>
+			    	<when test=' "mobile".equals(pagingHelper.search.item) '>
+						AND mobile = #{pagingHelper.search.keyword}
+			    	</when>
+			    	<when test=' "email".equals(pagingHelper.search.item) '>
+						AND email = #{pagingHelper.search.keyword}
+			    	</when>
+			    	<otherwise>
+						AND (
+							username LIKE CONCAT('%', #{pagingHelper.search.keyword}, '%')
+						)
+			    	</otherwise>
+			    </choose>
+	    	</if>
+	    </where>
+	</sql>
+
+	<sql id="orderClauseOfUhdbLog">
+		<if test=' pagingHelper != null and pagingHelper.sortList != null '>
+			ORDER BY
+            <foreach collection="pagingHelper.sortList" item="sort" open="" separator="," close="">
+                ${sort.column} ${sort.ascOrDesc}
+            </foreach>
+        </if>
+	</sql>
+
+	<select id="selectUhdbLogListCount" parameterType="UhdbDto" resultType="int">
+	    SELECT /* selectUhdbLogListCount, 전강욱(realsnake1975@gmail.com) */ COUNT(*)
+	    FROM tb_bx0201h
+	    <include refid="whereClauseOfUhdbLog" />
+	</select>
+
+	<select id="selectUhdbLogList" parameterType="UhdbDto" resultType="UhdbLogVo">
+		SELECT /* selectAptList, 전강욱(realsnake1975@gmail.com) */ upddt AS upd_dt,
+	    aptid AS apt_id,
+	    aptposi AS apt_posi,
+	    boxno AS box_no,
+	    safefunc AS safe_func,
+	    useyn AS use_yn,
+	    stdt AS st_dt,
+	    endt AS en_dt,
+	    dong,
+	    ho,
+	    amtgb AS amt_gb,
+	    amt,
+	    taekbae_handphone,
+	    taekbae_pswd,
+	    handphone,
+	    taekbae,
+	    pswd
+		FROM tb_bx0201h
+	    <include refid="whereClauseOfUhdbLog" />
+	    <include refid="orderClauseOfUhdbLog" />
+	    LIMIT #{pagingHelper.startNum}, #{pagingHelper.endNum}
+	</select>
+
+	<select id="selectAptUhdbUserList" parameterType="int" resultType="map">
+		SELECT /* selectAptUhdbUserList, 전강욱(realsnake1975@gmail.com) */ A.aptid AS apt_id,
+	    A.aptnm AS apt_nm,
+	    A.aptsnm AS apts_nm,
+	    A.zipcd AS zip_cd,
+	    A.city,
+	    A.sigu,
+	    A.addr1,
+	    A.addr2,
+	    A.inst_cnt,
+	    B.aptposi AS apt_posi,
+	    B.aptPosiNm AS apt_posi_nm,
+        C.dong,
+        C.ho
+		FROM tb_ap0101 A JOIN tb_ap0102 B ON A.aptid = B.aptid
+						 JOIN user_uhdb C ON B.aptid = C.apt_id AND B.aptposi = C.uhdb_id
+		WHERE C.user_seq = #{userSeq}
+			AND C.del_yn = 'N'
+        ORDER BY seq DESC
+	</select>
+
+</mapper>
