@@ -5,6 +5,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -106,6 +108,38 @@ public class ApiUhdbController {
         }
 
         return result;
+    }
+
+    /**
+     * 무인택배함 락커 열기
+     *
+     * @param aptId
+     * @return
+     * @throws CommonApiException
+     */
+    @PostMapping(value = "/open")
+    public ApiResponse<?> openBox(String aptId, String uhdbId, String boxNo, String password) throws CommonApiException {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication == null) {
+                LOGGER.debug("<<무인택배함 락커 열기(/uhdb/open)>> 인증 실패");
+                throw new CommonApiException(ApiResultCode.NOTFOUND_USER);
+            }
+
+            UhdbLogVo param = new UhdbLogVo();
+            param.setAptId(aptId);
+            param.setAptPosi(uhdbId);
+            param.setBoxNo(boxNo);
+            param.setPswd(password);
+            String result = this.uhdbService.openBox(param);
+
+            ApiResponse<String> apiResponse = new ApiResponse<>();
+            apiResponse.setBody(result);
+
+            return apiResponse;
+        } catch (Exception e) {
+            throw new CommonApiException(ApiResultCode.COMMON_FAIL, e);
+        }
     }
 
 }

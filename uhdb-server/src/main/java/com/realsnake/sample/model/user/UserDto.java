@@ -6,6 +6,7 @@
 package com.realsnake.sample.model.user;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -34,6 +35,16 @@ public class UserDto extends CommonDto implements Serializable {
 
     /** SID */
     private static final long serialVersionUID = 4567006840401302779L;
+
+    private List<Integer> userSeqList;
+
+    public List<Integer> getUserSeqList() {
+        return userSeqList;
+    }
+
+    public void setUserSeqList(List<Integer> userSeqList) {
+        this.userSeqList = userSeqList;
+    }
 
     @Override
     public String toString() {

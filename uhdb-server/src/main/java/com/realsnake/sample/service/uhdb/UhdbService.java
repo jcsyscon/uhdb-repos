@@ -35,4 +35,6 @@ public interface UhdbService {
 
     List<Map<String, Object>> findAptUhdbUserList(Integer param) throws Exception;
 
+    String openBox(UhdbLogVo param);
+
 }

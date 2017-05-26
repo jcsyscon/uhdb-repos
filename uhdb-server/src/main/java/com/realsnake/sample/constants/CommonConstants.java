@@ -171,7 +171,7 @@ public interface CommonConstants {
         }
     }
 
-    /** 푸시/SMS 발송 유형 - 인증번호발송: sms-auth-number, 무인택배함정보: sms-uhdb, 가입권유: sms-apply, 가입권유: push-uhdb, 푸시광고: push-ad */
+    /** 푸시/SMS 발송 유형 - 인증번호발송: sms-auth-number, 무인택배함정보: sms-uhdb, 가입권유: sms-apply, 무인택배함정보: push-uhdb, 푸시광고: push-ad */
     enum SendType {
         SMS_AUTH_NUMBER("sms-auth-number"), SMS_UHDB("sms-uhdb"), SMS_APPLY("sms-apply"), PUSH_UHDB("push-uhdb"), PUSH_AD("push-ad");
 
@@ -188,22 +188,28 @@ public interface CommonConstants {
 
     enum SafeFuncType {
         /* @formatter:off */
-        SAFE_FUNC_10("10", "택배보관(택배기사)")
-        , SAFE_FUNC_20("20", "택배수령(고객)")
-        , SAFE_FUNC_30("30", "택배발송요청(고객)")
-        , SAFE_FUNC_40("40", "택배수령(택배기사)")
-        , SAFE_FUNC_50("50", "택배반품반송요청(고객)")
+        SAFE_FUNC_10("10", "택배보관(택배기사)", "택배보관", "%s 택배함 %s번 택배보관되었습니다. 비밀번호는 %s입니다.")
+        , SAFE_FUNC_20("20", "택배수령(고객)", "", "")
+        , SAFE_FUNC_30("30", "택배발송요청(고객)", "", "")
+        , SAFE_FUNC_40("40", "택배수령(택배기사)", "택배발송", "%s 택배함 %s번에 보관한 택배가 발송되었습니다.")
+        , SAFE_FUNC_50("50", "택배반품반송요청(고객)", "", "")
         ;
         /* @formatter:on */
 
-        SafeFuncType(String code, String value) {
+        SafeFuncType(String code, String value, String title, String body) {
             this.code = code;
             this.value = value;
+            this.title = title;
+            this.body = body;
         }
 
         private String code;
 
         private String value;
+
+        private String title;
+
+        private String body;
 
         public String getCode() {
             return code;
@@ -213,10 +219,18 @@ public interface CommonConstants {
             return value;
         }
 
-        @Override
-        public String toString() {
-            return String.format("Code:%s, Value:%s", getCode(), getValue());
+        public String getTitle() {
+            return title;
         }
+
+        public String getBody() {
+            return body;
+        }
+
+        // @Override
+        // public String toString() {
+        // return String.format("Code:%s, Value:%s", getCode(), getValue());
+        // }
     }
 
 }

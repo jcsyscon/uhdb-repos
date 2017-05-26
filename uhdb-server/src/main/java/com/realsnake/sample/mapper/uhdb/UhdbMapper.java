@@ -32,4 +32,6 @@ public interface UhdbMapper {
 
     List<Map<String, Object>> selectAptUhdbUserList(Integer param);
 
+    UhdbLogVo selectUhdbLog(UhdbLogVo param);
+
 }

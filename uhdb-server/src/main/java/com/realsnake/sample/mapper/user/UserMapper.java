@@ -109,6 +109,13 @@ public interface UserMapper {
     UserUhdbVo selectUserUhdb(UserUhdbVo param);
 
     /**
+     * user_uhdb 데이타를 조회한다.
+     *
+     * @param param
+     */
+    List<UserUhdbVo> selectUserUhdbList(UserUhdbVo param);
+
+    /**
      * user_fcm에 데이타를 입력한다.
      *
      * @param param

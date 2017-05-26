@@ -34,6 +34,7 @@
 	    <where>
 			<choose>
 				<when test=' aptId != null and !"".equals(aptId) '>AND aptid = #{aptId}
+					<if test=' aptposi != null and !"".equals(aptposi) '>AND aptposi = #{aptPosi}</if>
 					<if test=' aptPosiNm != null and !"".equals(aptPosiNm) '>AND aptPosiNm LIKE CONCAT('%', #{aptPosiNm}, '%')</if>
 				</when>
 				<otherwise>AND aptid = '@@@@@@'</otherwise>
@@ -193,10 +194,37 @@
         C.dong,
         C.ho
 		FROM tb_ap0101 A JOIN tb_ap0102 B ON A.aptid = B.aptid
-						 JOIN user_uhdb C ON B.aptid = C.apt_id AND B.aptposi = C.uhdb_id
+						 		JOIN user_uhdb C ON B.aptid = C.apt_id AND B.aptposi = C.uhdb_id
 		WHERE C.user_seq = #{userSeq}
 			AND C.del_yn = 'N'
         ORDER BY seq DESC
+	</select>
+
+	<select id="selectUhdbLog" parameterType="UhdbLogVo" resultType="UhdbLogVo">
+		SELECT /* selectAptList, 전강욱(realsnake1975@gmail.com) */ upddt AS upd_dt,
+	    aptid AS apt_id,
+	    aptposi AS apt_posi,
+	    boxno AS box_no,
+	    safefunc AS safe_func,
+	    useyn AS use_yn,
+	    stdt AS st_dt,
+	    endt AS en_dt,
+	    dong,
+	    ho,
+	    amtgb AS amt_gb,
+	    amt,
+	    taekbae_handphone,
+	    taekbae_pswd,
+	    handphone,
+	    taekbae,
+	    pswd
+		FROM tb_bx0201
+		WHERE aptid = #{aptId}
+			AND aptposi = #{aptPosi}
+			AND boxno = #{boxNo}
+			AND pswd = #{pswd}
+	    ORDER BY upd_dt DESC
+	    LIMIT 1
 	</select>
 
 </mapper>

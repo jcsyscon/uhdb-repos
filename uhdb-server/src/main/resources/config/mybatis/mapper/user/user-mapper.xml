@@ -28,6 +28,12 @@
 
 	<sql id="whereClauseOfUser">
 	    <where>
+			<if test=' userSeqList != null and !userSeqList.isEmpty() '>
+				AND seq IN
+	            <foreach collection="userSeqList" item="userSeq" open="(" separator="," close=")">
+	                #{userSeq}
+	            </foreach>
+			</if>
 		    <choose>
 		    	<when test=' pagingHelper.search.startDate != null and !"".equals(pagingHelper.search.startDate) '>
 			    	AND reg_date &gt;= CONCAT(#{pagingHelper.search.startDate}, ' 00:00:00')
@@ -256,6 +262,35 @@
 			<choose>
 				<when test=' seq != null and seq > 0 '>AND seq = #{seq}</when>
 				<when test=' userSeq != null and userSeq > 0 '>AND user_seq = #{userSeq} AND del_yn = 'N'</when>
+				<otherwise>AND seq = 0</otherwise>
+			</choose>
+	    </where>
+	</select>
+
+	<select id="selectUserUhdbList" parameterType="UserUhdbVo" resultType="UserUhdbVo">
+	    SELECT /* selectUserUhdb, 전강욱(realsnake1975@gmail.com) */ seq
+    	user_seq
+        , apt_id
+        , uhdb_id
+        , dong
+        , ho
+        , reg_user_seq
+        , reg_date
+        , del_yn
+        , del_user_seq
+        , del_yn
+	    FROM user_uhdb
+	    <where>
+			<choose>
+				<when test=' aptId != null and !"".equals(aptId) '>AND aptId = #{aptId}
+					AND uhdb_id = #{uhdbId}
+					AND dong = #{dong}
+					AND ho = #{ho}
+					AND del_yn = 'N'
+				</when>
+				<when test=' mobile != null and !"".equals(mobile) '>
+					AND user_seq IN (SELECT seq FROM user WHERE mobile = #{mobile}) AND del_yn = 'N'
+				</when>
 				<otherwise>AND seq = 0</otherwise>
 			</choose>
 	    </where>

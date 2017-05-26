@@ -47,6 +47,8 @@ public class UserUhdbVo implements Serializable {
     private Integer delUserSeq;
     @JsonIgnore
     private Date delDate;
+    @JsonIgnore
+    private String mobile;
 
     public Integer getSeq() {
         return seq;
@@ -134,6 +136,14 @@ public class UserUhdbVo implements Serializable {
 
     public void setDelDate(Date delDate) {
         this.delDate = delDate;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
     }
 
     @Override

@@ -43,6 +43,11 @@ public class Message implements Serializable {
         this.body = body;
     }
 
+    public Message(String title, String body, String adUrl) {
+        this(title, body);
+        this.adUrl = adUrl;
+    }
+
     public String getTitle() {
         return title;
     }

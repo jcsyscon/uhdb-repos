@@ -14,7 +14,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,7 +26,6 @@ import com.realsnake.sample.model.common.api.ApiResponse;
 import com.realsnake.sample.model.token.AuthRequestToken;
 import com.realsnake.sample.model.token.AuthToken;
 import com.realsnake.sample.model.user.LoginUser;
-import com.realsnake.sample.util.MobilePagingHelper;
 
 @RestController("ApiV1AuthController")
 @RequestMapping(value = "/api/v1")
@@ -43,16 +41,6 @@ public class ApiAuthController {
 
     @Value("${jwt.token.header}")
     private String jwtTokenHeader;
-
-    @GetMapping(value = "/login")
-    public ApiResponse<?> login(MobilePagingHelper mobilePagingHelper) throws CommonApiException {
-        LOGGER.debug("<<mobilePagingHelper.toString()>>, {}", mobilePagingHelper.toString());
-
-        ApiResponse<MobilePagingHelper> apiResponse = new ApiResponse<>();
-        apiResponse.setBody(mobilePagingHelper);
-
-        return apiResponse;
-    }
 
     @PostMapping(value = "/login")
     public ApiResponse<?> loginProcessing(HttpSession session, AuthRequestToken param) throws CommonApiException {
