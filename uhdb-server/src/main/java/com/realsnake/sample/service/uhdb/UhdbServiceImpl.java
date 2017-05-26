@@ -39,6 +39,7 @@ import com.realsnake.sample.model.user.UserVo;
 import com.realsnake.sample.service.ad.AdService;
 import com.realsnake.sample.service.common.CommonService;
 import com.realsnake.sample.util.FcmUtils;
+import com.realsnake.sample.util.JdbcUtils;
 import com.realsnake.sample.util.SmsUtils;
 
 /**
@@ -98,14 +99,14 @@ public class UhdbServiceImpl implements UhdbService {
             throw new Exception("택배함 아이디는 필수입니다!");
         }
         if (StringUtils.isEmpty(param.getBoxNo())) {
-            throw new Exception("락커 번호는 필수입니다!");
+            throw new Exception("보관함 번호는 필수입니다!");
         }
 
         String title = StringUtils.EMPTY;
         String body = StringUtils.EMPTY;
         String uhdbName = StringUtils.EMPTY;
 
-        /** 10: 택배보관(택배기사), 20: 택배수령(고객), 30: 택배발송요청(고객), 40: 택배수령(택배기사), 50: 택배반품반송요청(고객) */
+        /** 10: 택배보관(택배기사), 20: 택배수령(고객), 30: 택배발송요청(고객), 40: 택배반품반송요청(고객), 50: 택배수령(택배기사) */
         if (param.getSafeFunc().equals(CommonConstants.SafeFuncType.SAFE_FUNC_10.getCode())) {
             param.setUseYn("Y");
             param.setStDt(new Date());
@@ -143,6 +144,19 @@ public class UhdbServiceImpl implements UhdbService {
             param.setEnDt(null);
             param.setAmt((double) 0);
         } else if (param.getSafeFunc().equals(CommonConstants.SafeFuncType.SAFE_FUNC_40.getCode())) {
+            param.setUseYn("N");
+            param.setStDt(null);
+            param.setEnDt(new Date());
+            param.setDong(null);
+            param.setHo(null);
+            param.setAmtGb(null);
+            param.setAmt((double) 0);
+            param.setTaekbaeHandphone(null);
+            param.setTaekbaePswd(null);
+            param.setTaekbae(null);
+            param.setHandphone(null);
+            param.setPswd(null);
+        } else if (param.getSafeFunc().equals(CommonConstants.SafeFuncType.SAFE_FUNC_50.getCode())) {
             param.setUseYn("Y");
             param.setStDt(new Date());
             param.setEnDt(null);
@@ -158,28 +172,15 @@ public class UhdbServiceImpl implements UhdbService {
                 uhdbName = uhdbList.get(0).getAptPosiNm();
             }
 
-            title = CommonConstants.SafeFuncType.SAFE_FUNC_40.getTitle();
-            body = String.format(CommonConstants.SafeFuncType.SAFE_FUNC_40.getBody(), uhdbName, param.getBoxNo());
-        } else if (param.getSafeFunc().equals(CommonConstants.SafeFuncType.SAFE_FUNC_50.getCode())) {
-            param.setUseYn("N");
-            param.setStDt(null);
-            param.setEnDt(new Date());
-            param.setDong(null);
-            param.setHo(null);
-            param.setAmtGb(null);
-            param.setAmt((double) 0);
-            param.setTaekbaeHandphone(null);
-            param.setTaekbaePswd(null);
-            param.setTaekbae(null);
-            param.setHandphone(null);
-            param.setPswd(null);
+            title = CommonConstants.SafeFuncType.SAFE_FUNC_50.getTitle();
+            body = String.format(CommonConstants.SafeFuncType.SAFE_FUNC_50.getBody(), uhdbName, param.getBoxNo());
         }
 
         this.uhdbMapper.updateUhdbLog(param);
         logger.info("<<무인택배함 로그 저장>> {}", param.toString());
 
         if (StringUtils.isEmpty(body)) {
-            logger.info("<<SMS / PUSH 미발송>>");
+            logger.info("<<무인택배함API {}, SMS / PUSH 미발송>>", param.getSafeFunc());
             return;
         }
 
@@ -290,6 +291,7 @@ public class UhdbServiceImpl implements UhdbService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public String openBox(UhdbLogVo param) {
         try {
             // 1. 무인택배함 사용기록 조회
@@ -316,13 +318,32 @@ public class UhdbServiceImpl implements UhdbService {
                 return "PUBLIC IP NOT FOUND";
             }
 
-            // TODO: 3. 락커 오픈 실행(DB 업데이트)
+            // 3. 락커 오픈 실행(DB 업데이트)
+            try {
+                JdbcUtils ju = new JdbcUtils();
+                ju.openBox(gonginIp, param.getAptId(), param.getAptPosi(), param.getBoxNo());
+                logger.info("<<{} {} 무인택배함 {} 번 보관함이 열렸습니다.>>", param.getAptId(), param.getAptPosi(), param.getBoxNo());
+            } catch (Exception e) {
+                logger.error("<<무인택배함 보관함 열기 실패>>", e);
+                return e.getMessage();
+            }
 
+            return "OK";
         } catch (Exception e) {
-            logger.error("<<택배함 락커 열기 실패>>", e);
+            logger.error("<<무인택배함 보관함 열기 실패>>", e);
+            return e.getMessage();
         }
+    }
 
-        return null;
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void modifyUhdbGonginIp(UhdbVo param) throws Exception {
+        try {
+            this.uhdbMapper.updateUhdbGonginIp(param);
+            logger.info("<<무인택배함 공인아이피 수정>> {}", param.toString());
+        } catch (Exception e) {
+            logger.error("<<무인택배함 공인아이피 수정 실패>>", e);
+        }
     }
 
 }

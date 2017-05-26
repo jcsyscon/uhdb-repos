@@ -93,18 +93,26 @@ public class ApiUhdbController {
         String result = "NOK";
 
         try {
-            /**
-             * Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-             *
-             * if (authentication == null) { LOGGER.debug("<<ApiNoticeController.getNoticeList>> 인증 실패"); throw new CommonApiException(ApiResultCode.NOTFOUND_USER); }
-             */
-
             param.setSafeFunc(safeFunc);
 
             this.uhdbService.modifyUhdbLog(param);
             result = "OK";
         } catch (Exception e) {
             LOGGER.error("<<modifyUhdbLog, 무인택배함 사용 기록 수정 중 오류>>", e);
+        }
+
+        return result;
+    }
+
+    @PostMapping(value = "/public-ip/modify")
+    public String modifyUhdbPublicIp(UhdbVo param) {
+        String result = "NOK";
+
+        try {
+            this.uhdbService.modifyUhdbGonginIp(param);
+            result = "OK";
+        } catch (Exception e) {
+            LOGGER.error("<<modifyUhdbPublicIp, 무인택배함 공인아이피 수정 중 오류>>", e);
         }
 
         return result;

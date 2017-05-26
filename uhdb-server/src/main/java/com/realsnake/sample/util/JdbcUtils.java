@@ -30,7 +30,7 @@ public class JdbcUtils {
 
     public static final String JDBC_DRIVER_NAME = "com.mysql.jdbc.Driver";
 
-    public static final String CONN_URL = "jdbc:mysql:%s:3306/DB명";
+    public static final String CONN_URL = "jdbc:mysql:%s:3306/%s";
 
     public Connection getConnection(String dpIp) {
         Connection conn = null;
@@ -75,6 +75,23 @@ public class JdbcUtils {
                 }
             }
         }
+
+        return result;
+    }
+
+    private static final String BOX_OPEN_UPDATE_QUERY = "UPDATE tb_cd0102 SET code_nm = ? WHERE aptid = ? AND code = ? AND code_type = 'BOX_OPEN'";
+
+    public int openBox(String gonginIp, String aptId, String aptPosi, String boxNo) throws Exception {
+        Connection conn = this.getConnection(gonginIp);
+
+        PreparedStatement ps = conn.prepareStatement(BOX_OPEN_UPDATE_QUERY);
+        ps.setString(1, boxNo);
+        ps.setString(2, aptId);
+        ps.setString(3, aptPosi);
+        int result = ps.executeUpdate();
+        ps.close();
+
+        this.closeConnection(conn);
 
         return result;
     }

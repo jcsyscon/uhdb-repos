@@ -37,4 +37,6 @@ public interface UhdbService {
 
     String openBox(UhdbLogVo param);
 
+    void modifyUhdbGonginIp(UhdbVo param) throws Exception;
+
 }

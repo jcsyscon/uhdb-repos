@@ -42,6 +42,13 @@
 	    </where>
 	</select>
 
+	<update id="updateUhdbGonginIp" parameterType="UhdbVo">
+		UPDATE /* updateUhdb, 전강욱(realsnake1975@gmail.com) */ tb_ap0102
+	    SET gongin_ip = #{gonginIp}
+		WHERE apt_id = #{aptId}
+			AND aptposi = #{aptPosi}
+	</update>
+
 	<update id="updateUhdbLog" parameterType="UhdbLogVo">
 		UPDATE /* updateUhdbLog, 전강욱(realsnake1975@gmail.com) */ tb_bx0201
 		<set>

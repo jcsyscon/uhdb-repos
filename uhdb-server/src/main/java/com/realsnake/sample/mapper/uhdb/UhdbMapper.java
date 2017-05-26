@@ -24,7 +24,9 @@ public interface UhdbMapper {
 
     List<UhdbVo> selectUhdbList(UhdbVo param);
 
-    void updateUhdbLog(UhdbLogVo param);
+    int updateUhdbGonginIp(UhdbVo param);
+
+    int updateUhdbLog(UhdbLogVo param);
 
     int selectUhdbLogListCount(UhdbDto param);
 
