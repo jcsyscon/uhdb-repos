@@ -150,4 +150,31 @@ public class ApiUhdbController {
         }
     }
 
+    @GetMapping(value = "/passwod")
+    public String findUhdbUserPassword(UhdbLogVo param) {
+        String result = "NOK";
+
+        try {
+            result = this.uhdbService.findUhdbUserPassword(param);
+        } catch (Exception e) {
+            LOGGER.error("<<findUhdbUserPassword, 무인택배함 세대 비밀번호 조회 중 오류>>", e);
+        }
+
+        return result;
+    }
+
+    @PostMapping(value = "/passwod")
+    public String modifyUhdbUserPassword(UhdbLogVo param) {
+        String result = "NOK";
+
+        try {
+            this.uhdbService.modifyUhdbUserPassword(param);
+            result = "OK";
+        } catch (Exception e) {
+            LOGGER.error("<<findUhdbUserPassword, 무인택배함 사용자 비밀번호 수정 중 오류>>", e);
+        }
+
+        return result;
+    }
+
 }

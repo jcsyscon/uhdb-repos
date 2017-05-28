@@ -49,6 +49,44 @@
 			AND aptposi = #{aptPosi}
 	</update>
 
+	<update id="insertUhdbLog" parameterType="UhdbLogVo">
+		INSERT INTO /* insertUhdbLog, 전강욱(realsnake1975@gmail.com) */ tb_bx0201 (
+			aptid
+			, aptposi
+			, boxno
+			, safefunc
+			, useyn
+			, sd_dt
+			, dong
+			, ho
+			, amtgb
+			, amt
+			, taekbae
+			, taekbae_handphone
+			, taekbae_pswd
+			, handphone
+			, pswd
+			, upddt
+		) VALUES (
+			#{aptId}
+			, #{aptPosi}
+			, #{boxNo}
+			, #{safeFunc}
+			, 'Y'
+			, NOW()
+			, #{dong}
+			, #{ho}
+			, '1'
+			, 0
+			, #{taekbae}
+			, #{taekbaeHandphone}
+			, #{taekbaePswd}
+			, #{handphone}
+			, #{pswd}
+			, NOW()
+		)
+	</update>
+
 	<update id="updateUhdbLog" parameterType="UhdbLogVo">
 		UPDATE /* updateUhdbLog, 전강욱(realsnake1975@gmail.com) */ tb_bx0201
 		<set>
@@ -107,6 +145,33 @@
 			AND aptposi = #{aptPosi}
 			AND boxno = #{boxNo}
 	</update>
+
+	<select id="selectUhdbLog" parameterType="UhdbLogVo" resultType="UhdbLogVo">
+		SELECT /* selectAptList, 전강욱(realsnake1975@gmail.com) */ upddt AS upd_dt,
+	    aptid AS apt_id,
+	    aptposi AS apt_posi,
+	    boxno AS box_no,
+	    safefunc AS safe_func,
+	    useyn AS use_yn,
+	    stdt AS st_dt,
+	    endt AS en_dt,
+	    dong,
+	    ho,
+	    amtgb AS amt_gb,
+	    amt,
+	    taekbae_handphone,
+	    taekbae_pswd,
+	    handphone,
+	    taekbae,
+	    pswd
+		FROM tb_bx0201
+		WHERE aptid = #{aptId}
+			AND aptposi = #{aptPosi}
+			<if test=' boxNo != null and !"".equals(boxNo) '>AND boxno = #{boxNo}</if>
+			<if test=' pswd != null and !"".equals(pswd) '>AND pswd = #{pswd}</if>
+	    ORDER BY upd_dt DESC
+	    LIMIT 1
+	</select>
 
 	<sql id="whereClauseOfUhdbLog">
 	    <where>
@@ -207,31 +272,23 @@
         ORDER BY seq DESC
 	</select>
 
-	<select id="selectUhdbLog" parameterType="UhdbLogVo" resultType="UhdbLogVo">
-		SELECT /* selectAptList, 전강욱(realsnake1975@gmail.com) */ upddt AS upd_dt,
-	    aptid AS apt_id,
-	    aptposi AS apt_posi,
-	    boxno AS box_no,
-	    safefunc AS safe_func,
-	    useyn AS use_yn,
-	    stdt AS st_dt,
-	    endt AS en_dt,
-	    dong,
-	    ho,
-	    amtgb AS amt_gb,
-	    amt,
-	    taekbae_handphone,
-	    taekbae_pswd,
-	    handphone,
-	    taekbae,
-	    pswd
-		FROM tb_bx0201
+	<select id="selectUhdbUserPassword" parameterType="UhdbLogVo" resultType="string">
+		SELECT /* selectUhdbUserPassword, 전강욱(realsnake1975@gmail.com) */ passwd
+		FROM tb_ap0202
 		WHERE aptid = #{aptId}
 			AND aptposi = #{aptPosi}
-			AND boxno = #{boxNo}
-			AND pswd = #{pswd}
-	    ORDER BY upd_dt DESC
+			AND aptdong = #{dong}
+			AND aptho = #{ho}
 	    LIMIT 1
 	</select>
 
+	<update id="updateUhdbUserPassword" parameterType="UhdbLogVo">
+		UPDATE /* updateUhdbUserPassword, 전강욱(realsnake1975@gmail.com) */ tb_ap0202
+		SET passwd = #{pswd}
+		WHERE aptid = #{aptId}
+			AND aptposi = #{aptPosi}
+			AND aptdong = #{dong}
+			AND aptho = #{ho}
+	</update>
+	
 </mapper>

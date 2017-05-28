@@ -26,6 +26,8 @@ public interface UhdbMapper {
 
     int updateUhdbGonginIp(UhdbVo param);
 
+    int insertUhdbLog(UhdbLogVo param);
+
     int updateUhdbLog(UhdbLogVo param);
 
     int selectUhdbLogListCount(UhdbDto param);
@@ -35,5 +37,9 @@ public interface UhdbMapper {
     List<Map<String, Object>> selectAptUhdbUserList(Integer param);
 
     UhdbLogVo selectUhdbLog(UhdbLogVo param);
+
+    String selectUhdbUserPassword(UhdbLogVo param);
+
+    int updateUhdbUserPassword(UhdbLogVo param);
 
 }

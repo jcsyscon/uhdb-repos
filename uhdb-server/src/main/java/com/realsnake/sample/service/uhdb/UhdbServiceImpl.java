@@ -106,7 +106,7 @@ public class UhdbServiceImpl implements UhdbService {
         String body = StringUtils.EMPTY;
         String uhdbName = StringUtils.EMPTY;
 
-        /** 10: 택배보관(택배기사), 20: 택배수령(고객), 30: 택배발송요청(고객), 40: 택배반품반송요청(고객), 50: 택배수령(택배기사) */
+        /** 10: 택배보관(택배기사), 20: 택배수령(고객), 30: 택배발송요청(고객), 40: 택배반품요청(고객), 50: 택배수령(택배기사) */
         if (param.getSafeFunc().equals(CommonConstants.SafeFuncType.SAFE_FUNC_10.getCode())) {
             param.setUseYn("Y");
             param.setStDt(new Date());
@@ -144,6 +144,11 @@ public class UhdbServiceImpl implements UhdbService {
             param.setEnDt(null);
             param.setAmt((double) 0);
         } else if (param.getSafeFunc().equals(CommonConstants.SafeFuncType.SAFE_FUNC_40.getCode())) {
+            param.setUseYn("Y");
+            param.setStDt(new Date());
+            param.setEnDt(null);
+            param.setAmt((double) 0);
+        } else if (param.getSafeFunc().equals(CommonConstants.SafeFuncType.SAFE_FUNC_50.getCode())) {
             param.setUseYn("N");
             param.setStDt(null);
             param.setEnDt(new Date());
@@ -156,11 +161,6 @@ public class UhdbServiceImpl implements UhdbService {
             param.setTaekbae(null);
             param.setHandphone(null);
             param.setPswd(null);
-        } else if (param.getSafeFunc().equals(CommonConstants.SafeFuncType.SAFE_FUNC_50.getCode())) {
-            param.setUseYn("Y");
-            param.setStDt(new Date());
-            param.setEnDt(null);
-            param.setAmt((double) 0);
 
             // 택배함 조회
             UhdbVo uhdb = new UhdbVo();
@@ -343,6 +343,23 @@ public class UhdbServiceImpl implements UhdbService {
             logger.info("<<무인택배함 공인아이피 수정>> {}", param.toString());
         } catch (Exception e) {
             logger.error("<<무인택배함 공인아이피 수정 실패>>", e);
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public String findUhdbUserPassword(UhdbLogVo param) throws Exception {
+        return this.uhdbMapper.selectUhdbUserPassword(param);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void modifyUhdbUserPassword(UhdbLogVo param) throws Exception {
+        try {
+            this.uhdbMapper.updateUhdbUserPassword(param);
+            logger.info("<<무인택배함 세대 비밀번호 수정>> {}", param.toString());
+        } catch (Exception e) {
+            logger.error("<<무인택배함 세대 비밀번호 수정 실패>>", e);
         }
     }
 

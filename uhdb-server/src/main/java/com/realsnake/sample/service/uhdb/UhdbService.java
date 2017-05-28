@@ -39,4 +39,8 @@ public interface UhdbService {
 
     void modifyUhdbGonginIp(UhdbVo param) throws Exception;
 
+    String findUhdbUserPassword(UhdbLogVo param) throws Exception;
+
+    void modifyUhdbUserPassword(UhdbLogVo param) throws Exception;
+
 }
