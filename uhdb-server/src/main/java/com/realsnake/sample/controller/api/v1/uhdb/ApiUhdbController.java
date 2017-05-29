@@ -90,18 +90,15 @@ public class ApiUhdbController {
 
     @PostMapping(value = "/modify/{safeFunc}")
     public String modifyUhdbLog(@PathVariable("safeFunc") String safeFunc, UhdbLogVo param) {
-        String result = "NOK";
-
         try {
             param.setSafeFunc(safeFunc);
 
             this.uhdbService.modifyUhdbLog(param);
-            result = "OK";
+            return "OK";
         } catch (Exception e) {
             LOGGER.error("<<modifyUhdbLog, 무인택배함 사용 기록 수정 중 오류>>", e);
+            return String.format("NOK, %s", e.getMessage());
         }
-
-        return result;
     }
 
     @PostMapping(value = "/public-ip/modify")

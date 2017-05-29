@@ -92,6 +92,8 @@ public class UhdbServiceImpl implements UhdbService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void modifyUhdbLog(UhdbLogVo param) throws Exception {
+        logger.info("<<무인택배함 로그>> {}", param.toString());
+
         if (StringUtils.isEmpty(param.getAptId())) {
             throw new Exception("아파트 아이디는 필수입니다!");
         }
