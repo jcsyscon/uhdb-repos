@@ -70,7 +70,8 @@ public class JwtTokenUtil {
     private static final String DEVICE_TABLET = "tablet";
 
     private static String SECRET = "!@#123qwe";
-    private static Long EXPIRATION = 604800L; // 7일(?)
+    // private static Long EXPIRATION = 604800L; // 7일(?)
+    private static Long EXPIRATION = 3600L; // 1시간, 4 테스트
 
     @Value("${jwt.token.header}")
     private String jwtTokenHeader;
@@ -81,8 +82,7 @@ public class JwtTokenUtil {
             final Claims claims = getClaimsFromToken(token);
             username = (String) claims.get(CLAIM_KEY_AUDIENCE);
         } catch (Exception e) {
-            // username = null;
-            e.printStackTrace();
+            logger.error("<<JWT 오류>>", e);
         }
         return username;
     }
@@ -93,7 +93,7 @@ public class JwtTokenUtil {
             final Claims claims = getClaimsFromToken(token);
             created = new Date((Long) claims.get(CLAIM_KEY_ISSUEDAT));
         } catch (Exception e) {
-            // created = null;
+            logger.error("<<JWT 오류>>", e);
         }
         return created;
     }
@@ -104,7 +104,7 @@ public class JwtTokenUtil {
             final Claims claims = getClaimsFromToken(token);
             expiration = claims.getExpiration();
         } catch (Exception e) {
-            // expiration = null;
+            logger.error("<<JWT 오류>>", e);
         }
         return expiration;
     }
@@ -118,7 +118,7 @@ public class JwtTokenUtil {
             // System.out.println("<<Claims>> Key: " + key + ", value: " + (String) claims.get(key));
             // }
         } catch (Exception e) {
-            // claims = null;
+            logger.error("<<JWT 오류>>", e);
         }
         return claims;
     }
@@ -168,29 +168,32 @@ public class JwtTokenUtil {
         return audience;
     }
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(LoginUser loginUser) {
         Map<String, Object> claims = new HashMap<>();
         claims.put(CLAIM_KEY_ISSUER, CLAIM_VALUE_ISSUER);
-        claims.put(CLAIM_KEY_AUDIENCE, userDetails.getUsername());
+        claims.put(CLAIM_KEY_AUDIENCE, loginUser.getUsername());
         claims.put(CLAIM_KEY_ISSUEDAT, new Date());
+        claims.put("seq", loginUser.getSeq());
         return this.generateToken(claims);
     }
 
-    public String generateToken(UserDetails userDetails, String jwtId) {
+    public String generateToken(LoginUser loginUser, String jwtId) {
         Map<String, Object> claims = new HashMap<>();
         claims.put(CLAIM_KEY_ISSUER, CLAIM_VALUE_ISSUER);
-        claims.put(CLAIM_KEY_AUDIENCE, userDetails.getUsername());
+        claims.put(CLAIM_KEY_AUDIENCE, loginUser.getUsername());
         claims.put(CLAIM_KEY_ISSUEDAT, new Date());
         claims.put(CLAIM_KEY_JWTID, jwtId);
+        claims.put("seq", loginUser.getSeq());
         return this.generateToken(claims);
     }
 
-    public String generateToken(UserDetails userDetails, Device device) {
+    public String generateToken(LoginUser loginUser, Device device) {
         Map<String, Object> claims = new HashMap<>();
         claims.put(CLAIM_KEY_ISSUER, CLAIM_VALUE_ISSUER);
-        claims.put(CLAIM_KEY_AUDIENCE, userDetails.getUsername());
+        claims.put(CLAIM_KEY_AUDIENCE, loginUser.getUsername());
         claims.put(CLAIM_KEY_ISSUEDAT, new Date());
         claims.put(CLAIM_KEY_DEVICE, this.generateDevice(device));
+        claims.put("seq", loginUser.getSeq());
         return this.generateToken(claims);
     }
 

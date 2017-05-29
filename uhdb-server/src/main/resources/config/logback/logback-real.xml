@@ -36,9 +36,10 @@ See here for more details: http://gordondickens.com/wordpress/2013/03/27/sawing-
 	<logger name="sun" level="info" additivity="false" />
 	<logger name="javax.activation" level="info" />
 	<!-- 루트 패키지 입력 -->
-	<logger name="com.jaha" level="info" />
+	<logger name="com.realsnake" level="debug" />
+	<logger name="kr.co.tbyo" level="debug" />
 
-    <root level="info">
+    <root level="debug">
     	<appender-ref ref="console" />
         <appender-ref ref="FILE" />
     </root>

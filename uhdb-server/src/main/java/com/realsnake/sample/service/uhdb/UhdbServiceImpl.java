@@ -107,9 +107,12 @@ public class UhdbServiceImpl implements UhdbService {
         String title = StringUtils.EMPTY;
         String body = StringUtils.EMPTY;
         String uhdbName = StringUtils.EMPTY;
+        String userMobile = StringUtils.EMPTY;
 
         /** 10: 택배보관(택배기사), 20: 택배수령(고객), 30: 택배발송요청(고객), 40: 택배수령(택배기사), 50: 택배반품요청(고객) */
         if (param.getSafeFunc().equals(CommonConstants.SafeFuncType.SAFE_FUNC_10.getCode())) { // 택배보관(택배기사)
+            userMobile = param.getHandphone();
+
             param.setUseYn("Y");
             param.setStDt(new Date());
             param.setEnDt(null);
@@ -157,6 +160,8 @@ public class UhdbServiceImpl implements UhdbService {
                 param.setAmt((double) 0);
             }
         } else if (param.getSafeFunc().equals(CommonConstants.SafeFuncType.SAFE_FUNC_40.getCode())) { // 택배수령(택배기사)
+            userMobile = param.getHandphone();
+
             param.setSafeFunc(null);
             param.setUseYn("N");
             param.setStDt(null);
@@ -206,7 +211,7 @@ public class UhdbServiceImpl implements UhdbService {
         try {
             // 1. 핸드폰번호로 사용자 찾기
             UserUhdbVo userUhdb = new UserUhdbVo();
-            userUhdb.setMobile(param.getHandphone());
+            userUhdb.setMobile(userMobile);
             List<UserUhdbVo> userUhdbList = this.userMapper.selectUserUhdbList(userUhdb);
 
             if (userUhdbList == null || userUhdbList.isEmpty()) {
@@ -221,12 +226,12 @@ public class UhdbServiceImpl implements UhdbService {
 
             if (userUhdbList == null || userUhdbList.isEmpty()) {
                 // 3. 핸드폰번호로도 아파트아이디, 택배함 위치, 동, 호로도 사용자를 찾을 수 없다면 SMS 발송
-                CompletableFuture<String> result = this.smsUtils.send(param.getHandphone(), body);
+                CompletableFuture<String> result = this.smsUtils.send(userMobile, body);
 
                 // 발송 로그 저장
                 SendVo send = new SendVo();
                 send.setGubun(CommonConstants.SendType.SMS_UHDB.getValue());
-                send.setMobile(param.getHandphone());
+                send.setMobile(userMobile);
                 send.setSendMessage(body);
                 send.setResultMessage(result.get());
                 this.commonService.regSendLog(send);

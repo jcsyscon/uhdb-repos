@@ -43,6 +43,7 @@ public class ApiAuthController {
     private String jwtTokenHeader;
 
     @PostMapping(value = "/login")
+    @Deprecated
     public ApiResponse<?> loginProcessing(HttpSession session, AuthRequestToken param) throws CommonApiException {
         LOGGER.debug("<<x-auth-token, AuthRequestToken.toString()>>, {}", param.toString());
 
@@ -86,6 +87,7 @@ public class ApiAuthController {
 
             // Reload password post-security so we can generate token
             LoginUser loginUser = (LoginUser) authentication.getPrincipal();
+            // LOGGER.debug("<<user seq>> {}", loginUser.getSeq());
             final String accessToken = this.jwtTokenUtil.generateToken(loginUser, session.getId());
             LOGGER.debug("<<accessToken>> {}", accessToken);
 
