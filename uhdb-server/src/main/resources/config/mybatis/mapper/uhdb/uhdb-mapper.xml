@@ -45,7 +45,7 @@
 	<update id="updateUhdbGonginIp" parameterType="UhdbVo">
 		UPDATE /* updateUhdb, 전강욱(realsnake1975@gmail.com) */ tb_ap0102
 	    SET gongin_ip = #{gonginIp}
-		WHERE apt_id = #{aptId}
+		WHERE aptid = #{aptId}
 			AND aptposi = #{aptPosi}
 	</update>
 
