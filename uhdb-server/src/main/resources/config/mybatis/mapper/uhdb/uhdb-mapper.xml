@@ -34,7 +34,7 @@
 	    <where>
 			<choose>
 				<when test=' aptId != null and !"".equals(aptId) '>AND aptid = #{aptId}
-					<if test=' aptposi != null and !"".equals(aptposi) '>AND aptposi = #{aptPosi}</if>
+					<if test=' aptPosi != null and !"".equals(aptPosi) '>AND aptposi = #{aptPosi}</if>
 					<if test=' aptPosiNm != null and !"".equals(aptPosiNm) '>AND aptPosiNm LIKE CONCAT('%', #{aptPosiNm}, '%')</if>
 				</when>
 				<otherwise>AND aptid = '@@@@@@'</otherwise>
@@ -290,5 +290,5 @@
 			AND aptdong = #{dong}
 			AND aptho = #{ho}
 	</update>
-	
+
 </mapper>
