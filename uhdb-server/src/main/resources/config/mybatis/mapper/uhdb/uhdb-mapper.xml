@@ -116,7 +116,7 @@
 	    		<otherwise>, amtgb = NULL</otherwise>
 	    	</choose>
 	    	<choose>
-	    		<when test=' amt != null and amtgb > 0 '>, amt = #{amt}</when>
+	    		<when test=' amt != null and amt > 0 '>, amt = #{amt}</when>
 	    		<otherwise>, amt = 0</otherwise>
 	    	</choose>
 	    	<choose>
