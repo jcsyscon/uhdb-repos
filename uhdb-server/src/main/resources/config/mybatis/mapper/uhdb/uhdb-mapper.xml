@@ -56,7 +56,7 @@
 			, boxno
 			, safefunc
 			, useyn
-			, sd_dt
+			, stdt
 			, dong
 			, ho
 			, amtgb
@@ -96,12 +96,12 @@
 	    	</choose>
 	    	<if test=' "Y".equals(useYn) or "N".equals(useYn) '>, useyn = #{useYn}</if>
 	    	<choose>
-	    		<when test=' stDt != null '>, sd_dt = NOW()</when>
-	    		<otherwise>, sd_dt = NULL</otherwise>
+	    		<when test=' stDt != null '>, stdt = NOW()</when>
+	    		<otherwise>, stdt = NULL</otherwise>
 	    	</choose>
 	    	<choose>
-	    		<when test=' enDt != null '>, en_dt = NOW()</when>
-	    		<otherwise>, en_dt = NULL</otherwise>
+	    		<when test=' enDt != null '>, endt = NOW()</when>
+	    		<otherwise>, endt = NULL</otherwise>
 	    	</choose>
 	    	<choose>
 	    		<when test=' dong != null and !"".equals(dong) '>, dong = #{dong}</when>

@@ -113,7 +113,12 @@ public class UhdbServiceImpl implements UhdbService {
             param.setUseYn("Y");
             param.setStDt(new Date());
             param.setEnDt(null);
-            param.setAmt((double) 0);
+            if (StringUtils.isEmpty(param.getAmtGb())) {
+                param.setAmtGb(null);
+            }
+            if (param.getAmt() == null) {
+                param.setAmt((double) 0);
+            }
 
             // 택배함 조회
             UhdbVo uhdb = new UhdbVo();
@@ -144,12 +149,22 @@ public class UhdbServiceImpl implements UhdbService {
             param.setUseYn("Y");
             param.setStDt(new Date());
             param.setEnDt(null);
-            param.setAmt((double) 0);
+            if (StringUtils.isEmpty(param.getAmtGb())) {
+                param.setAmtGb(null);
+            }
+            if (param.getAmt() == null) {
+                param.setAmt((double) 0);
+            }
         } else if (param.getSafeFunc().equals(CommonConstants.SafeFuncType.SAFE_FUNC_40.getCode())) {
             param.setUseYn("Y");
             param.setStDt(new Date());
             param.setEnDt(null);
-            param.setAmt((double) 0);
+            if (StringUtils.isEmpty(param.getAmtGb())) {
+                param.setAmtGb(null);
+            }
+            if (param.getAmt() == null) {
+                param.setAmt((double) 0);
+            }
         } else if (param.getSafeFunc().equals(CommonConstants.SafeFuncType.SAFE_FUNC_50.getCode())) {
             param.setUseYn("N");
             param.setStDt(null);
