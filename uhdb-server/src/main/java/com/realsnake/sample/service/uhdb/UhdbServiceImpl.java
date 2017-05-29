@@ -133,6 +133,7 @@ public class UhdbServiceImpl implements UhdbService {
             title = CommonConstants.SafeFuncType.SAFE_FUNC_10.getTitle();
             body = String.format(CommonConstants.SafeFuncType.SAFE_FUNC_10.getBody(), uhdbName, param.getBoxNo(), param.getPswd());
         } else if (param.getSafeFunc().equals(CommonConstants.SafeFuncType.SAFE_FUNC_20.getCode())) {
+            param.setSafeFunc(null);
             param.setUseYn("N");
             param.setStDt(null);
             param.setEnDt(new Date());
@@ -166,6 +167,7 @@ public class UhdbServiceImpl implements UhdbService {
                 param.setAmt((double) 0);
             }
         } else if (param.getSafeFunc().equals(CommonConstants.SafeFuncType.SAFE_FUNC_50.getCode())) {
+            param.setSafeFunc(null);
             param.setUseYn("N");
             param.setStDt(null);
             param.setEnDt(new Date());
