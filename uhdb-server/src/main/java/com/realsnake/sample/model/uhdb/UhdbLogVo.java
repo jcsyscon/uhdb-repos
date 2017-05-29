@@ -30,7 +30,7 @@ public class UhdbLogVo implements Serializable {
     private String aptPosi;
     /** 락커번호 */
     private String boxNo;
-    /** 10: 택배보관(택배기사), 20: 택배수령(고객), 30: 택배발송요청(고객), 40: 택배수령(택배기사), 50: 택배반품반송요청(고객) */
+    /** 10: 택배보관(택배기사), 20: 택배수령(고객), 30: 택배발송요청(고객), 40: 택배수령(택배기사), 50: 택배반품요청(고객) */
     private String safeFunc;
     /** 보관여부 */
     private String useYn;

@@ -108,8 +108,8 @@ public class UhdbServiceImpl implements UhdbService {
         String body = StringUtils.EMPTY;
         String uhdbName = StringUtils.EMPTY;
 
-        /** 10: 택배보관(택배기사), 20: 택배수령(고객), 30: 택배발송요청(고객), 40: 택배반품요청(고객), 50: 택배수령(택배기사) */
-        if (param.getSafeFunc().equals(CommonConstants.SafeFuncType.SAFE_FUNC_10.getCode())) {
+        /** 10: 택배보관(택배기사), 20: 택배수령(고객), 30: 택배발송요청(고객), 40: 택배수령(택배기사), 50: 택배반품요청(고객) */
+        if (param.getSafeFunc().equals(CommonConstants.SafeFuncType.SAFE_FUNC_10.getCode())) { // 택배보관(택배기사)
             param.setUseYn("Y");
             param.setStDt(new Date());
             param.setEnDt(null);
@@ -132,7 +132,7 @@ public class UhdbServiceImpl implements UhdbService {
 
             title = CommonConstants.SafeFuncType.SAFE_FUNC_10.getTitle();
             body = String.format(CommonConstants.SafeFuncType.SAFE_FUNC_10.getBody(), uhdbName, param.getBoxNo(), param.getPswd());
-        } else if (param.getSafeFunc().equals(CommonConstants.SafeFuncType.SAFE_FUNC_20.getCode())) {
+        } else if (param.getSafeFunc().equals(CommonConstants.SafeFuncType.SAFE_FUNC_20.getCode())) { // 택배수령(고객)
             param.setSafeFunc(null);
             param.setUseYn("N");
             param.setStDt(null);
@@ -146,7 +146,7 @@ public class UhdbServiceImpl implements UhdbService {
             param.setTaekbae(null);
             param.setHandphone(null);
             param.setPswd(null);
-        } else if (param.getSafeFunc().equals(CommonConstants.SafeFuncType.SAFE_FUNC_30.getCode())) {
+        } else if (param.getSafeFunc().equals(CommonConstants.SafeFuncType.SAFE_FUNC_30.getCode())) { // 택배발송요청(고객)
             param.setUseYn("Y");
             param.setStDt(new Date());
             param.setEnDt(null);
@@ -156,17 +156,7 @@ public class UhdbServiceImpl implements UhdbService {
             if (param.getAmt() == null) {
                 param.setAmt((double) 0);
             }
-        } else if (param.getSafeFunc().equals(CommonConstants.SafeFuncType.SAFE_FUNC_40.getCode())) {
-            param.setUseYn("Y");
-            param.setStDt(new Date());
-            param.setEnDt(null);
-            if (StringUtils.isEmpty(param.getAmtGb())) {
-                param.setAmtGb(null);
-            }
-            if (param.getAmt() == null) {
-                param.setAmt((double) 0);
-            }
-        } else if (param.getSafeFunc().equals(CommonConstants.SafeFuncType.SAFE_FUNC_50.getCode())) {
+        } else if (param.getSafeFunc().equals(CommonConstants.SafeFuncType.SAFE_FUNC_40.getCode())) { // 택배수령(택배기사)
             param.setSafeFunc(null);
             param.setUseYn("N");
             param.setStDt(null);
@@ -191,8 +181,18 @@ public class UhdbServiceImpl implements UhdbService {
                 uhdbName = uhdbList.get(0).getAptPosiNm();
             }
 
-            title = CommonConstants.SafeFuncType.SAFE_FUNC_50.getTitle();
-            body = String.format(CommonConstants.SafeFuncType.SAFE_FUNC_50.getBody(), uhdbName, param.getBoxNo());
+            title = CommonConstants.SafeFuncType.SAFE_FUNC_40.getTitle();
+            body = String.format(CommonConstants.SafeFuncType.SAFE_FUNC_40.getBody(), uhdbName, param.getBoxNo());
+        } else if (param.getSafeFunc().equals(CommonConstants.SafeFuncType.SAFE_FUNC_50.getCode())) { // 택배반품요청(고객)
+            param.setUseYn("Y");
+            param.setStDt(new Date());
+            param.setEnDt(null);
+            if (StringUtils.isEmpty(param.getAmtGb())) {
+                param.setAmtGb(null);
+            }
+            if (param.getAmt() == null) {
+                param.setAmt((double) 0);
+            }
         }
 
         this.uhdbMapper.updateUhdbLog(param);
