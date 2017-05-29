@@ -112,7 +112,7 @@
 	    		<otherwise>, ho = NULL</otherwise>
 	    	</choose>
 	    	<choose>
-	    		<when test=' amtgb != null and !"".equals(amtgb) '>, amtgb = #{amtGb}</when>
+	    		<when test=' amtGb != null and !"".equals(amtGb) '>, amtgb = #{amtGb}</when>
 	    		<otherwise>, amtgb = NULL</otherwise>
 	    	</choose>
 	    	<choose>
