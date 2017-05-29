@@ -268,7 +268,7 @@
 	</select>
 
 	<select id="selectUserUhdbList" parameterType="UserUhdbVo" resultType="UserUhdbVo">
-	    SELECT /* selectUserUhdb, 전강욱(realsnake1975@gmail.com) */ seq
+	    SELECT /* selectUserUhdbList, 전강욱(realsnake1975@gmail.com) */ seq
     	user_seq
         , apt_id
         , uhdb_id
@@ -282,7 +282,7 @@
 	    FROM user_uhdb
 	    <where>
 			<choose>
-				<when test=' aptId != null and !"".equals(aptId) '>AND aptId = #{aptId}
+				<when test=' aptId != null and !"".equals(aptId) '>AND apt_id = #{aptId}
 					AND uhdb_id = #{uhdbId}
 					AND dong = #{dong}
 					AND ho = #{ho}
