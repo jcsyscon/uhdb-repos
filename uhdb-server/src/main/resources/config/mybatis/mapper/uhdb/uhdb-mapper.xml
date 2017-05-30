@@ -44,7 +44,8 @@
 
 	<update id="updateUhdbGonginIp" parameterType="UhdbVo">
 		UPDATE /* updateUhdb, 전강욱(realsnake1975@gmail.com) */ tb_ap0102
-	    SET gongin_ip = #{gonginIp}
+	    SET upddt = NOW()
+	    , gongin_ip = #{gonginIp}
 		WHERE aptid = #{aptId}
 			AND aptposi = #{aptPosi}
 	</update>
@@ -169,7 +170,7 @@
 			AND aptposi = #{aptPosi}
 			<if test=' boxNo != null and !"".equals(boxNo) '>AND boxno = #{boxNo}</if>
 			<if test=' pswd != null and !"".equals(pswd) '>AND pswd = #{pswd}</if>
-	    ORDER BY upd_dt DESC
+	    ORDER BY upddt DESC
 	    LIMIT 1
 	</select>
 
@@ -284,11 +285,43 @@
 
 	<update id="updateUhdbUserPassword" parameterType="UhdbLogVo">
 		UPDATE /* updateUhdbUserPassword, 전강욱(realsnake1975@gmail.com) */ tb_ap0202
-		SET passwd = #{pswd}
+		SET upddt = NOW()
+		, passwd = #{pswd}
 		WHERE aptid = #{aptId}
 			AND aptposi = #{aptPosi}
 			AND aptdong = #{dong}
 			AND aptho = #{ho}
+	</update>
+
+	<update id="insertNfc" parameterType="NfcVo">
+		INSERT INTO /* insertNfc, 전강욱(realsnake1975@gmail.com) */ tb_ap0301 (
+			insdt
+			, aptid
+			, aptposi
+			, aptdong
+			, aptho
+			, perid
+			, pernm
+			, pergb
+		) VALUES (
+			NOW()
+			, #{aptId}
+			, #{aptPosi}
+			, #{dong}
+			, #{ho}
+			, #{perId}
+			, #{perNm}
+			, #{perGb}
+		)
+	</update>
+
+	<update id="deleteNfc" parameterType="NfcVo">
+		DELETE /* deleteNfc, 전강욱(realsnake1975@gmail.com) */ FROM tb_ap0301
+		WHERE aptid = #{aptId}
+			AND aptposi = #{aptPosi}
+			AND aptdong = #{dong}
+			AND aptho = #{ho}
+			AND perid = #{perId}
 	</update>
 
 </mapper>

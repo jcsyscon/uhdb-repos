@@ -448,6 +448,7 @@
 	    , del_user_seq
 		, del_date
 	    FROM ad
+	    WHERE del_yn = 'N'
 	    ORDER BY RAND()
 		LIMIT 1
 	</select>

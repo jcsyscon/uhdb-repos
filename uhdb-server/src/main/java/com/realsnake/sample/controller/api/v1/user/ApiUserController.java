@@ -404,7 +404,7 @@ public class ApiUserController {
             user.setSeq(seq);
             user.setAlarmRecYn(alarmRecYn);
 
-            this.userService.modifyUser(user);
+            this.userService.modifyUserAlarmRecYn(user);
 
             ApiResponse<UserVo> apiResponse = new ApiResponse<>();
             // apiResponse.setBody(user);

@@ -221,4 +221,10 @@ public class UserServiceImpl implements UserService {
         this.userMapper.insertUserFcm(userFcm);
     }
 
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void modifyUserAlarmRecYn(UserVo param) throws Exception {
+        this.userMapper.updateUser(param);
+    }
+
 }

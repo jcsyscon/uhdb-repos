@@ -29,6 +29,7 @@ import com.realsnake.sample.model.fcm.Data;
 import com.realsnake.sample.model.fcm.FcmReqForm;
 import com.realsnake.sample.model.fcm.Message;
 import com.realsnake.sample.model.uhdb.AptVo;
+import com.realsnake.sample.model.uhdb.NfcVo;
 import com.realsnake.sample.model.uhdb.UhdbDto;
 import com.realsnake.sample.model.uhdb.UhdbLogVo;
 import com.realsnake.sample.model.uhdb.UhdbVo;
@@ -384,6 +385,28 @@ public class UhdbServiceImpl implements UhdbService {
             logger.info("<<무인택배함 세대 비밀번호 수정>> {}", param.toString());
         } catch (Exception e) {
             logger.error("<<무인택배함 세대 비밀번호 수정 실패>>", e);
+        }
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void regNfc(NfcVo param) throws Exception {
+        try {
+            this.uhdbMapper.insertNfc(param);
+            logger.info("<<무인택배함 NFC 등록>> {}", param.toString());
+        } catch (Exception e) {
+            logger.error("<<무인택배함 NFC 등록 실패>>", e);
+        }
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void removeNfc(NfcVo param) throws Exception {
+        try {
+            this.uhdbMapper.deleteNfc(param);
+            logger.info("<<무인택배함 NFC 삭제>> {}", param.toString());
+        } catch (Exception e) {
+            logger.error("<<무인택배함 NFC 삭제 실패>>", e);
         }
     }
 

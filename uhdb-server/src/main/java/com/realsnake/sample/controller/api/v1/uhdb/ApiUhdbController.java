@@ -17,6 +17,7 @@ import com.realsnake.sample.constants.ApiResultCode;
 import com.realsnake.sample.exception.CommonApiException;
 import com.realsnake.sample.model.common.api.ApiResponse;
 import com.realsnake.sample.model.uhdb.AptVo;
+import com.realsnake.sample.model.uhdb.NfcVo;
 import com.realsnake.sample.model.uhdb.UhdbLogVo;
 import com.realsnake.sample.model.uhdb.UhdbVo;
 import com.realsnake.sample.service.uhdb.UhdbService;
@@ -169,6 +170,34 @@ public class ApiUhdbController {
             result = "OK";
         } catch (Exception e) {
             LOGGER.error("<<findUhdbUserPassword, 무인택배함 사용자 비밀번호 수정 중 오류>>", e);
+        }
+
+        return result;
+    }
+
+    @PostMapping(value = "/nfc/reg")
+    public String regNfc(NfcVo param) {
+        String result = "NOK";
+
+        try {
+            this.uhdbService.regNfc(param);
+            result = "OK";
+        } catch (Exception e) {
+            LOGGER.error("<<regNfc, 무인택배함 NFC 등록 중 오류>>", e);
+        }
+
+        return result;
+    }
+
+    @PostMapping(value = "/nfc/remove")
+    public String removeNfc(NfcVo param) {
+        String result = "NOK";
+
+        try {
+            this.uhdbService.removeNfc(param);
+            result = "OK";
+        } catch (Exception e) {
+            LOGGER.error("<<regNfc, 무인택배함 NFC 삭제 중 오류>>", e);
         }
 
         return result;

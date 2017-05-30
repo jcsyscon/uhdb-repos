@@ -54,4 +54,6 @@ public interface UserService {
 
     void modifyUserFcm(UserFcmVo userFcm) throws Exception;
 
+    void modifyUserAlarmRecYn(UserVo param) throws Exception;
+
 }

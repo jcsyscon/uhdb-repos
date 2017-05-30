@@ -70,8 +70,7 @@ public class JwtTokenUtil {
     private static final String DEVICE_TABLET = "tablet";
 
     private static String SECRET = "!@#123qwe";
-    // private static Long EXPIRATION = 604800L; // 7일(?)
-    private static Long EXPIRATION = 3600L; // 1시간, 4 테스트
+    private static Long EXPIRATION = 31536000000L; // 1년(토큰 만료 기한은 1년이며 1년이 지난 토큰은 폐기되어 해석 못함)
 
     @Value("${jwt.token.header}")
     private String jwtTokenHeader;
@@ -112,10 +111,10 @@ public class JwtTokenUtil {
     private Claims getClaimsFromToken(String token) {
         Claims claims = null;
         try {
-            claims = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token).getBody();
+            claims = Jwts.parser().setSigningKey(SECRET.getBytes()).parseClaimsJws(token).getBody();
 
             // for (String key : claims.keySet()) {
-            // System.out.println("<<Claims>> Key: " + key + ", value: " + (String) claims.get(key));
+            // logger.debug("<<Claims>> key: {}, value: {}", key, claims.get(key));
             // }
         } catch (Exception e) {
             logger.error("<<JWT 오류>>", e);
@@ -200,7 +199,7 @@ public class JwtTokenUtil {
     private String generateToken(Map<String, Object> claims) {
         logger.debug(claims.toString());
 
-        return Jwts.builder().setClaims(claims).setExpiration(generateExpirationDate()).signWith(SignatureAlgorithm.HS512, SECRET).compact();
+        return Jwts.builder().setClaims(claims).setExpiration(generateExpirationDate()).signWith(SignatureAlgorithm.HS512, SECRET.getBytes()).compact();
     }
 
     public Boolean canTokenBeRefreshed(String token, Date lastPasswordReset) {

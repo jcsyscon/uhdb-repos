@@ -9,13 +9,14 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.realsnake.sample.model.uhdb.AptVo;
+import com.realsnake.sample.model.uhdb.NfcVo;
 import com.realsnake.sample.model.uhdb.UhdbDto;
 import com.realsnake.sample.model.uhdb.UhdbLogVo;
 import com.realsnake.sample.model.uhdb.UhdbVo;
 
 /**
  * @author 전강욱(realsnake1975@gmail.com) <br />
- *         This Mapper class mapped db-table called tb_ap0101, tb_ap0102, tb_bx0201, tb_bx0201h
+ *         This Mapper class mapped db-table called tb_ap0101, tb_ap0102, tb_bx0201, tb_bx0201h 등등
  */
 @Mapper
 public interface UhdbMapper {
@@ -41,5 +42,9 @@ public interface UhdbMapper {
     String selectUhdbUserPassword(UhdbLogVo param);
 
     int updateUhdbUserPassword(UhdbLogVo param);
+
+    int insertNfc(NfcVo param);
+
+    int deleteNfc(NfcVo param);
 
 }

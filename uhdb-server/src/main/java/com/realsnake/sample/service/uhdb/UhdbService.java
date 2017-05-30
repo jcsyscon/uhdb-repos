@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.realsnake.sample.model.uhdb.AptVo;
+import com.realsnake.sample.model.uhdb.NfcVo;
 import com.realsnake.sample.model.uhdb.UhdbDto;
 import com.realsnake.sample.model.uhdb.UhdbLogVo;
 import com.realsnake.sample.model.uhdb.UhdbVo;
@@ -42,5 +43,9 @@ public interface UhdbService {
     String findUhdbUserPassword(UhdbLogVo param) throws Exception;
 
     void modifyUhdbUserPassword(UhdbLogVo param) throws Exception;
+
+    void regNfc(NfcVo param) throws Exception;
+
+    void removeNfc(NfcVo param) throws Exception;
 
 }
