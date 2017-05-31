@@ -68,7 +68,7 @@ public class ApiUhdbController {
      * @throws CommonApiException
      */
     @PostMapping(value = "/{aptId}/{uhdbId}")
-    public ApiResponse<?> searchUhdb(@PathVariable("aptId") String aptId, @PathVariable("aptId") String uhdbId) throws CommonApiException {
+    public ApiResponse<?> searchUhdb(@PathVariable("aptId") String aptId, @PathVariable("uhdbId") String uhdbId) throws CommonApiException {
         try {
             UhdbVo param = new UhdbVo();
             param.setAptId(aptId);
@@ -201,6 +201,29 @@ public class ApiUhdbController {
         }
 
         return result;
+    }
+
+
+    /**
+     * 택배함 보관함 사용내역 조회
+     *
+     * @param gubun PAST / NOW
+     * @param seq
+     * @return
+     * @throws CommonApiException
+     */
+    @PostMapping(value = "/log/{gubun}/{seq}")
+    public ApiResponse<?> searchUhdbLogList(@PathVariable("gubun") String gubun, @PathVariable("seq") Integer seq) throws CommonApiException {
+        try {
+            List<UhdbLogVo> uhdbLogList = this.uhdbService.findUhdbLogList(seq, gubun);
+
+            ApiResponse<List<UhdbLogVo>> apiResponse = new ApiResponse<>();
+            apiResponse.setBody(uhdbLogList);
+
+            return apiResponse;
+        } catch (Exception e) {
+            throw new CommonApiException(ApiResultCode.COMMON_FAIL, e);
+        }
     }
 
 }

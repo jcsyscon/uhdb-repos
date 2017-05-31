@@ -410,4 +410,30 @@ public class UhdbServiceImpl implements UhdbService {
         }
     }
 
+    @Override
+    public List<UhdbLogVo> findUhdbLogList(Integer seq, String gubun) throws Exception {
+        try {
+            logger.info("<<무인택배함 보관함 사용내역 조회>> 사용자일련번호: {}, 구분: {}", seq, gubun);
+
+            List<Map<String, Object>> userUhdbList = this.uhdbMapper.selectAptUhdbUserList(seq);
+
+            if (userUhdbList != null && !userUhdbList.isEmpty()) {
+                for (Map<String, Object> temp : userUhdbList) {
+                    String aptId = (String) temp.get("aptId");
+                    String aptPosi = (String) temp.get("aptPosi");
+                    String dong = (String) temp.get("dong");
+                    String ho = (String) temp.get("ho");
+                }
+            }
+
+            // UhdbLogVo param = new UhdbLogVo();
+            // param.setAptId(aptId);
+            // param.setAptPosi(uhdbId);
+        } catch (Exception e) {
+            logger.error("<<무인택배함 보관함 사용내역 조회 실패>>", e);
+        }
+
+        return null;
+    }
+
 }
