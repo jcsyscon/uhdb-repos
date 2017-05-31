@@ -100,10 +100,10 @@
 	<update id="updateNotice" parameterType="NoticeVo">
 	    UPDATE /* updateNotice, 전강욱(realsnake1975@gmail.com) */ board_notice
 	    <set>
-	    	<if test=' title != null and !"".equals(title) '>title = #{title}</if>
-	    	<if test=' content != null and !"".equals(content) '>, content = #{content}</if>
-	    	, mod_user_seq = #{modUserSeq}
-	    	, mod_date = NOW()
+	    	<if test=' title != null and !"".equals(title) '>title = #{title},</if>
+	    	<if test=' content != null and !"".equals(content) '>content = #{content},</if>
+	    	mod_user_seq = #{modUserSeq},
+	    	mod_date = NOW()
 	    </set>
 		WHERE seq = #{seq}
 	</update>

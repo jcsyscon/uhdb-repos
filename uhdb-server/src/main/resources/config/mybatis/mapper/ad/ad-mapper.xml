@@ -116,11 +116,11 @@
 	<update id="updateSponsor" parameterType="SponsorVo">
 	    UPDATE /* updateSponsor, 전강욱(realsnake1975@gmail.com) */ sponsor
 	    <set>
-	    	<if test=' name != null and !"".equals(name) '>name = #{name}</if>
-	    	<if test=' mobile != null and !"".equals(mobile) '>, mobile = #{mobile}</if>
-	    	<if test=' email != null and !"".equals(email) '>, email = #{email}</if>
-	    	, mod_user_seq = #{modUserSeq}
-	    	, mod_date = NOW()
+	    	<if test=' name != null and !"".equals(name) '>name = #{name}, </if>
+	    	<if test=' mobile != null and !"".equals(mobile) '>mobile = #{mobile},</if>
+	    	<if test=' email != null and !"".equals(email) '>email = #{email},</if>
+	    	mod_user_seq = #{modUserSeq},
+	    	mod_date = NOW()
 	    </set>
 		WHERE seq = #{seq}
 	</update>
@@ -246,12 +246,12 @@
 	<update id="updateShop" parameterType="ShopVo">
 	    UPDATE /* updateShop, 전강욱(realsnake1975@gmail.com) */ shop
 	    <set>
-	    	<if test=' sponsorSeq != null and sponsorSeq > 0 '>sponsor_seq = #{sponsorSeq}</if>
-	    	<if test=' name != null and !"".equals(name) '>, name = #{name}</if>
-	    	<if test=' tel != null and !"".equals(tel) '>, tel = #{tel}</if>
-	    	<if test=' homepage != null and !"".equals(homepage) '>, homepage = #{homepage}</if>
-	    	, mod_user_seq = #{modUserSeq}
-	    	, mod_date = NOW()
+	    	<if test=' sponsorSeq != null and sponsorSeq > 0 '>sponsor_seq = #{sponsorSeq},</if>
+	    	<if test=' name != null and !"".equals(name) '>name = #{name},</if>
+	    	<if test=' tel != null and !"".equals(tel) '>tel = #{tel},</if>
+	    	<if test=' homepage != null and !"".equals(homepage) '>homepage = #{homepage},</if>
+	    	mod_user_seq = #{modUserSeq},
+	    	mod_date = NOW()
 	    </set>
 		WHERE seq = #{seq}
 	</update>
@@ -402,19 +402,19 @@
 	<update id="updateAd" parameterType="AdVo">
 	    UPDATE /* updateAd, 전강욱(realsnake1975@gmail.com) */ ad
 	    <set>
-	    	<if test=' shopSeq != null and shopSeq > 0 '>shop_seq = #{shopSeq}</if>
-	    	<if test=' title != null and !"".equals(title) '>, title = #{title}</if>
-	    	<if test=' copy != null and !"".equals(copy) '>, copy = #{copy}</if>
-	    	<if test=' way != null and !"".equals(way) '>, way = #{way}</if>
-	    	<if test=' unitPrice != null and unitPrice > 0 '>unit_price = #{unitPrice}</if>
-	    	<if test=' startDate != null and !"".equals(startDate) '>, start_date = #{startDate}</if>
-	    	<if test=' endDate != null and !"".equals(endDate) '>, end_date = #{endDate}</if>
-	    	<if test=' targetArea != null and !"".equals(targetArea) '>, target_area = #{targetArea}</if>
-	    	<if test=' targetAge != null and !"".equals(targetAge) '>, target_age = #{targetAge}</if>
-	    	<if test=' targetSex != null and !"".equals(targetSex) '>, target_sex = #{targetSex}</if>
-	    	<if test=' targetUrl != null and !"".equals(targetUrl) '>, target_url = #{targetUrl}</if>
-	    	, mod_user_seq = #{modUserSeq}
-	    	, mod_date = NOW()
+	    	<if test=' shopSeq != null and shopSeq > 0 '>shop_seq = #{shopSeq},</if>
+	    	<if test=' title != null and !"".equals(title) '>title = #{title},</if>
+	    	<if test=' copy != null and !"".equals(copy) '>copy = #{copy},</if>
+	    	<if test=' way != null and !"".equals(way) '>way = #{way},</if>
+	    	<if test=' unitPrice != null and unitPrice > 0 '>unit_price = #{unitPrice},</if>
+	    	<if test=' startDate != null and !"".equals(startDate) '>start_date = #{startDate},</if>
+	    	<if test=' endDate != null and !"".equals(endDate) '>end_date = #{endDate},</if>
+	    	<if test=' targetArea != null and !"".equals(targetArea) '>target_area = #{targetArea},</if>
+	    	<if test=' targetAge != null and !"".equals(targetAge) '>target_age = #{targetAge},</if>
+	    	<if test=' targetSex != null and !"".equals(targetSex) '>target_sex = #{targetSex},</if>
+	    	<if test=' targetUrl != null and !"".equals(targetUrl) '>target_url = #{targetUrl},</if>
+	    	mod_user_seq = #{modUserSeq},
+	    	mod_date = NOW()
 	    </set>
 		WHERE seq = #{seq}
 	</update>

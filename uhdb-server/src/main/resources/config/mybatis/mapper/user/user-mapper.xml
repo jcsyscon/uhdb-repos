@@ -133,12 +133,12 @@
 	<update id="updateUser" parameterType="UserVo">
 	    UPDATE /* updateUser, 전강욱(realsnake1975@gmail.com) */ user
 	    <set>
-	    	<if test=' name != null and !"".equals(name) '>, name = #{name}</if>
-	    	<if test=' mobile != null and !"".equals(mobile) '>, mobile = #{mobile}</if>
-	    	<if test=' email != null and !"".equals(email) '>, email = #{email}</if>
-	    	<if test=' birthDate != null and !"".equals(birthDate) '>, birth_date = #{birthDate}</if>
-	    	<if test=' "Y".equals(sex) or "N".equals(sex) '>, sex = #{sex}</if>
-	    	<if test=' "Y".equals(alarmRecYn) or "N".equals(alarmRecYn) '>, alarm_rec_yn = #{alarmRecYn}</if>
+	    	<if test=' name != null and !"".equals(name) '>name = #{name},</if>
+	    	<if test=' mobile != null and !"".equals(mobile) '>mobile = #{mobile},</if>
+	    	<if test=' email != null and !"".equals(email) '>email = #{email},</if>
+	    	<if test=' birthDate != null and !"".equals(birthDate) '>birth_date = #{birthDate},</if>
+	    	<if test=' "Y".equals(sex) or "N".equals(sex) '>sex = #{sex},</if>
+	    	<if test=' "Y".equals(alarmRecYn) or "N".equals(alarmRecYn) '>alarm_rec_yn = #{alarmRecYn}</if>
 	    </set>
 	    <where>
 			<choose>

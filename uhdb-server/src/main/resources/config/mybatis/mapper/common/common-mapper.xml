@@ -193,11 +193,11 @@
 	<update id="updateCommonCode" parameterType="CommonCodeVo">
 		UPDATE /* updateCommonCode, 전강욱(realsnake1975@gmail.com) */ common.common_code
 		<set>
-	    	<if test=' code != null and !"".equals(code) '>, code = #{code}</if>
-	    	<if test=' value != null and !"".equals(value) '>, value = #{value}</if>
-	    	<if test=' sort_order != null and sort_order > 0 '>, sort_order = #{sortOrder}</if>
-			, mod_user_seq = #{modUserSeq}
-			, mod_date = NOW()
+	    	<if test=' code != null and !"".equals(code) '>code = #{code},</if>
+	    	<if test=' value != null and !"".equals(value) '>value = #{value},</if>
+	    	<if test=' sort_order != null and sort_order > 0 '>sort_order = #{sortOrder},</if>
+			mod_user_seq = #{modUserSeq},
+			mod_date = NOW()
 		</set>
 		WHERE code = #{code}
      </update>
