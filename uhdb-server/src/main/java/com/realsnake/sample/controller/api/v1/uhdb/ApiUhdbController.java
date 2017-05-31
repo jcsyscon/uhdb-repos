@@ -18,9 +18,11 @@ import com.realsnake.sample.exception.CommonApiException;
 import com.realsnake.sample.model.common.api.ApiResponse;
 import com.realsnake.sample.model.uhdb.AptVo;
 import com.realsnake.sample.model.uhdb.NfcVo;
+import com.realsnake.sample.model.uhdb.UhdbDto;
 import com.realsnake.sample.model.uhdb.UhdbLogVo;
 import com.realsnake.sample.model.uhdb.UhdbVo;
 import com.realsnake.sample.service.uhdb.UhdbService;
+import com.realsnake.sample.util.MobilePagingHelper;
 
 @RestController("ApiV1UhdbController")
 @RequestMapping(value = "/api/v1/uhdb")
@@ -203,21 +205,32 @@ public class ApiUhdbController {
         return result;
     }
 
-
     /**
      * 택배함 보관함 사용내역 조회
      *
-     * @param gubun PAST / NOW
+     * @param gubun past / now
      * @param seq
+     * @param mobilePagingHelper
+     * @param param
      * @return
      * @throws CommonApiException
      */
-    @PostMapping(value = "/log/{gubun}/{seq}")
-    public ApiResponse<?> searchUhdbLogList(@PathVariable("gubun") String gubun, @PathVariable("seq") Integer seq) throws CommonApiException {
+    @PostMapping(value = "/log/{gubun}/{userSeq}")
+    public ApiResponse<?> searchUhdbLogList(@PathVariable("gubun") String gubun, @PathVariable("userSeq") Integer userSeq, MobilePagingHelper mobilePagingHelper, UhdbDto param)
+            throws CommonApiException {
         try {
-            List<UhdbLogVo> uhdbLogList = this.uhdbService.findUhdbLogList(seq, gubun);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication == null) {
+                LOGGER.debug("<<무인택배함 보관함 사용내역 조회(/log/{gubun}/{userSeq})>> 인증 실패");
+                throw new CommonApiException(ApiResultCode.NOTFOUND_USER);
+            }
 
-            ApiResponse<List<UhdbLogVo>> apiResponse = new ApiResponse<>();
+            param.setUserSeq(userSeq);
+            param.setGubun(gubun);
+
+            List<UhdbLogVo> uhdbLogList = this.uhdbService.findUhdbLogList4Mobile(param);
+
+            ApiResponse<List<UhdbLogVo>> apiResponse = new ApiResponse<>(mobilePagingHelper.getNextPageToken(), mobilePagingHelper.getPageSize());
             apiResponse.setBody(uhdbLogList);
 
             return apiResponse;

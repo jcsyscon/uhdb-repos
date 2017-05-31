@@ -48,6 +48,6 @@ public interface UhdbService {
 
     void removeNfc(NfcVo param) throws Exception;
 
-    List<UhdbLogVo> findUhdbLogList(Integer seq, String gubun) throws Exception;
+    List<UhdbLogVo> findUhdbLogList4Mobile(UhdbDto param) throws Exception;
 
 }

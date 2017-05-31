@@ -97,7 +97,7 @@
 	    	</choose>
 	    	<if test=' "Y".equals(useYn) or "N".equals(useYn) '>, useyn = #{useYn}</if>
 	    	<choose>
-	    		<when test=' stDt != null '>, stdt = NOW()</when>
+	    		<when test=' stDt != null '>, stdt = now()</when>
 	    		<otherwise>, stdt = NULL</otherwise>
 	    	</choose>
 	    	<choose>
@@ -176,6 +176,10 @@
 
 	<sql id="whereClauseOfUhdbLog">
 	    <where>
+	    	<if test=' aptId != null and !"".equals(aptId) '>AND aptid = #{aptId}</if>
+	        <if test=' aptPosi != null and !"".equals(aptPosi) '>AND aptposi = #{aptPosi}</if>
+	        <if test=' dong != null and !"".equals(dong) '>AND dong = #{dong}</if>
+	        <if test=' ho != null and !"".equals(ho) '>AND ho = #{ho}</if>
 		    <choose>
 		    	<when test=' pagingHelper.search.startDate != null and !"".equals(pagingHelper.search.startDate) '>
 			    	AND reg_date &gt;= CONCAT(#{pagingHelper.search.startDate}, ' 00:00:00')
@@ -224,12 +228,15 @@
 
 	<select id="selectUhdbLogListCount" parameterType="UhdbDto" resultType="int">
 	    SELECT /* selectUhdbLogListCount, 전강욱(realsnake1975@gmail.com) */ COUNT(*)
-	    FROM tb_bx0201h
+	    <choose>
+	    	<when test=' "now".equals(gubun) '>FROM tb_bx0201</when>
+	    	<otherwise>FROM tb_bx0201h</otherwise>
+	    </choose>
 	    <include refid="whereClauseOfUhdbLog" />
 	</select>
 
 	<select id="selectUhdbLogList" parameterType="UhdbDto" resultType="UhdbLogVo">
-		SELECT /* selectAptList, 전강욱(realsnake1975@gmail.com) */ upddt AS upd_dt,
+		SELECT /* selectUhdbLogList, 전강욱(realsnake1975@gmail.com) */ upddt AS upd_dt,
 	    aptid AS apt_id,
 	    aptposi AS apt_posi,
 	    boxno AS box_no,
@@ -246,7 +253,10 @@
 	    handphone,
 	    taekbae,
 	    pswd
-		FROM tb_bx0201h
+	    <choose>
+	    	<when test=' "now".equals(gubun) '>FROM tb_bx0201</when>
+	    	<otherwise>FROM tb_bx0201h</otherwise>
+	    </choose>
 	    <include refid="whereClauseOfUhdbLog" />
 	    <include refid="orderClauseOfUhdbLog" />
 	    LIMIT #{pagingHelper.startNum}, #{pagingHelper.endNum}
@@ -267,10 +277,10 @@
         C.dong,
         C.ho
 		FROM tb_ap0101 A JOIN tb_ap0102 B ON A.aptid = B.aptid
-						 		JOIN user_uhdb C ON B.aptid = C.apt_id AND B.aptposi = C.uhdb_id
+						 		 JOIN user_uhdb C ON B.aptid = C.apt_id AND B.aptposi = C.uhdb_id
 		WHERE C.user_seq = #{userSeq}
 			AND C.del_yn = 'N'
-        ORDER BY seq DESC
+        ORDER BY C.seq DESC
 	</select>
 
 	<select id="selectUhdbUserPassword" parameterType="UhdbLogVo" resultType="string">
@@ -323,5 +333,94 @@
 			AND aptho = #{ho}
 			AND perid = #{perId}
 	</update>
+
+	<sql id="whereClauseOfUhdbLog4Mobile">
+	    <where>
+	    	seq &lt; #{mobilePagingHelper.nextPageToken}
+	    	<if test=' aptId != null and !"".equals(aptId) '>AND aptid = #{aptId}</if>
+	        <if test=' aptPosi != null and !"".equals(aptPosi) '>AND aptposi = #{aptPosi}</if>
+	        <if test=' dong != null and !"".equals(dong) '>AND dong = #{dong}</if>
+	        <if test=' ho != null and !"".equals(ho) '>AND ho = #{ho}</if>
+		    <choose>
+		    	<when test=' mobilePagingHelper.search.startDate != null and !"".equals(mobilePagingHelper.search.startDate) '>
+			    	AND reg_date &gt;= CONCAT(#{mobilePagingHelper.search.startDate}, ' 00:00:00')
+			    	<if test=' mobilePagingHelper.search.endDate != null and !"".equals(mobilePagingHelper.search.endDate) '>
+			    		AND reg_date &lt;= CONCAT(#{mobilePagingHelper.search.endDate}, ' 23:59:59')
+			    	</if>
+		    	</when>
+		    	<otherwise>
+			    	<if test=' mobilePagingHelper.search.endDate != null and !"".equals(mobilePagingHelper.search.endDate) '>
+			    		AND reg_date &lt;= CONCAT(#{mobilePagingHelper.search.endDate}, ' 23:59:59')
+			    	</if>
+		    	</otherwise>
+		    </choose>
+	    	<if test=' mobilePagingHelper.search.keyword != null and !"".equals(mobilePagingHelper.search.keyword) '>
+			    <choose>
+			    	<when test=' "username".equals(mobilePagingHelper.search.item) '>
+						AND username LIKE CONCAT('%', #{mobilePagingHelper.search.keyword}, '%')
+			    	</when>
+			    	<when test=' "name".equals(mobilePagingHelper.search.item) '>
+						AND name = #{mobilePagingHelper.search.keyword}
+			    	</when>
+			    	<when test=' "mobile".equals(mobilePagingHelper.search.item) '>
+						AND mobile = #{mobilePagingHelper.search.keyword}
+			    	</when>
+			    	<when test=' "email".equals(mobilePagingHelper.search.item) '>
+						AND email = #{mobilePagingHelper.search.keyword}
+			    	</when>
+			    	<otherwise>
+						AND (
+							username LIKE CONCAT('%', #{mobilePagingHelper.search.keyword}, '%')
+						)
+			    	</otherwise>
+			    </choose>
+	    	</if>
+	    </where>
+	</sql>
+
+	<sql id="orderClauseOfUhdbLog4Mobile">
+		<if test=' mobilePagingHelper != null and mobilePagingHelper.sortList != null '>
+			ORDER BY
+            <foreach collection="mobilePagingHelper.sortList" item="sort" open="" separator="," close="">
+                ${sort.column} ${sort.ascOrDesc}
+            </foreach>
+        </if>
+	</sql>
+
+	<select id="selectUhdbLogListCount4Mobile" parameterType="UhdbDto" resultType="int">
+	    SELECT /* selectUhdbLogListCount4Mobile, 전강욱(realsnake1975@gmail.com) */ COUNT(*)
+	    <choose>
+	    	<when test=' "now".equals(gubun) '>FROM tb_bx0201</when>
+	    	<otherwise>FROM tb_bx0201h</otherwise>
+	    </choose>
+	    <include refid="whereClauseOfUhdbLog4Mobile" />
+	</select>
+
+	<select id="selectUhdbLogList4Mobile" parameterType="UhdbDto" resultType="UhdbLogVo">
+		SELECT /* selectUhdbLogList4Mobile, 전강욱(realsnake1975@gmail.com) */ upddt AS upd_dt,
+	    aptid AS apt_id,
+	    aptposi AS apt_posi,
+	    boxno AS box_no,
+	    safefunc AS safe_func,
+	    useyn AS use_yn,
+	    stdt AS st_dt,
+	    endt AS en_dt,
+	    dong,
+	    ho,
+	    amtgb AS amt_gb,
+	    amt,
+	    taekbae_handphone,
+	    taekbae_pswd,
+	    handphone,
+	    taekbae,
+	    pswd
+	    <choose>
+	    	<when test=' "now".equals(gubun) '>FROM tb_bx0201</when>
+	    	<otherwise>FROM tb_bx0201h</otherwise>
+	    </choose>
+	    <include refid="whereClauseOfUhdbLog4Mobile" />
+	    <include refid="orderClauseOfUhdbLog4Mobile" />
+		LIMIT 0, #{mobilePagingHelper.pageSize}
+	</select>
 
 </mapper>

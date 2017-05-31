@@ -47,4 +47,8 @@ public interface UhdbMapper {
 
     int deleteNfc(NfcVo param);
 
+    int selectUhdbLogListCount4Mobile(UhdbDto param);
+
+    List<UhdbLogVo> selectUhdbLogList4Mobile(UhdbDto param);
+
 }

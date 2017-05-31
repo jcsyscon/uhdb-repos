@@ -12,6 +12,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.ibatis.type.Alias;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
@@ -25,6 +26,8 @@ public class UhdbLogVo implements Serializable {
     /** SID */
     private static final long serialVersionUID = 4998511915929320817L;
 
+    private Integer seq;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private Date updDt;
     private String aptId;
     private String aptPosi;
@@ -34,7 +37,9 @@ public class UhdbLogVo implements Serializable {
     private String safeFunc;
     /** 보관여부 */
     private String useYn;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private Date stDt;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private Date enDt;
     private String dong;
     private String ho;
@@ -46,13 +51,23 @@ public class UhdbLogVo implements Serializable {
     /** 택배기사 전화번호 */
     private String taekbaeHandphone;
     /** 택배기사 비밀번호 */
+    // @JsonIgnore
     private String taekbaePswd;
-    /** 고객비밀번호 */
+    /** 고객핸드폰번호 */
     private String handphone;
     /** 고객비밀번호 */
+    // @JsonIgnore
     private String pswd;
     // private String plcAddr;
     // private String sendStatus;
+
+    public Integer getSeq() {
+        return seq;
+    }
+
+    public void setSeq(Integer seq) {
+        this.seq = seq;
+    }
 
     public Date getUpdDt() {
         return updDt;

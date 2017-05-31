@@ -226,6 +226,9 @@ public class UhdbServiceImpl implements UhdbService {
             }
 
             if (userUhdbList == null || userUhdbList.isEmpty()) {
+                /* @formatter:off */
+                // 테스트 기간 중 SMS 발송 중지
+                /**
                 // 3. 핸드폰번호로도 아파트아이디, 택배함 위치, 동, 호로도 사용자를 찾을 수 없다면 SMS 발송
                 CompletableFuture<String> result = this.smsUtils.send(userMobile, body);
 
@@ -238,6 +241,8 @@ public class UhdbServiceImpl implements UhdbService {
                 this.commonService.regSendLog(send);
 
                 logger.info("<<SMS 발송>> {}", send.toString());
+                */
+                /* @formatter:on */
             } else {
                 List<Integer> userSeqList = new ArrayList<>();
 
@@ -295,7 +300,7 @@ public class UhdbServiceImpl implements UhdbService {
     public List<UhdbLogVo> findUhdbLogList(UhdbDto param) throws Exception {
         if (param.getPagingHelper().getSortList() == null || param.getPagingHelper().getSortList().isEmpty()) {
             Sort sort = new Sort();
-            sort.setColumn("seq");
+            sort.setColumn("upddt");
             sort.setAscOrDesc(CommonConstants.SortType.DESC.getValue());
 
             List<Sort> sortList = new ArrayList<>();
@@ -411,29 +416,50 @@ public class UhdbServiceImpl implements UhdbService {
     }
 
     @Override
-    public List<UhdbLogVo> findUhdbLogList(Integer seq, String gubun) throws Exception {
-        try {
-            logger.info("<<무인택배함 보관함 사용내역 조회>> 사용자일련번호: {}, 구분: {}", seq, gubun);
+    @Transactional(readOnly = true)
+    public List<UhdbLogVo> findUhdbLogList4Mobile(UhdbDto param) throws Exception {
+        logger.info("<<무인택배함 보관함 사용내역 조회>> {}", param.toString());
 
-            List<Map<String, Object>> userUhdbList = this.uhdbMapper.selectAptUhdbUserList(seq);
+        List<Map<String, Object>> userUhdbList = this.uhdbMapper.selectAptUhdbUserList(param.getUserSeq());
 
-            if (userUhdbList != null && !userUhdbList.isEmpty()) {
-                for (Map<String, Object> temp : userUhdbList) {
-                    String aptId = (String) temp.get("aptId");
-                    String aptPosi = (String) temp.get("aptPosi");
-                    String dong = (String) temp.get("dong");
-                    String ho = (String) temp.get("ho");
-                }
-            }
-
-            // UhdbLogVo param = new UhdbLogVo();
-            // param.setAptId(aptId);
-            // param.setAptPosi(uhdbId);
-        } catch (Exception e) {
-            logger.error("<<무인택배함 보관함 사용내역 조회 실패>>", e);
+        if (userUhdbList == null || userUhdbList.isEmpty()) {
+            return null;
         }
 
-        return null;
+        if (param.getMobilePagingHelper().getSortList() == null || param.getMobilePagingHelper().getSortList().isEmpty()) {
+            Sort sort = new Sort();
+            sort.setColumn("upddt");
+            sort.setAscOrDesc(CommonConstants.SortType.DESC.getValue());
+
+            List<Sort> sortList = new ArrayList<>();
+            sortList.add(sort);
+
+            param.getMobilePagingHelper().setSortList(sortList);
+        }
+
+        Map<String, Object> temp = userUhdbList.get(0);
+        String aptId = (String) temp.get("aptId");
+        String aptPosi = (String) temp.get("aptPosi");
+        String dong = (String) temp.get("dong");
+        String ho = (String) temp.get("ho");
+
+        param.setAptId(aptId);
+        param.setAptPosi(aptPosi);
+        param.setDong(dong);
+        param.setHo(ho);
+
+        param.getMobilePagingHelper().setTotalCount(this.uhdbMapper.selectUhdbLogListCount4Mobile(param));
+        List<UhdbLogVo> uhdbLogList = this.uhdbMapper.selectUhdbLogList4Mobile(param);
+
+        int nextPageToken = 0;
+
+        if (uhdbLogList != null && !uhdbLogList.isEmpty()) {
+            nextPageToken = uhdbLogList.get(uhdbLogList.size() - 1).getSeq();
+        }
+
+        param.getMobilePagingHelper().setNextPageToken(nextPageToken);
+
+        return uhdbLogList;
     }
 
 }
