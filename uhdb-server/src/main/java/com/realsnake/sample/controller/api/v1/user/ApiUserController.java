@@ -233,8 +233,14 @@ public class ApiUserController {
 
             UserVo user = this.userService.findUser(seq);
 
-            ApiResponse<UserVo> apiResponse = new ApiResponse<>();
-            apiResponse.setBody(user);
+            List<Map<String, Object>> mapList = this.uhdbService.findAptUhdbUserList(seq);
+
+            Map<String, Object> responseMap = new HashMap<>();
+            responseMap.put("user", user);
+            responseMap.put("aptList", mapList);
+
+            ApiResponse<Map<String, Object>> apiResponse = new ApiResponse<>();
+            apiResponse.setBody(responseMap);
 
             return apiResponse;
         } catch (Exception e) {

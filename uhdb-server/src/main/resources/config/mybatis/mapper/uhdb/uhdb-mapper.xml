@@ -263,17 +263,17 @@
 	</select>
 
 	<select id="selectAptUhdbUserList" parameterType="int" resultType="map">
-		SELECT /* selectAptUhdbUserList, 전강욱(realsnake1975@gmail.com) */ A.aptid AS apt_id,
-	    A.aptnm AS apt_nm,
-	    A.aptsnm AS apts_nm,
-	    A.zipcd AS zip_cd,
+		SELECT /* selectAptUhdbUserList, 전강욱(realsnake1975@gmail.com) */ A.aptid AS aptId,
+	    A.aptnm AS aptNm,
+	    A.aptsnm AS aptsNm,
+	    A.zipcd AS zipCd,
 	    A.city,
 	    A.sigu,
 	    A.addr1,
 	    A.addr2,
-	    A.inst_cnt,
-	    B.aptposi AS apt_posi,
-	    B.aptPosiNm AS apt_posi_nm,
+	    A.inst_cnt AS instCnt,
+	    B.aptposi AS aptPosi,
+	    B.aptPosiNm AS aptPosiNm,
         C.dong,
         C.ho
 		FROM tb_ap0101 A JOIN tb_ap0102 B ON A.aptid = B.aptid
