@@ -336,7 +336,7 @@
 
 	<sql id="whereClauseOfUhdbLog4Mobile">
 	    <where>
-	    	seq &lt; #{mobilePagingHelper.nextPageToken}
+	    	<if test=' "past".equals(gubun) '>seq &lt; #{mobilePagingHelper.nextPageToken}</if>
 	    	<if test=' aptId != null and !"".equals(aptId) '>AND aptid = #{aptId}</if>
 	        <if test=' aptPosi != null and !"".equals(aptPosi) '>AND aptposi = #{aptPosi}</if>
 	        <if test=' dong != null and !"".equals(dong) '>AND dong = #{dong}</if>
@@ -413,10 +413,16 @@
 	    taekbae_pswd,
 	    handphone,
 	    taekbae,
-	    pswd
+	    pswd,
 	    <choose>
-	    	<when test=' "now".equals(gubun) '>FROM tb_bx0201</when>
-	    	<otherwise>FROM tb_bx0201h</otherwise>
+	    	<when test=' "now".equals(gubun) '>
+	    		0 AS seq
+	    		FROM tb_bx0201
+	    	</when>
+	    	<otherwise>
+	    		seq
+	    		FROM tb_bx0201h
+	    	</otherwise>
 	    </choose>
 	    <include refid="whereClauseOfUhdbLog4Mobile" />
 	    <include refid="orderClauseOfUhdbLog4Mobile" />

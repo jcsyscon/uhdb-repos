@@ -137,7 +137,7 @@
 	    	<if test=' mobile != null and !"".equals(mobile) '>mobile = #{mobile},</if>
 	    	<if test=' email != null and !"".equals(email) '>email = #{email},</if>
 	    	<if test=' birthDate != null and !"".equals(birthDate) '>birth_date = #{birthDate},</if>
-	    	<if test=' "Y".equals(sex) or "N".equals(sex) '>sex = #{sex},</if>
+	    	<if test=' "M".equals(sex) or "F".equals(sex) '>sex = #{sex},</if>
 	    	<if test=' "Y".equals(alarmRecYn) or "N".equals(alarmRecYn) '>alarm_rec_yn = #{alarmRecYn}</if>
 	    </set>
 	    <where>
@@ -232,7 +232,7 @@
 	</update>
 
 	<update id="deleteUserUhdb" parameterType="UserUhdbVo">
-	    UPDATE /* deleteUserUhdb, 전강욱(realsnake1975@gmail.com) */ INTO user_uhdb
+	    UPDATE /* deleteUserUhdb, 전강욱(realsnake1975@gmail.com) */ user_uhdb
 	    SET del_user_seq = #{delUserSeq}
 	    , del_yn = 'Y'
 	    , del_date = NOW()
@@ -315,7 +315,7 @@
 	</update>
 
 	<update id="deleteUserFcm" parameterType="UserFcmVo">
-	    UPDATE /* deleteUserFcm, 전강욱(realsnake1975@gmail.com) */ INTO user_fcm
+	    UPDATE /* deleteUserFcm, 전강욱(realsnake1975@gmail.com) */ user_fcm
 	    SET del_user_seq = #{delUserSeq}
 	    , del_yn = 'Y'
 	    , del_date = NOW()

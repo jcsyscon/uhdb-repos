@@ -61,7 +61,7 @@ public class ApiUserController {
      * @throws Exception
      */
     @GetMapping(value = "/double-check/{type}/{param}")
-    public ApiResponse<?> doubleCheckProcessing(@PathVariable("type") String type, @PathVariable("param") String param) throws Exception {
+    public ApiResponse<?> doubleCheckProcessing(@PathVariable("type") String type, @PathVariable("param") String param) throws CommonApiException {
         try {
             String result = this.userService.checkDoubleUser(type, param);
 

@@ -19,14 +19,20 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = {CommonException.class})
     public void handleException(CommonException e) {
+        // LOGGER.error("================================================================================");
+        // LOGGER.error("<<Exception>> {}", e.getMessage());
+        // LOGGER.error("================================================================================");
+
         LOGGER.error("================================================================================");
-        LOGGER.error("<<Exception>> {}", e.getMessage());
+        LOGGER.error("<<CommonException>>", e);
         LOGGER.error("================================================================================");
     }
 
     @ExceptionHandler(value = {Exception.class})
     public String HandleException(Exception e) {
+        LOGGER.error("================================================================================");
         LOGGER.error("<<Exception>>", e);
+        LOGGER.error("================================================================================");
 
         return "error";
     }
@@ -35,8 +41,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = CommonApiException.class)
     @ResponseBody
     public ApiResponse<?> handleApiException(HttpServletRequest req, CommonApiException e) throws Exception {
+        // LOGGER.error("================================================================================");
+        // LOGGER.error("<<API Exception>> 응답코드: {}, 응답메시지: {}, 에러: {}", e.getResCode(), e.getResMessage(), e.getMessage());
+        // LOGGER.error("================================================================================");
+
         LOGGER.error("================================================================================");
-        LOGGER.error("<<API Exception>> 응답코드: {}, 응답메시지: {}, 에러: {}", e.getResCode(), e.getResMessage(), e.getMessage());
+        LOGGER.error("<<CommonApiException>>", e);
         LOGGER.error("================================================================================");
 
         return new ApiResponse<>(e.getResCode(), e.getResMessage(), e.getMessage());

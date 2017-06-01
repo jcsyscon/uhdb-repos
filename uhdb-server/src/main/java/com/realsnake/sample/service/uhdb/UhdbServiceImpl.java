@@ -291,7 +291,7 @@ public class UhdbServiceImpl implements UhdbService {
                 }
             }
         } catch (Exception e) {
-            logger.error("SMS 및 FCM 발송 중 오류", e);
+            logger.error("<<SMS 및 FCM 발송 중 오류>>", e);
         }
     }
 
@@ -368,12 +368,8 @@ public class UhdbServiceImpl implements UhdbService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void modifyUhdbGonginIp(UhdbVo param) throws Exception {
-        try {
-            this.uhdbMapper.updateUhdbGonginIp(param);
-            logger.info("<<무인택배함 공인아이피 수정>> {}", param.toString());
-        } catch (Exception e) {
-            logger.error("<<무인택배함 공인아이피 수정 실패>>", e);
-        }
+        this.uhdbMapper.updateUhdbGonginIp(param);
+        logger.info("<<무인택배함 공인아이피 수정>> {}", param.toString());
     }
 
     @Override
@@ -385,40 +381,28 @@ public class UhdbServiceImpl implements UhdbService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void modifyUhdbUserPassword(UhdbLogVo param) throws Exception {
-        try {
-            this.uhdbMapper.updateUhdbUserPassword(param);
-            logger.info("<<무인택배함 세대 비밀번호 수정>> {}", param.toString());
-        } catch (Exception e) {
-            logger.error("<<무인택배함 세대 비밀번호 수정 실패>>", e);
-        }
+        this.uhdbMapper.updateUhdbUserPassword(param);
+        logger.info("<<무인택배함 세대 비밀번호 수정>> {}", param.toString());
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void regNfc(NfcVo param) throws Exception {
-        try {
-            this.uhdbMapper.insertNfc(param);
-            logger.info("<<무인택배함 NFC 등록>> {}", param.toString());
-        } catch (Exception e) {
-            logger.error("<<무인택배함 NFC 등록 실패>>", e);
-        }
+        this.uhdbMapper.insertNfc(param);
+        logger.info("<<무인택배함 NFC 등록>> {}", param.toString());
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void removeNfc(NfcVo param) throws Exception {
-        try {
-            this.uhdbMapper.deleteNfc(param);
-            logger.info("<<무인택배함 NFC 삭제>> {}", param.toString());
-        } catch (Exception e) {
-            logger.error("<<무인택배함 NFC 삭제 실패>>", e);
-        }
+        this.uhdbMapper.deleteNfc(param);
+        logger.info("<<무인택배함 NFC 삭제>> {}", param.toString());
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<UhdbLogVo> findUhdbLogList4Mobile(UhdbDto param) throws Exception {
-        logger.info("<<무인택배함 보관함 사용내역 조회>> {}", param.toString());
+        logger.info("<<무인택배함 사용내역 조회>> {}", param.toString());
 
         List<Map<String, Object>> userUhdbList = this.uhdbMapper.selectAptUhdbUserList(param.getUserSeq());
 

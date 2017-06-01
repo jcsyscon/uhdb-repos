@@ -31,7 +31,7 @@ public class ApiNoticeController {
 
     @GetMapping(value = "/list")
     public ApiResponse<?> getNoticeList(MobilePagingHelper mobilePagingHelper, BoardDto param) throws CommonApiException {
-        LOGGER.debug("<<mobilePagingHelper.toString()>>, {}", mobilePagingHelper.toString());
+        // LOGGER.debug("<<mobilePagingHelper.toString()>>, {}", mobilePagingHelper.toString());
 
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

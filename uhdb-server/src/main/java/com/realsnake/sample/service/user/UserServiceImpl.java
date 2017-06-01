@@ -8,6 +8,7 @@ package com.realsnake.sample.service.user;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -147,14 +148,18 @@ public class UserServiceImpl implements UserService {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void modifyUser(UserVo param) throws Exception {
         // 사용자가 입력한 비밀번호를 해싱(단방향 암호화) 처리
-        String passwordHash = PasswordHash.createHash(param.getPassword());
-        param.setPassword(passwordHash);
+        // String passwordHash = PasswordHash.createHash(param.getPassword());
+        // param.setPassword(passwordHash);
 
         // 사용자의 이름/이메일 등을 암호화
         // String secretKey = BlockCipherUtils.generateSecretKey(passwordHash);
         String secretKey = BlockCipherUtils.generateSecretKey(CommonConstants.DEFAULT_AUTH_KEY);
-        param.setName(BlockCipherUtils.encrypt(secretKey, param.getName()));
-        param.setMobile(BlockCipherUtils.encrypt(secretKey, param.getMobile()));
+        if (StringUtils.isNotEmpty(param.getName())) {
+            param.setName(BlockCipherUtils.encrypt(secretKey, param.getName()));
+        }
+        if (StringUtils.isNotEmpty(param.getMobile())) {
+            param.setMobile(BlockCipherUtils.encrypt(secretKey, param.getMobile()));
+        }
 
         this.userMapper.updateUser(param);
     }
