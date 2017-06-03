@@ -43,7 +43,7 @@
 	</select>
 
 	<update id="updateUhdbGonginIp" parameterType="UhdbVo">
-		UPDATE /* updateUhdb, 전강욱(realsnake1975@gmail.com) */ tb_ap0102
+		UPDATE /* updateUhdbGonginIp, 전강욱(realsnake1975@gmail.com) */ tb_ap0102
 	    SET upddt = NOW()
 	    , gongin_ip = #{gonginIp}
 		WHERE aptid = #{aptId}
@@ -148,7 +148,7 @@
 	</update>
 
 	<select id="selectUhdbLog" parameterType="UhdbLogVo" resultType="UhdbLogVo">
-		SELECT /* selectAptList, 전강욱(realsnake1975@gmail.com) */ upddt AS upd_dt,
+		SELECT /* selectUhdbLog, 전강욱(realsnake1975@gmail.com) */ upddt AS upd_dt,
 	    aptid AS apt_id,
 	    aptposi AS apt_posi,
 	    boxno AS box_no,

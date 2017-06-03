@@ -327,7 +327,7 @@ public class UhdbServiceImpl implements UhdbService {
             // 1. 무인택배함 사용기록 조회
             UhdbLogVo uhdbLog = this.uhdbMapper.selectUhdbLog(param);
 
-            if (uhdbLog != null) {
+            if (uhdbLog == null) {
                 return "USER NOT FOUND";
             }
 
@@ -342,23 +342,31 @@ public class UhdbServiceImpl implements UhdbService {
                 return "UHDB NOT FOUND";
             }
 
+            // logger.debug("<<무인택배함 정보>> {}", uhdbList.get(0).toString());
             String gonginIp = uhdbList.get(0).getGonginIp();
+            String portFw = StringUtils.defaultIfEmpty(uhdbList.get(0).getPortFw(), "3306");
 
             if (StringUtils.isEmpty(gonginIp)) {
                 return "PUBLIC IP NOT FOUND";
             }
 
             // 3. 락커 오픈 실행(DB 업데이트)
+            int updateCount = 0;
+
             try {
                 JdbcUtils ju = new JdbcUtils();
-                ju.openBox(gonginIp, param.getAptId(), param.getAptPosi(), param.getBoxNo());
-                logger.info("<<{} {} 무인택배함 {} 번 보관함이 열렸습니다.>>", param.getAptId(), param.getAptPosi(), param.getBoxNo());
+                updateCount = ju.openBox(gonginIp, portFw, param.getAptId(), param.getAptPosi(), param.getBoxNo());
             } catch (Exception e) {
                 logger.error("<<무인택배함 보관함 열기 실패>>", e);
                 return e.getMessage();
             }
 
-            return "OK";
+            if (updateCount > 0) {
+                logger.info("<<{} {} 무인택배함 {} 번 보관함이 열렸습니다.>>", param.getAptId(), param.getAptPosi(), param.getBoxNo());
+                return "OK";
+            } else {
+                return "NOK";
+            }
         } catch (Exception e) {
             logger.error("<<무인택배함 보관함 열기 실패>>", e);
             return e.getMessage();
