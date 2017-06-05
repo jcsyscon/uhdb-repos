@@ -34,40 +34,42 @@
 	                #{userSeq}
 	            </foreach>
 			</if>
-		    <choose>
-		    	<when test=' pagingHelper.search.startDate != null and !"".equals(pagingHelper.search.startDate) '>
-			    	AND reg_date &gt;= CONCAT(#{pagingHelper.search.startDate}, ' 00:00:00')
-			    	<if test=' pagingHelper.search.endDate != null and !"".equals(pagingHelper.search.endDate) '>
-			    		AND reg_date &lt;= CONCAT(#{pagingHelper.search.endDate}, ' 23:59:59')
-			    	</if>
-		    	</when>
-		    	<otherwise>
-			    	<if test=' pagingHelper.search.endDate != null and !"".equals(pagingHelper.search.endDate) '>
-			    		AND reg_date &lt;= CONCAT(#{pagingHelper.search.endDate}, ' 23:59:59')
-			    	</if>
-		    	</otherwise>
-		    </choose>
-	    	<if test=' pagingHelper.search.keyword != null and !"".equals(pagingHelper.search.keyword) '>
+			<if test=' pagingHelper != null and pagingHelper.search != null '>
 			    <choose>
-			    	<when test=' "username".equals(pagingHelper.search.item) '>
-						AND username LIKE CONCAT('%', #{pagingHelper.search.keyword}, '%')
-			    	</when>
-			    	<when test=' "name".equals(pagingHelper.search.item) '>
-						AND name = #{pagingHelper.search.keyword}
-			    	</when>
-			    	<when test=' "mobile".equals(pagingHelper.search.item) '>
-						AND mobile = #{pagingHelper.search.keyword}
-			    	</when>
-			    	<when test=' "email".equals(pagingHelper.search.item) '>
-						AND email = #{pagingHelper.search.keyword}
+			    	<when test=' pagingHelper.search.startDate != null and !"".equals(pagingHelper.search.startDate) '>
+				    	AND reg_date &gt;= CONCAT(#{pagingHelper.search.startDate}, ' 00:00:00')
+				    	<if test=' pagingHelper.search.endDate != null and !"".equals(pagingHelper.search.endDate) '>
+				    		AND reg_date &lt;= CONCAT(#{pagingHelper.search.endDate}, ' 23:59:59')
+				    	</if>
 			    	</when>
 			    	<otherwise>
-						AND (
-							username LIKE CONCAT('%', #{pagingHelper.search.keyword}, '%')
-						)
+				    	<if test=' pagingHelper.search.endDate != null and !"".equals(pagingHelper.search.endDate) '>
+				    		AND reg_date &lt;= CONCAT(#{pagingHelper.search.endDate}, ' 23:59:59')
+				    	</if>
 			    	</otherwise>
 			    </choose>
-	    	</if>
+		    	<if test=' pagingHelper.search.keyword != null and !"".equals(pagingHelper.search.keyword) '>
+				    <choose>
+				    	<when test=' "username".equals(pagingHelper.search.item) '>
+							AND username LIKE CONCAT('%', #{pagingHelper.search.keyword}, '%')
+				    	</when>
+				    	<when test=' "name".equals(pagingHelper.search.item) '>
+							AND name = #{pagingHelper.search.keyword}
+				    	</when>
+				    	<when test=' "mobile".equals(pagingHelper.search.item) '>
+							AND mobile = #{pagingHelper.search.keyword}
+				    	</when>
+				    	<when test=' "email".equals(pagingHelper.search.item) '>
+							AND email = #{pagingHelper.search.keyword}
+				    	</when>
+				    	<otherwise>
+							AND (
+								username LIKE CONCAT('%', #{pagingHelper.search.keyword}, '%')
+							)
+				    	</otherwise>
+				    </choose>
+		    	</if>
+			</if>
 	    </where>
 	</sql>
 
@@ -127,7 +129,9 @@
 	    FROM user
 	    <include refid="whereClauseOfUser" />
 	    <include refid="orderClauseOfUser" />
-	    LIMIT #{pagingHelper.startNum}, #{pagingHelper.endNum}
+	    <if test=' pagingHelper != null '>
+	    	LIMIT #{pagingHelper.startNum}, #{pagingHelper.endNum}
+	    </if>
 	</select>
 
 	<update id="updateUser" parameterType="UserVo">
@@ -269,7 +273,7 @@
 
 	<select id="selectUserUhdbList" parameterType="UserUhdbVo" resultType="UserUhdbVo">
 	    SELECT /* selectUserUhdbList, 전강욱(realsnake1975@gmail.com) */ seq
-    	user_seq
+    	, user_seq
         , apt_id
         , uhdb_id
         , dong
@@ -278,7 +282,7 @@
         , reg_date
         , del_yn
         , del_user_seq
-        , del_yn
+        , del_date
 	    FROM user_uhdb
 	    <where>
 			<choose>
@@ -345,6 +349,8 @@
 				<otherwise>AND seq = 0</otherwise>
 			</choose>
 	    </where>
+	    ORDER BY seq DESC
+	    LIMIT 1
 	</select>
 
 </mapper>

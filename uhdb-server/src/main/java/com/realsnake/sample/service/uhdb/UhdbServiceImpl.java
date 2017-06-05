@@ -19,9 +19,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.realsnake.sample.constants.CommonConstants;
 import com.realsnake.sample.mapper.uhdb.UhdbMapper;
 import com.realsnake.sample.mapper.user.UserMapper;
+import com.realsnake.sample.model.ad.AdDto;
 import com.realsnake.sample.model.ad.AdVo;
 import com.realsnake.sample.model.common.SendVo;
 import com.realsnake.sample.model.common.Sort;
@@ -42,6 +44,7 @@ import com.realsnake.sample.service.common.CommonService;
 import com.realsnake.sample.util.FcmUtils;
 import com.realsnake.sample.util.JdbcUtils;
 import com.realsnake.sample.util.SmsUtils;
+import com.realsnake.sample.util.crypto.BlockCipherUtils;
 
 /**
  * <pre>
@@ -89,6 +92,8 @@ public class UhdbServiceImpl implements UhdbService {
     public List<UhdbVo> findUhdbList(UhdbVo param) throws Exception {
         return this.uhdbMapper.selectUhdbList(param);
     }
+
+    private ObjectMapper mapper = new ObjectMapper();
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
@@ -209,10 +214,17 @@ public class UhdbServiceImpl implements UhdbService {
             return;
         }
 
+        String secretKey = null;
+
         try {
             // 1. 핸드폰번호로 사용자 찾기
             UserUhdbVo userUhdb = new UserUhdbVo();
-            userUhdb.setMobile(userMobile);
+
+            String mobileNumber = userMobile.substring(0, 3) + "-" + userMobile.substring(3, 7) + "-" + userMobile.substring(7, 11);
+            secretKey = BlockCipherUtils.generateSecretKey(CommonConstants.DEFAULT_AUTH_KEY);
+            String encMobileNumber = BlockCipherUtils.encrypt(secretKey, mobileNumber);
+
+            userUhdb.setMobile(encMobileNumber);
             List<UserUhdbVo> userUhdbList = this.userMapper.selectUserUhdbList(userUhdb);
 
             if (userUhdbList == null || userUhdbList.isEmpty()) {
@@ -265,12 +277,15 @@ public class UhdbServiceImpl implements UhdbService {
 
                         // 광고 조회
                         String adUrl = null;
-                        AdVo ad = this.adService.findRandomAd(null);
+                        AdVo ad = this.adService.findRandomAd(new AdDto());
                         if (ad != null) {
                             adUrl = String.format(AD_URL, ad.getSeq());
                         }
 
                         UserFcmVo fcm = this.userMapper.selectUserFcm(userFcm);
+                        if (fcm == null) {
+                            continue;
+                        }
 
                         Message message = new Message(title, body, adUrl);
                         FcmReqForm fcmReqForm = new FcmReqForm(new Data(message), fcm.getFcmToken());
@@ -280,9 +295,9 @@ public class UhdbServiceImpl implements UhdbService {
                         // 발송 로그 저장
                         SendVo send = new SendVo();
                         send.setGubun(CommonConstants.SendType.PUSH_UHDB.getValue());
-                        send.setMobile(user.getMobile());
+                        send.setMobile(BlockCipherUtils.decrypt(secretKey, user.getMobile()));
                         send.setFcmToken(fcm.getFcmToken());
-                        send.setSendMessage(fcmReqForm.toString());
+                        send.setSendMessage(this.mapper.writeValueAsString(fcmReqForm));
                         send.setResultMessage(result.get());
                         this.commonService.regSendLog(send);
 
