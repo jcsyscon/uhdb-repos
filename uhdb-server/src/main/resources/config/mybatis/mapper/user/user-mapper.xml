@@ -11,7 +11,6 @@
 	        , email
 	        , birth_date
 	        , sex
-	        , alarm_rec_yn
 	        , reg_date
 	    ) VALUES (
 	    	#{username}
@@ -21,7 +20,6 @@
 	        , #{email}
 	        , #{birthDate}
 	        , #{sex}
-	        , #{alarmRecYn}
 	        , NOW()
 	    )
 	</update>

@@ -52,7 +52,7 @@ public class UserVo implements Serializable {
     /** 성별 */
     private String sex;
     /** 알람수신여부 */
-    private String alarmRecYn;
+    private String alarmRecYn = "Y";
     /** 등록일시 */
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private Date regDate;
