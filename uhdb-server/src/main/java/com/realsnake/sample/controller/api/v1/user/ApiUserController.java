@@ -301,13 +301,13 @@ public class ApiUserController {
     /**
      * 회원 정보 수정 - 택배함 수정
      *
-     * @param seq
+     * @param userSeq
      * @param userUhdb
      * @return
      * @throws CommonApiException
      */
-    @PostMapping(value = "/modify/{seq}/uhdb")
-    public ApiResponse<?> modifyUserUhdb(@PathVariable("seq") Integer seq, UserUhdbVo userUhdb) throws CommonApiException {
+    @PostMapping(value = "/modify/{userSeq}/uhdb")
+    public ApiResponse<?> modifyUserUhdb(@PathVariable("userSeq") Integer userSeq, UserUhdbVo userUhdb) throws CommonApiException {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -316,7 +316,6 @@ public class ApiUserController {
                 throw new CommonApiException(ApiResultCode.NOTFOUND_USER);
             }
 
-            userUhdb.setUserSeq(seq);
             this.userService.modifyUserUhdb(userUhdb);
 
             ApiResponse<UserVo> apiResponse = new ApiResponse<>();
@@ -424,13 +423,13 @@ public class ApiUserController {
     /**
      * 회원 정보 수정 - FCM토큰 수정
      *
-     * @param seq
+     * @param userSeq
      * @param userFcm
      * @return
      * @throws CommonApiException
      */
-    @PostMapping(value = "/modify/{seq}/fcm-token")
-    public ApiResponse<?> modifyUserFcm(@PathVariable("seq") Integer seq, UserFcmVo userFcm) throws CommonApiException {
+    @PostMapping(value = "/modify/{userSeq}/fcm-token")
+    public ApiResponse<?> modifyUserFcm(@PathVariable("userSeq") Integer userSeq, UserFcmVo userFcm) throws CommonApiException {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -439,7 +438,6 @@ public class ApiUserController {
                 throw new CommonApiException(ApiResultCode.NOTFOUND_USER);
             }
 
-            userFcm.setUserSeq(seq);
             this.userService.modifyUserFcm(userFcm);
 
             ApiResponse<UserVo> apiResponse = new ApiResponse<>();

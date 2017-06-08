@@ -241,7 +241,7 @@
 	    <where>
 			<choose>
 				<when test=' seq != null and seq > 0 '>AND seq = #{seq}</when>
-				<when test=' userSeq != null and userSeq > 0 '>AND user_seq = #{userSeq}</when>
+				<when test=' userSeq != null and userSeq > 0 '>AND user_seq = #{userSeq} AND del_yn = 'N'</when>
 				<otherwise>AND seq = 0</otherwise>
 			</choose>
 	    </where>
