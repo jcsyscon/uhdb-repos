@@ -414,7 +414,10 @@
 	    	<if test=' targetSex != null and !"".equals(targetSex) '>target_sex = #{targetSex},</if>
 	    	<if test=' targetUrl != null and !"".equals(targetUrl) '>target_url = #{targetUrl},</if>
 	    	mod_user_seq = #{modUserSeq},
-	    	mod_date = NOW()
+	    	mod_date = NOW(),
+	    	del_yn = 'N',
+			del_user_seq = NULL,
+			del_date = NULL
 	    </set>
 		WHERE seq = #{seq}
 	</update>

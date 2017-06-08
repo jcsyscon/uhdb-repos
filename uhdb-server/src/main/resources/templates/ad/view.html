@@ -240,18 +240,23 @@ function deleteUploadedFile(el, seq, gubun) {
 }
 function deleteUploadedFilePush(el, seq) {
 	deleteUploadedFile(el, seq, "Push");
+	$("#attachFilePush").show();
 }
 function deleteUploadedFileStart(el, seq) {
 	deleteUploadedFile(el, seq, "Start");
+	$("#attachFileStart").show();
 }
 function deleteUploadedFileEnd(el, seq) {
 	deleteUploadedFile(el, seq, "End");
+	$("#attachFileEnd").show();
 }
 function deleteUploadedFileBanner(el, seq) {
 	deleteUploadedFile(el, seq, "Banner");
+	$("#attachFileBanner").show();
 }
 function deleteUploadedFilePopup(el, seq) {
 	deleteUploadedFile(el, seq, "Popup");
+	$("#attachFilePopup").show();
 }
 
 /*]]>*/
@@ -347,6 +352,7 @@ function deleteUploadedFilePopup(el, seq) {
 
 					<ul id="_ul_uploaded_files_area-push" th:if="${not #lists.isEmpty(attachFileList)}">
 						<li style="padding-top: 5px;" th:each="attachFile,iterStat : ${attachFileList}" th:if="${ attachFile.subGubun eq 'push' }">
+							<script type="text/javascript">$("#attachFilePush").hide();</script>
 							<span th:id="'span_file_name_' + ${attachFile.fileSeq}" th:text="${attachFile.orgName}">파일명</span>
 							<span th:text="'(' + ${#numbers.formatInteger(attachFile.size, 3, 'COMMA')} + 'KB)'">파일사이즈</span> &nbsp;
 							<button class="btn btn-xs btn-danger" th:onclick="'deleteUploadedFilePush(this, ' + ${attachFile.fileSeq} + ')'" type="button">삭제</button>
@@ -394,6 +400,7 @@ function deleteUploadedFilePopup(el, seq) {
 
 					<ul id="_ul_uploaded_files_area-start" th:if="${not #lists.isEmpty(attachFileList)}">
 						<li style="padding-top: 5px;" th:each="attachFile,iterStat : ${attachFileList}" th:if="${ attachFile.subGubun eq 'start' }">
+							<script type="text/javascript">$("#attachFileStart").hide();</script>
 							<span th:id="'span_file_name_' + ${attachFile.fileSeq}" th:text="${attachFile.orgName}">파일명</span>
 							<span th:text="'(' + ${#numbers.formatInteger(attachFile.size, 3, 'COMMA')} + 'KB)'">파일사이즈</span> &nbsp;
 							<button class="btn btn-xs btn-danger" th:onclick="'deleteUploadedFileStart(this, ' + ${attachFile.fileSeq} + ')'" type="button">삭제</button>
@@ -436,6 +443,7 @@ function deleteUploadedFilePopup(el, seq) {
 
 					<ul id="_ul_uploaded_files_area-end" th:if="${not #lists.isEmpty(attachFileList)}">
 						<li style="padding-top: 5px;" th:each="attachFile,iterStat : ${attachFileList}" th:if="${ attachFile.subGubun eq 'end' }">
+							<script type="text/javascript">$("#attachFileEnd").hide();</script>
 							<span th:id="'span_file_name_' + ${attachFile.fileSeq}" th:text="${attachFile.orgName}">파일명</span>
 							<span th:text="'(' + ${#numbers.formatInteger(attachFile.size, 3, 'COMMA')} + 'KB)'">파일사이즈</span> &nbsp;
 							<button class="btn btn-xs btn-danger" th:onclick="'deleteUploadedFileEnd(this, ' + ${attachFile.fileSeq} + ')'" type="button">삭제</button>
@@ -478,6 +486,7 @@ function deleteUploadedFilePopup(el, seq) {
 
 					<ul id="_ul_uploaded_files_area-banner" th:if="${not #lists.isEmpty(attachFileList)}">
 						<li style="padding-top: 5px;" th:each="attachFile,iterStat : ${attachFileList}" th:if="${ attachFile.subGubun eq 'banner' }">
+							<script type="text/javascript">$("#attachFileBanner").hide();</script>
 							<span th:id="'span_file_name_' + ${attachFile.fileSeq}" th:text="${attachFile.orgName}">파일명</span>
 							<span th:text="'(' + ${#numbers.formatInteger(attachFile.size, 3, 'COMMA')} + 'KB)'">파일사이즈</span> &nbsp;
 							<button class="btn btn-xs btn-danger" th:onclick="'deleteUploadedFileBanner(this, ' + ${attachFile.fileSeq} + ')'" type="button">삭제</button>
@@ -520,6 +529,7 @@ function deleteUploadedFilePopup(el, seq) {
 
 					<ul id="_ul_uploaded_files_area-popup" th:if="${not #lists.isEmpty(attachFileList)}">
 						<li style="padding-top: 5px;" th:each="attachFile,iterStat : ${attachFileList}" th:if="${ attachFile.subGubun eq 'popup' }">
+							<script type="text/javascript">$("#attachFilePopup").hide();</script>
 							<span th:id="'span_file_name_' + ${attachFile.fileSeq}" th:text="${attachFile.orgName}">파일명</span>
 							<span th:text="'(' + ${#numbers.formatInteger(attachFile.size, 3, 'COMMA')} + 'KB)'">파일사이즈</span> &nbsp;
 							<button class="btn btn-xs btn-danger" th:onclick="'deleteUploadedFilePopup(this, ' + ${attachFile.fileSeq} + ')'" type="button">삭제</button>

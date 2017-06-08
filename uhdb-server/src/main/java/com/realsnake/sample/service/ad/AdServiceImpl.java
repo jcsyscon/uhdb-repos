@@ -239,6 +239,7 @@ public class AdServiceImpl implements AdService {
      */
     private void saveAdAttachFile(Integer loginSeq, Integer groupSeq, String fullFilePath, CommonConstants.AdImageType adImageType) throws Exception {
         if (StringUtils.isEmpty(fullFilePath)) {
+            logger.debug("<<광고 이미지가 없어 파일 저장을 종료합니다!>>");
             return;
         }
 
