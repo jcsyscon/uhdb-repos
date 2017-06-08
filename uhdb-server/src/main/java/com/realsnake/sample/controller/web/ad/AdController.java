@@ -53,6 +53,7 @@ public class AdController {
     public String moveAdRegPage(Model model, AdDto param, Integer shopSeq) throws Exception {
         model.addAttribute("shop", this.adService.findShop(param, shopSeq));
         model.addAttribute("sponsor", param.getSponsor());
+        model.addAttribute("sidoList", this.commonService.findSidoList());
         return "ad/reg";
     }
 
@@ -75,7 +76,6 @@ public class AdController {
     public String modifyAd(@PathVariable("seq") Integer seq, AdDto param, AdVo ad) throws Exception {
         LOGGER.debug("<<AdDto>> {}", param.toString());
 
-        param.setAd(ad);
         this.adService.modifyAd(param, ad);
         return "redirect:/ad/list";
     }

@@ -45,6 +45,8 @@ public class AdDto extends CommonDto implements Serializable {
     private String uploadedFileBanner;
     private String uploadedFilePopup;
 
+    private String userAptId;
+
     public SponsorVo getSponsor() {
         return sponsor;
     }
@@ -107,6 +109,14 @@ public class AdDto extends CommonDto implements Serializable {
 
     public void setUploadedFilePopup(String uploadedFilePopup) {
         this.uploadedFilePopup = uploadedFilePopup;
+    }
+
+    public String getUserAptId() {
+        return userAptId;
+    }
+
+    public void setUserAptId(String userAptId) {
+        this.userAptId = userAptId;
     }
 
     @Override

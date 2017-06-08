@@ -58,6 +58,9 @@ public class AdVo implements Serializable {
     private String targetSex;
     /** 타겟URL */
     private String targetUrl;
+    /** 타겟아파트 */
+    @JsonIgnore
+    private String targetApt;
     /** 등록자 일련번호 */
     @JsonIgnore
     private Integer regUserSeq;
@@ -133,6 +136,14 @@ public class AdVo implements Serializable {
 
     public void setTargetUrl(String targetUrl) {
         this.targetUrl = targetUrl;
+    }
+
+    public String getTargetApt() {
+        return targetApt;
+    }
+
+    public void setTargetApt(String targetApt) {
+        this.targetApt = targetApt;
     }
 
     public Integer getRegUserSeq() {

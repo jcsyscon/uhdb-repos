@@ -281,6 +281,7 @@
 			, target_age
 			, target_sex
 			, target_url
+			, target_apt
 	        , reg_user_seq
 	        , reg_date
 	        , del_yn
@@ -296,6 +297,7 @@
 	        , #{targetAge}
 	        , #{targetSex}
 	        , #{targetUrl}
+	        , #{targetApt}
 	        , #{regUserSeq}
 	        , NOW()
 	        , 'N'
@@ -356,6 +358,7 @@
 		, target_age
 		, target_sex
 		, target_url
+		, target_apt
 	    , reg_user_seq
 		, reg_date
 	    , mod_user_seq
@@ -386,6 +389,7 @@
 		, target_age
 		, target_sex
 		, target_url
+		, target_apt
 	    , reg_user_seq
 		, reg_date
 	    , mod_user_seq
@@ -413,6 +417,7 @@
 	    	<if test=' targetAge != null and !"".equals(targetAge) '>target_age = #{targetAge},</if>
 	    	<if test=' targetSex != null and !"".equals(targetSex) '>target_sex = #{targetSex},</if>
 	    	<if test=' targetUrl != null and !"".equals(targetUrl) '>target_url = #{targetUrl},</if>
+	    	<if test=' targetApt != null and !"".equals(targetApt) '>target_apt = #{targetApt},</if>
 	    	mod_user_seq = #{modUserSeq},
 	    	mod_date = NOW(),
 	    	del_yn = 'N',
@@ -443,6 +448,7 @@
 		, target_age
 		, target_sex
 		, target_url
+		, target_apt
 	    , reg_user_seq
 		, reg_date
 	    , mod_user_seq
@@ -451,7 +457,38 @@
 	    , del_user_seq
 		, del_date
 	    FROM ad
-	    WHERE del_yn = 'N'
+	    <where>
+	        <choose>
+	        	<when test=' userAptId != null and !"".equals(userAptId) '>INSTR(target_apt, #{userAptId}) &gt; 0 AND del_yn = 'N'</when>
+	        	<otherwise>del_yn = 'N'</otherwise>
+	        </choose>
+	    </where>
+	    ORDER BY RAND()
+		LIMIT 1
+	</select>
+	<select id="selectRandomAd4All" parameterType="adDto" resultType="AdVo">
+	    SELECT /* selectAd, 전강욱(realsnake1975@gmail.com) */ seq
+		, shop_seq
+		, title
+		, copy
+		, way
+		, unit_price
+		, start_date
+		, end_date
+		, target_area
+		, target_age
+		, target_sex
+		, target_url
+		, target_apt
+	    , reg_user_seq
+		, reg_date
+	    , mod_user_seq
+		, mod_date
+		, del_yn
+	    , del_user_seq
+		, del_date
+	    FROM ad
+	    WHERE (target_apt IS NULL OR target_apt = 'all') AND del_yn = 'N'
 	    ORDER BY RAND()
 		LIMIT 1
 	</select>

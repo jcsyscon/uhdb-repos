@@ -430,4 +430,16 @@ public class CommonServiceImpl implements CommonService {
         return false;
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<String> findSidoList() {
+        return this.commonMapper.selectSidoList(null);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<String> findSiguList(String param) {
+        return this.commonMapper.selectSiguList(param);
+    }
+
 }

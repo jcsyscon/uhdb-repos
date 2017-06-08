@@ -68,4 +68,8 @@ public interface CommonService {
 
     Boolean compareAuthMobileCode(String code, String key);
 
+    List<String> findSidoList();
+
+    List<String> findSiguList(String param);
+
 }

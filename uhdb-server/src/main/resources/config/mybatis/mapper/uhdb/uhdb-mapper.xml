@@ -17,7 +17,17 @@
 			<choose>
 				<when test=' aptId != null and !"".equals(aptId) '>AND aptid = #{aptId}</when>
 				<when test=' aptNm != null and !"".equals(aptNm) '>AND (aptnm LIKE CONCAT('%', #{aptNm}, '%') OR aptsnm LIKE CONCAT('%', #{aptNm}, '%'))</when>
-				<otherwise>AND aptid = '@@@@@@'</otherwise>
+				<otherwise>
+					<choose>
+						<when test=' sigu != null and !"".equals(sigu) '>AND city LIKE CONCAT(#{city}, '%') AND sigu LIKE CONCAT(#{sigu}, '%')</when>
+						<otherwise>
+							<choose>
+								<when test=' city != null and !"".equals(city) '>AND city LIKE CONCAT(#{city}, '%')</when>
+								<otherwise>AND aptid = '@@@@@@'</otherwise>
+							</choose>
+						</otherwise>
+					</choose>
+				</otherwise>
 			</choose>
 	    </where>
 	</select>

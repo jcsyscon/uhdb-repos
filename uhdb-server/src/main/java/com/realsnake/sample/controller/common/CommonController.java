@@ -13,6 +13,7 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -442,6 +443,16 @@ public class CommonController {
             // https://spi.maps.daum.net/postcode/guidessl#info
             return this.restTemplate.getForObject(new URI(apiUrl), String.class);
         } catch (UnsupportedEncodingException | RestClientException | URISyntaxException e) {
+            throw new CommonApiException(ApiResultCode.COMMON_FAIL, e);
+        }
+    }
+
+    @RequestMapping(value = "/common/search/sigu", method = RequestMethod.POST)
+    @ResponseBody
+    public List<String> searchSiguList(String sido) throws CommonApiException {
+        try {
+            return this.commonService.findSiguList(sido);
+        } catch (Exception e) {
             throw new CommonApiException(ApiResultCode.COMMON_FAIL, e);
         }
     }

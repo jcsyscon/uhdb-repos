@@ -61,4 +61,8 @@ public interface CommonMapper {
 
     SendVo selectSendLog(String param);
 
+    List<String> selectSidoList(String param);
+
+    List<String> selectSiguList(String param);
+
 }

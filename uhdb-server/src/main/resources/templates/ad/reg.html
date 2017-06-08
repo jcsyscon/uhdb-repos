@@ -204,6 +204,35 @@ function deleteUploadedTempFile(el, gubun) {
 	}
 }
 
+function searchSiguList(el) {
+	var $this = $(el);
+
+	if ($this.val() == "all") {
+		return;
+	}
+
+    var options = {
+        beforeSubmit : function() {
+
+        }
+        , success : function(siguList, statusText, xhr, $form) {
+			alert(siguList);
+        }
+        , error : function(e) {
+           // alert(e);
+        }
+        , complete : function(xhr) {
+           // alert(xhr.responseText);
+        }
+        , dataType : "text" // 응답타입 json이 아니라 text(IE9에서 JSON 데이타를 다운로드함)
+        , url : "/common/search/sigu"
+    };
+
+    var orgAction = $("form").attr("action");
+    $("form").ajaxSubmit(options);
+    $("form").attr("action", orgAction);
+}
+
 /*]]>*/
 </script>
 </head>
@@ -298,6 +327,17 @@ function deleteUploadedTempFile(el, gubun) {
                   <label class="col-sm-2 control-label">타겟URL</label>
                   <div class="col-sm-4">
                   	<input type="text" id="targetUrl" name="targetUrl" class="form-control" placeholder="타겟 URL" data-inputmask="'alias': 'url'" data-mask />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label">타겟 아파트</label>
+                  <div class="col-sm-4">
+                  	<select class="form-control" id="sido" name="sido" onchange="searchSiguList(this);">
+                  		<option value="all">전체</option>
+                  		<option th:each="sido : ${sidoList}" th:value="${sido}" th:text="${sido}" />
+                  	</select>
+
+                  	<select class="form-control" id="sigu" name="sigu" style="display:none;"></select>
                   </div>
                 </div>
 <!--
