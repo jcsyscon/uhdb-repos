@@ -503,12 +503,14 @@
 		SELECT /* selectCityList, 전강욱(realsnake1975@gmail.com) */ DISTINCT city
 		FROM tb_ap0101
 		WHERE city IS NOT NULL
+		ORDER BY city
 	</select>
 
 	<select id="selectSiguList" parameterType="string" resultType="string">
 		SELECT /* selectSiguList, 전강욱(realsnake1975@gmail.com) */ DISTINCT sigu
 		FROM tb_ap0101
 		WHERE city = #{sido}
+		ORDER BY sigu
 	</select>
 
 </mapper>

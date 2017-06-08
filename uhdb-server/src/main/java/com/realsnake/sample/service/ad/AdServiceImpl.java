@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.realsnake.sample.constants.CommonConstants;
 import com.realsnake.sample.mapper.ad.AdMapper;
 import com.realsnake.sample.mapper.common.CommonMapper;
+import com.realsnake.sample.mapper.user.UserMapper;
 import com.realsnake.sample.model.ad.AdDto;
 import com.realsnake.sample.model.ad.AdVo;
 import com.realsnake.sample.model.ad.ShopVo;
@@ -26,6 +27,7 @@ import com.realsnake.sample.model.ad.SponsorVo;
 import com.realsnake.sample.model.common.AddressVo;
 import com.realsnake.sample.model.common.AttachFileVo;
 import com.realsnake.sample.model.common.Sort;
+import com.realsnake.sample.model.user.UserUhdbVo;
 import com.realsnake.sample.service.common.CommonService;
 
 /**
@@ -48,6 +50,9 @@ public class AdServiceImpl implements AdService {
 
     @Autowired
     private CommonMapper commonMapper;
+
+    @Autowired
+    private UserMapper userMapper;
 
     @Autowired
     private CommonService commonService;
@@ -209,12 +214,22 @@ public class AdServiceImpl implements AdService {
         return this.adMapper.selectShopList(param);
     }
 
-
+    private static final String ALL = "all";
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void regAd(AdDto param, AdVo ad) throws Exception {
         Integer loginSeq = param.getLoginUser().getSeq();
+
+        if (StringUtils.isEmpty(ad.getTargetSido())) {
+            ad.setTargetSido(ALL);
+        }
+        if (StringUtils.isEmpty(ad.getTargetSigu())) {
+            ad.setTargetSigu(ALL);
+        }
+        if (StringUtils.isEmpty(ad.getTargetApt())) {
+            ad.setTargetApt(ALL);
+        }
 
         ad.setRegUserSeq(loginSeq);
         this.adMapper.insertAd(ad);
@@ -271,6 +286,17 @@ public class AdServiceImpl implements AdService {
             this.adMapper.deleteAd(ad);
         } else {
             ad.setModUserSeq(loginSeq);
+
+            if (StringUtils.isEmpty(ad.getTargetSido())) {
+                ad.setTargetSido(ALL);
+            }
+            if (StringUtils.isEmpty(ad.getTargetSigu())) {
+                ad.setTargetSigu(ALL);
+            }
+            if (StringUtils.isEmpty(ad.getTargetApt())) {
+                ad.setTargetApt(ALL);
+            }
+
             this.adMapper.updateAd(ad);
 
             Integer groupSeq = ad.getSeq();
@@ -323,7 +349,17 @@ public class AdServiceImpl implements AdService {
     @Override
     @Transactional(readOnly = true)
     public AdVo findRandomAd(AdDto param) throws Exception {
+        UserUhdbVo userUhdbParam = new UserUhdbVo();
+        userUhdbParam.setUserSeq(param.getLoginUser().getSeq());
+
+        UserUhdbVo userUhdb = this.userMapper.selectUserUhdb(userUhdbParam);
+        param.setUserAptId(userUhdb.getAptId());
+
         AdVo ad = this.adMapper.selectRandomAd(param);
+
+        if (ad == null) {
+            ad = this.adMapper.selectRandomAd4All(null);
+        }
 
         // 매장 조회
         ShopVo shop = this.adMapper.selectShop(ad.getShopSeq());

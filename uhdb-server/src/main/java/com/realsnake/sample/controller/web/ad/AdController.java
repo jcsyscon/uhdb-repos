@@ -69,6 +69,8 @@ public class AdController {
         model.addAttribute("sponsor", param.getSponsor());
         model.addAttribute("shop", param.getShop());
         model.addAttribute("attachFileList", param.getAttachFileList());
+        model.addAttribute("sidoList", this.commonService.findSidoList());
+
         return "ad/view";
     }
 

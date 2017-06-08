@@ -281,6 +281,8 @@
 			, target_age
 			, target_sex
 			, target_url
+			, target_sido
+			, target_sigu
 			, target_apt
 	        , reg_user_seq
 	        , reg_date
@@ -297,6 +299,8 @@
 	        , #{targetAge}
 	        , #{targetSex}
 	        , #{targetUrl}
+	        , #{targetSido}
+	        , #{targetSigu}
 	        , #{targetApt}
 	        , #{regUserSeq}
 	        , NOW()
@@ -358,6 +362,8 @@
 		, target_age
 		, target_sex
 		, target_url
+		, target_sido
+		, target_sigu
 		, target_apt
 	    , reg_user_seq
 		, reg_date
@@ -389,6 +395,8 @@
 		, target_age
 		, target_sex
 		, target_url
+		, target_sido
+		, target_sigu
 		, target_apt
 	    , reg_user_seq
 		, reg_date
@@ -417,6 +425,8 @@
 	    	<if test=' targetAge != null and !"".equals(targetAge) '>target_age = #{targetAge},</if>
 	    	<if test=' targetSex != null and !"".equals(targetSex) '>target_sex = #{targetSex},</if>
 	    	<if test=' targetUrl != null and !"".equals(targetUrl) '>target_url = #{targetUrl},</if>
+	    	<if test=' targetSido != null and !"".equals(targetSido) '>target_sido = #{targetSido},</if>
+	    	<if test=' targetSigu != null and !"".equals(targetSigu) '>target_sigu = #{targetSigu},</if>
 	    	<if test=' targetApt != null and !"".equals(targetApt) '>target_apt = #{targetApt},</if>
 	    	mod_user_seq = #{modUserSeq},
 	    	mod_date = NOW(),
@@ -448,6 +458,8 @@
 		, target_age
 		, target_sex
 		, target_url
+		, target_sido
+		, target_sigu
 		, target_apt
 	    , reg_user_seq
 		, reg_date
@@ -459,8 +471,22 @@
 	    FROM ad
 	    <where>
 	        <choose>
-	        	<when test=' userAptId != null and !"".equals(userAptId) '>INSTR(target_apt, #{userAptId}) &gt; 0 AND del_yn = 'N'</when>
-	        	<otherwise>del_yn = 'N'</otherwise>
+	        	<when test=' userAptId != null and !"".equals(userAptId) '>
+	        		(
+	        			(
+	        				target_sido = (SELECT city FROM tb_ap0101 WHERE aptid = #{userAptId} LIMIT 1)
+	        				AND target_sigu = (SELECT sigu FROM tb_ap0101 WHERE aptid = #{userAptId} LIMIT 1)
+	        				AND target_apt = 'all'
+	        			)
+	        			OR INSTR(target_apt, #{userAptId}) &gt; 0
+	        		)
+	        		AND (start_date &lt;= DATE_FORMAT(NOW(), '%Y%m%d%H%i%s') AND end_date &gt;= DATE_FORMAT(NOW(), '%Y%m%d%H%i%s'))
+	        		AND del_yn = 'N'
+	        	</when>
+	        	<otherwise>
+	        		(start_date &lt;= DATE_FORMAT(NOW(), '%Y%m%d%H%i%s') AND end_date &gt;= DATE_FORMAT(NOW(), '%Y%m%d%H%i%s'))
+	        		AND del_yn = 'N'
+	        	</otherwise>
 	        </choose>
 	    </where>
 	    ORDER BY RAND()
@@ -479,6 +505,8 @@
 		, target_age
 		, target_sex
 		, target_url
+		, target_sido
+		, target_sigu
 		, target_apt
 	    , reg_user_seq
 		, reg_date
@@ -488,7 +516,9 @@
 	    , del_user_seq
 		, del_date
 	    FROM ad
-	    WHERE (target_apt IS NULL OR target_apt = 'all') AND del_yn = 'N'
+	    WHERE target_sido = 'all'
+	    	AND (start_date &lt;= DATE_FORMAT(NOW(), '%Y%m%d%H%i%s') AND end_date &gt;= DATE_FORMAT(NOW(), '%Y%m%d%H%i%s'))
+	    	AND del_yn = 'N'
 	    ORDER BY RAND()
 		LIMIT 1
 	</select>

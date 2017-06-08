@@ -53,6 +53,15 @@ $(document).ready(function() {
 
     	$("#startDate").val(startDateVal + "000000");
     	$("#endDate").val(endDateVal + "235959");
+
+    	if ($("#targetSido").val() != "all" && $("#targetSigu").val() == "all") {
+    		alert(" 시/구를 선택하여 주십시오. ");
+			return false;
+    	}
+
+    	if ($("#targetApts").val()) {
+			$("#targetApt").val($("#targetApts").val());
+    	}
     });
 });
 
@@ -204,33 +213,100 @@ function deleteUploadedTempFile(el, gubun) {
 	}
 }
 
+/**
+ * 시구 검색
+ */
 function searchSiguList(el) {
 	var $this = $(el);
 
 	if ($this.val() == "all") {
+		$("#targetSigu").html("").hide();
+		$("#targetApts").html("").hide();
 		return;
 	}
 
     var options = {
-        beforeSubmit : function() {
+        beforeSubmit : function() { }
+        , success : function(sigus, statusText, xhr, $form) {
+			// alert(sigus);
 
+			var temp = "";
+
+			for (var i=0; i<sigus.length; i++) {
+				temp += "<option value=\"" + sigus[i] +"\">" + sigus[i] + "</option>";
+			}
+
+			$("#targetSigu").html("").prepend("<option value=\"all\">전체</value>").append(temp).show();
+			$("#targetApts").html("").hide();
         }
-        , success : function(siguList, statusText, xhr, $form) {
-			alert(siguList);
-        }
-        , error : function(e) {
-           // alert(e);
-        }
-        , complete : function(xhr) {
-           // alert(xhr.responseText);
-        }
-        , dataType : "text" // 응답타입 json이 아니라 text(IE9에서 JSON 데이타를 다운로드함)
+        , error : function(e) { /** alert(e); */ }
+        , complete : function(xhr) { /* alert(xhr.responseText); */ }
+        , dataType : "json" // 응답타입 json이 아니라 text(IE9에서 JSON 데이타를 다운로드함)
         , url : "/common/search/sigu"
     };
 
     var orgAction = $("form").attr("action");
     $("form").ajaxSubmit(options);
     $("form").attr("action", orgAction);
+}
+/**
+ * 아파트 검색
+ */
+function searchAptList(el) {
+	var $this = $(el);
+
+	if ($this.val() == "all") {
+		$("#targetApts").html("").hide();
+		return;
+	}
+
+    var options = {
+        beforeSubmit : function() { }
+        , success : function(aptListJson, statusText, xhr, $form) {
+			var temp = "";
+			var count = 0;
+
+			for (var i=0; i<aptListJson.length; i++) {
+				temp += "<option value=\"" + aptListJson[i].aptId +"\">" + aptListJson[i].aptNm + "</option>";
+				count++;
+			}
+
+			var height = 95;
+
+			if (count > 3) {
+				height = height * (count / 3) + ((count % 3) * 20);
+			}
+
+			$("#targetApts").html("").prepend("<option value=\"all\">전체</value>").append(temp).show().css("height", height + "px");
+        }
+        , error : function(e) { /** alert(e); */ }
+        , complete : function(xhr) { /* alert(xhr.responseText); */ }
+        , dataType : "json" // 응답타입 json이 아니라 text(IE9에서 JSON 데이타를 다운로드함)
+        , url : "/common/search/apt"
+    };
+
+    var orgAction = $("form").attr("action");
+    $("form").ajaxSubmit(options);
+    $("form").attr("action", orgAction);
+}
+/**
+ * 아파트 선택 시
+ */
+function changeTargetApts(el) {
+	var $this = $(el);
+
+	// alert($this.val());
+
+	if ($this.val() == "all") {
+		 for( var i=0; i<$("#targetApts option").size(); i++) {
+			 if (i > 0) {
+				 $("#targetApts option:eq(" + i +")").removeAttr("selected");
+			 }
+		 }
+	}
+	else {
+		$("#targetApts option:eq(0)").removeAttr("selected");
+	}
 }
 
 /*]]>*/
@@ -331,13 +407,18 @@ function searchSiguList(el) {
                 </div>
                 <div class="form-group">
                   <label class="col-sm-2 control-label">타겟 아파트</label>
-                  <div class="col-sm-4">
-                  	<select class="form-control" id="sido" name="sido" onchange="searchSiguList(this);">
+                  <div class="col-sm-2">
+                  	<select class="form-control" id="targetSido" name="targetSido" onchange="searchSiguList(this);">
                   		<option value="all">전체</option>
                   		<option th:each="sido : ${sidoList}" th:value="${sido}" th:text="${sido}" />
                   	</select>
-
-                  	<select class="form-control" id="sigu" name="sigu" style="display:none;"></select>
+                  </div>
+                  <div class="col-sm-2">
+                  	<select class="form-control" id="targetSigu" name="targetSigu" style="display:none;" onchange="searchAptList(this);"></select>
+                  </div>
+                  <div class="col-sm-3">
+                  	<select class="form-control" id="targetApts" name="targetApts" style="display:none;" multiple onchange="changeTargetApts(this);"></select>
+                  	<input type="hidden" id="targetApt" name="targetApt" value="" />
                   </div>
                 </div>
 <!--

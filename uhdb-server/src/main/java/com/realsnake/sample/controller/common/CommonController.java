@@ -43,7 +43,9 @@ import com.realsnake.sample.constants.ApiResultCode;
 import com.realsnake.sample.exception.CommonApiException;
 import com.realsnake.sample.model.common.AttachFileVo;
 import com.realsnake.sample.model.common.CommonDto;
+import com.realsnake.sample.model.uhdb.AptVo;
 import com.realsnake.sample.service.common.CommonService;
+import com.realsnake.sample.service.uhdb.UhdbService;
 import com.realsnake.sample.util.RandomKeys;
 import com.realsnake.sample.util.Responses;
 
@@ -66,6 +68,9 @@ public class CommonController {
 
     @Autowired
     private CommonService commonService;
+
+    @Autowired
+    private UhdbService uhdbService;
 
     /**
      * @author shavrani 2016.05.31
@@ -449,9 +454,23 @@ public class CommonController {
 
     @RequestMapping(value = "/common/search/sigu", method = RequestMethod.POST)
     @ResponseBody
-    public List<String> searchSiguList(String sido) throws CommonApiException {
+    public List<String> searchSiguList(String targetSido) throws CommonApiException {
         try {
-            return this.commonService.findSiguList(sido);
+            return this.commonService.findSiguList(targetSido);
+        } catch (Exception e) {
+            throw new CommonApiException(ApiResultCode.COMMON_FAIL, e);
+        }
+    }
+
+    @RequestMapping(value = "/common/search/apt", method = RequestMethod.POST)
+    @ResponseBody
+    public List<AptVo> searchAptList(String targetSido, String targetSigu) throws CommonApiException {
+        try {
+            AptVo param = new AptVo();
+            param.setCity(targetSido);
+            param.setSigu(targetSigu);
+
+            return this.uhdbService.findAptList(param);
         } catch (Exception e) {
             throw new CommonApiException(ApiResultCode.COMMON_FAIL, e);
         }

@@ -58,6 +58,12 @@ public class AdVo implements Serializable {
     private String targetSex;
     /** 타겟URL */
     private String targetUrl;
+    /** 타겟시도 */
+    @JsonIgnore
+    private String targetSido;
+    /** 타겟시구 */
+    @JsonIgnore
+    private String targetSigu;
     /** 타겟아파트 */
     @JsonIgnore
     private String targetApt;
@@ -136,6 +142,22 @@ public class AdVo implements Serializable {
 
     public void setTargetUrl(String targetUrl) {
         this.targetUrl = targetUrl;
+    }
+
+    public String getTargetSido() {
+        return targetSido;
+    }
+
+    public String getTargetSigu() {
+        return targetSigu;
+    }
+
+    public void setTargetSido(String targetSido) {
+        this.targetSido = targetSido;
+    }
+
+    public void setTargetSigu(String targetSigu) {
+        this.targetSigu = targetSigu;
     }
 
     public String getTargetApt() {

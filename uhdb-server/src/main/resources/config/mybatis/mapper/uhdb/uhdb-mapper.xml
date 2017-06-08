@@ -17,6 +17,9 @@
 			<choose>
 				<when test=' aptId != null and !"".equals(aptId) '>AND aptid = #{aptId}</when>
 				<when test=' aptNm != null and !"".equals(aptNm) '>AND (aptnm LIKE CONCAT('%', #{aptNm}, '%') OR aptsnm LIKE CONCAT('%', #{aptNm}, '%'))</when>
+				<when test=' aptIdList != null and aptIdList.size() > 0 '>
+					AND aptid IN <foreach collection="aptIdList" item="id" open="(" separator="," close=")">#{id}</foreach>
+				</when>
 				<otherwise>
 					<choose>
 						<when test=' sigu != null and !"".equals(sigu) '>AND city LIKE CONCAT(#{city}, '%') AND sigu LIKE CONCAT(#{sigu}, '%')</when>

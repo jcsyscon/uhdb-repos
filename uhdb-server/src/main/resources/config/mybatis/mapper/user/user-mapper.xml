@@ -267,6 +267,8 @@
 				<otherwise>AND seq = 0</otherwise>
 			</choose>
 	    </where>
+	    ORDER BY seq DESC
+	    LIMIT 1
 	</select>
 
 	<select id="selectUserUhdbList" parameterType="UserUhdbVo" resultType="UserUhdbVo">

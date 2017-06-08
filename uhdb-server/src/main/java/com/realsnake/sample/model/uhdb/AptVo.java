@@ -4,6 +4,7 @@
 package com.realsnake.sample.model.uhdb;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -37,6 +38,8 @@ public class AptVo implements Serializable {
     private String addr2;
     @JsonIgnore
     private Integer instCnt;
+    @JsonIgnore
+    private List<String> aptIdList;
 
     public String getAptId() {
         return aptId;
@@ -108,6 +111,14 @@ public class AptVo implements Serializable {
 
     public void setInstCnt(Integer instCnt) {
         this.instCnt = instCnt;
+    }
+
+    public List<String> getAptIdList() {
+        return aptIdList;
+    }
+
+    public void setAptIdList(List<String> aptIdList) {
+        this.aptIdList = aptIdList;
     }
 
     @Override
