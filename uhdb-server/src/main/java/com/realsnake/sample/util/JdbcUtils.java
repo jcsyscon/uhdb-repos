@@ -87,7 +87,7 @@ public class JdbcUtils {
         return result;
     }
 
-    private static final String BOX_OPEN_UPDATE_QUERY = "UPDATE tb_cd0102 SET code_nm = ? WHERE aptid = ? AND code = ? AND code_type = 'BOX_OPEN'";
+    private static final String BOX_OPEN_UPDATE_QUERY = "UPDATE tb_cd0102 SET code_nm = ? WHERE aptid = ? AND code = ? AND code_type = 'BOX_DATA_INIT'";
 
     public int openBox(String gonginIp, String port, String aptId, String aptPosi, String boxNo) throws Exception {
         Connection conn = this.getConnection(gonginIp, port);

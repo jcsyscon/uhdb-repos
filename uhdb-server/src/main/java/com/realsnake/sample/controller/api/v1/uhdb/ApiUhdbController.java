@@ -150,7 +150,7 @@ public class ApiUhdbController {
         }
     }
 
-    @GetMapping(value = "/passwod")
+    @GetMapping(value = "/password")
     public String findUhdbUserPassword(UhdbLogVo param) {
         String result = "NOK";
 
@@ -163,7 +163,7 @@ public class ApiUhdbController {
         return result;
     }
 
-    @PostMapping(value = "/passwod")
+    @PostMapping(value = "/password")
     public String modifyUhdbUserPassword(UhdbLogVo param) {
         String result = "NOK";
 
@@ -206,7 +206,7 @@ public class ApiUhdbController {
     }
 
     /**
-     * 택배함 보관함 사용내역 조회
+     * 택배함 보관함 사용내역 조회(앱)
      *
      * @param gubun past / now
      * @param seq

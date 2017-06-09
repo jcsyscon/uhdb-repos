@@ -5,9 +5,11 @@
  */
 package com.realsnake.sample.service.uhdb;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -23,8 +25,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.realsnake.sample.constants.CommonConstants;
 import com.realsnake.sample.mapper.uhdb.UhdbMapper;
 import com.realsnake.sample.mapper.user.UserMapper;
-import com.realsnake.sample.model.ad.AdDto;
-import com.realsnake.sample.model.ad.AdVo;
 import com.realsnake.sample.model.common.SendVo;
 import com.realsnake.sample.model.common.Sort;
 import com.realsnake.sample.model.fcm.Data;
@@ -39,7 +39,6 @@ import com.realsnake.sample.model.user.UserDto;
 import com.realsnake.sample.model.user.UserFcmVo;
 import com.realsnake.sample.model.user.UserUhdbVo;
 import com.realsnake.sample.model.user.UserVo;
-import com.realsnake.sample.service.ad.AdService;
 import com.realsnake.sample.service.common.CommonService;
 import com.realsnake.sample.util.FcmUtils;
 import com.realsnake.sample.util.JdbcUtils;
@@ -74,12 +73,13 @@ public class UhdbServiceImpl implements UhdbService {
     private FcmUtils fcmUtils;
 
     @Autowired
-    private AdService adService;
-
-    @Autowired
     private CommonService commonService;
 
-    private static final String AD_URL = "/ad/%s";
+    private static final String PUSH_AD_URL = "/api/v1/ad/gubun/push";
+
+    private ObjectMapper mapper = new ObjectMapper();
+
+    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd", Locale.KOREA);
 
     @Override
     @Transactional(readOnly = true)
@@ -92,8 +92,6 @@ public class UhdbServiceImpl implements UhdbService {
     public List<UhdbVo> findUhdbList(UhdbVo param) throws Exception {
         return this.uhdbMapper.selectUhdbList(param);
     }
-
-    private ObjectMapper mapper = new ObjectMapper();
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
@@ -110,14 +108,48 @@ public class UhdbServiceImpl implements UhdbService {
             throw new Exception("보관함 번호는 필수입니다!");
         }
 
-        String title = StringUtils.EMPTY;
-        String body = StringUtils.EMPTY;
-        String uhdbName = StringUtils.EMPTY;
+        String title4User = StringUtils.EMPTY;
+        String body4User = StringUtils.EMPTY;
         String userMobile = StringUtils.EMPTY;
+
+        String body4Tb = StringUtils.EMPTY; // 택배기사용 문구
+        String tbMobile = StringUtils.EMPTY; // 택배기사 핸드폰번호
+
+        String aptsName = StringUtils.EMPTY;
+        String aptPosiName = StringUtils.EMPTY;
+        String nowYmd = StringUtils.EMPTY;
+
+        try {
+            AptVo aptParam = new AptVo();
+            aptParam.setAptId(param.getAptId());
+            List<AptVo> aptList = this.uhdbMapper.selectAptList(aptParam);
+
+            aptsName = aptList.get(0).getAptsNm();
+
+            UhdbVo uhdbParam = new UhdbVo();
+            uhdbParam.setAptId(param.getAptId());
+            uhdbParam.setAptPosi(param.getAptPosi());
+            List<UhdbVo> uhdbList = this.uhdbMapper.selectUhdbList(uhdbParam);
+            aptPosiName = uhdbList.get(0).getAptPosiNm();
+
+
+            nowYmd = sdf.format(new Date());
+        } catch (Exception e) {
+            logger.error("<<modifyUhdbLog 오류>>", e);
+        }
 
         /** 10: 택배보관(택배기사), 20: 택배수령(고객), 30: 택배발송요청(고객), 40: 택배수령(택배기사), 50: 택배반품요청(고객) */
         if (param.getSafeFunc().equals(CommonConstants.SafeFuncType.SAFE_FUNC_10.getCode())) { // 택배보관(택배기사)
             userMobile = param.getHandphone();
+            title4User = CommonConstants.SafeFuncType.SAFE_FUNC_10.getTitle();
+            body4User = String.format(CommonConstants.SafeFuncType.SAFE_FUNC_10.getBody(), aptPosiName, param.getBoxNo(), param.getPswd());
+
+            tbMobile = param.getTaekbaeHandphone();
+            // 택배기사 발송 문자
+            // 아파트명 택배함설치장소명 인증번호:taekbae_PSWD 물품교체/보관함 열리지 않았을때 사용
+            // - tb_ap0101.aptSnm tb_ap0102.aptPosiNM 인증번호:tb_bx0201.taekbae_pswd 물품교체/보관함이 열리지 않았을 때 사용
+            body4Tb = "%s %s 인증번호:%s 물품교체/보관함 열리지 않았을때 사용";
+            body4Tb = String.format(body4Tb, aptsName, aptPosiName, param.getTaekbaePswd());
 
             param.setUseYn("Y");
             param.setStDt(new Date());
@@ -128,19 +160,6 @@ public class UhdbServiceImpl implements UhdbService {
             if (param.getAmt() == null) {
                 param.setAmt((double) 0);
             }
-
-            // 택배함 조회
-            UhdbVo uhdb = new UhdbVo();
-            uhdb.setAptId(param.getAptId());
-            uhdb.setAptPosi(param.getAptPosi());
-            List<UhdbVo> uhdbList = this.uhdbMapper.selectUhdbList(uhdb);
-
-            if (uhdbList != null && !uhdbList.isEmpty()) {
-                uhdbName = uhdbList.get(0).getAptPosiNm();
-            }
-
-            title = CommonConstants.SafeFuncType.SAFE_FUNC_10.getTitle();
-            body = String.format(CommonConstants.SafeFuncType.SAFE_FUNC_10.getBody(), uhdbName, param.getBoxNo(), param.getPswd());
         } else if (param.getSafeFunc().equals(CommonConstants.SafeFuncType.SAFE_FUNC_20.getCode())) { // 택배수령(고객)
             param.setSafeFunc(null);
             param.setUseYn("N");
@@ -156,6 +175,13 @@ public class UhdbServiceImpl implements UhdbService {
             param.setHandphone(null);
             param.setPswd(null);
         } else if (param.getSafeFunc().equals(CommonConstants.SafeFuncType.SAFE_FUNC_30.getCode())) { // 택배발송요청(고객)
+            tbMobile = param.getTaekbaeHandphone();
+            // 택배기사 발송 문자
+            // 아파트명 택배함설치장소명 2017.07.08 1201동 1301호 001번함 택배보관 PW:12345(taekbae_pswd)
+            // - tb_ap0101.aptSnm tb_ap0102.aptPosiNM 현재날자 tb_bx0201.dong동 tb_bx0201.ho호 tb_bx0201.boxno번함 택배보관 PW:tb_bx0201. taekbae_pswd
+            body4Tb = "%s %s %s %s동 %s호 %s번함 택배보관, PW:%s";
+            body4Tb = String.format(body4Tb, aptsName, aptPosiName, nowYmd, param.getDong(), param.getHo(), param.getBoxNo(), param.getTaekbaePswd());
+
             param.setUseYn("Y");
             param.setStDt(new Date());
             param.setEnDt(null);
@@ -167,6 +193,12 @@ public class UhdbServiceImpl implements UhdbService {
             }
         } else if (param.getSafeFunc().equals(CommonConstants.SafeFuncType.SAFE_FUNC_40.getCode())) { // 택배수령(택배기사)
             userMobile = param.getHandphone();
+            title4User = CommonConstants.SafeFuncType.SAFE_FUNC_40.getTitle();
+            // 고객 푸시 발송
+            // 아파트명 택배함설치장소명 2017.07.08 1201동 1301호 001번 보관함에 물품 배송이 되었습니다.
+            // - tb_ap0101.aptSnm tb_ap0102.aptPosiNM 현재날자 tb_bx0201.dong동 tb_bx0201.ho호 tb_bx0201.boxno번 보관함에 물품 배송이 되었습니다.
+            body4User = "%s %s %s %s동 %s호 %s번 보관함 물품이 배송되었습니다.";
+            body4User = String.format(body4Tb, aptsName, aptPosiName, nowYmd, param.getDong(), param.getHo(), param.getBoxNo(), param.getTaekbaePswd());
 
             param.setSafeFunc(null);
             param.setUseYn("N");
@@ -181,20 +213,14 @@ public class UhdbServiceImpl implements UhdbService {
             param.setTaekbae(null);
             param.setHandphone(null);
             param.setPswd(null);
-
-            // 택배함 조회
-            UhdbVo uhdb = new UhdbVo();
-            uhdb.setAptId(param.getAptId());
-            uhdb.setAptPosi(param.getAptPosi());
-            List<UhdbVo> uhdbList = this.uhdbMapper.selectUhdbList(uhdb);
-
-            if (uhdbList != null && !uhdbList.isEmpty()) {
-                uhdbName = uhdbList.get(0).getAptPosiNm();
-            }
-
-            title = CommonConstants.SafeFuncType.SAFE_FUNC_40.getTitle();
-            body = String.format(CommonConstants.SafeFuncType.SAFE_FUNC_40.getBody(), uhdbName, param.getBoxNo());
         } else if (param.getSafeFunc().equals(CommonConstants.SafeFuncType.SAFE_FUNC_50.getCode())) { // 택배반품요청(고객)
+            tbMobile = param.getTaekbaeHandphone();
+            // 택배기사 발송 문자
+            // 아파트명 택배함설치장소명 2017.07.08 1201동 1301호 001번함 반품택배보관 PW:12345(taekbae_pswd)
+            // - tb_ap0101.aptSnm tb_ap0102.aptPosiNM 현재날자 tb_bx0201.dong동 tb_bx0201.ho호 tb_bx0201.boxno번함 택배보관 PW:tb_bx0201. taekbae_pswd
+            body4Tb = "%s %s %s %s동 %s호 %s번함 반품택배보관, PW:%s";
+            body4Tb = String.format(body4Tb, aptsName, aptPosiName, nowYmd, param.getDong(), param.getHo(), param.getBoxNo(), param.getTaekbaePswd());
+
             param.setUseYn("Y");
             param.setStDt(new Date());
             param.setEnDt(null);
@@ -207,10 +233,29 @@ public class UhdbServiceImpl implements UhdbService {
         }
 
         this.uhdbMapper.updateUhdbLog(param);
-        logger.info("<<무인택배함 로그 저장>> {}", param.toString());
+        // logger.info("<<무인택배함 로그 저장 완료>>");
 
-        if (StringUtils.isEmpty(body)) {
-            logger.info("<<무인택배함API {}, SMS / PUSH 미발송>>", param.getSafeFunc());
+        if (StringUtils.isNotEmpty(body4Tb)) {
+            try {
+                // 택배기사용 문자 발송
+                CompletableFuture<String> result = this.smsUtils.send(tbMobile, body4Tb);
+
+                // 발송 로그 저장
+                SendVo send = new SendVo();
+                send.setGubun(CommonConstants.SendType.SMS_UHDB.getValue());
+                send.setMobile(userMobile);
+                send.setSendMessage(body4User);
+                send.setResultMessage(result.get());
+                this.commonService.regSendLog(send);
+
+                logger.info("<<무인택배함 로그 API, 택배기사 SMS 발송>> {}", send.toString());
+            } catch (Exception e) {
+                logger.error("<<무인택배함 로그 API, 택배기사 문자발송 중 오류>>", e);
+            }
+        }
+
+        if (StringUtils.isEmpty(body4User)) {
+            logger.info("<<무인택배함API {}, 사용자에게 SMS / PUSH 미발송>>", param.getSafeFunc());
             return;
         }
 
@@ -237,73 +282,82 @@ public class UhdbServiceImpl implements UhdbService {
                 userUhdbList = this.userMapper.selectUserUhdbList(userUhdb);
             }
 
+            /* @formatter:off */
+            /**
             if (userUhdbList == null || userUhdbList.isEmpty()) {
-                /* @formatter:off */
                 // 테스트 기간 중 SMS 발송 중지
-                /**
                 // 3. 핸드폰번호로도 아파트아이디, 택배함 위치, 동, 호로도 사용자를 찾을 수 없다면 SMS 발송
-                CompletableFuture<String> result = this.smsUtils.send(userMobile, body);
+                CompletableFuture<String> result = this.smsUtils.send(userMobile, body4User);
 
                 // 발송 로그 저장
                 SendVo send = new SendVo();
                 send.setGubun(CommonConstants.SendType.SMS_UHDB.getValue());
                 send.setMobile(userMobile);
-                send.setSendMessage(body);
+                send.setSendMessage(body4User);
                 send.setResultMessage(result.get());
                 this.commonService.regSendLog(send);
 
-                logger.info("<<SMS 발송>> {}", send.toString());
+                logger.info("<<무인택배함로그API, 사용자 SMS 발송>> {}", send.toString());
+
+                return;
+            }
+            */
+            /* @formatter:on */
+
+            List<Integer> userSeqList = new ArrayList<>();
+
+            for (UserUhdbVo uu : userUhdbList) {
+                userSeqList.add(uu.getUserSeq());
+            }
+
+            UserDto userDto = new UserDto();
+            userDto.setUserSeqList(userSeqList);
+
+            List<UserVo> userList = this.userMapper.selectUserList(userDto);
+
+            if (userList == null || userList.isEmpty()) {
+                // 정말 이상한 경우이다. 나올 수 없는 경우이다.
+                return;
+            }
+
+            // 4. FCM 발송
+            for (UserVo user : userList) {
+                UserFcmVo userFcm = new UserFcmVo();
+                userFcm.setUserSeq(user.getSeq());
+
+                // 광고 조회
+                /* @formatter:off */
+                /**
+                String adUrl = null;
+                AdVo ad = this.adService.findRandomAd(new AdDto());
+                if (ad != null) {
+                    adUrl = String.format(AD_URL, ad.getSeq());
+                }
                 */
+
+                String adUrl = PUSH_AD_URL;
                 /* @formatter:on */
-            } else {
-                List<Integer> userSeqList = new ArrayList<>();
 
-                for (UserUhdbVo uu : userUhdbList) {
-                    userSeqList.add(uu.getUserSeq());
+                UserFcmVo fcm = this.userMapper.selectUserFcm(userFcm);
+                if (fcm == null) {
+                    continue;
                 }
 
-                UserDto userDto = new UserDto();
-                userDto.setUserSeqList(userSeqList);
+                Message message = new Message(title4User, body4User, adUrl);
+                FcmReqForm fcmReqForm = new FcmReqForm(new Data(message), fcm.getFcmToken());
 
-                List<UserVo> userList = this.userMapper.selectUserList(userDto);
+                CompletableFuture<String> result = this.fcmUtils.send(fcmReqForm);
 
-                if (userList == null || userList.isEmpty()) {
-                    // 정말 이상한 경우이다. 나올 수 없는 경우이다.
-                } else {
-                    // 4. FCM 발송
-                    for (UserVo user : userList) {
-                        UserFcmVo userFcm = new UserFcmVo();
-                        userFcm.setUserSeq(user.getSeq());
+                // 발송 로그 저장
+                SendVo send = new SendVo();
+                send.setGubun(CommonConstants.SendType.PUSH_UHDB.getValue());
+                send.setMobile(BlockCipherUtils.decrypt(secretKey, user.getMobile()));
+                send.setFcmToken(fcm.getFcmToken());
+                send.setSendMessage(this.mapper.writeValueAsString(fcmReqForm));
+                send.setResultMessage(result.get());
+                this.commonService.regSendLog(send);
 
-                        // 광고 조회
-                        String adUrl = null;
-                        AdVo ad = this.adService.findRandomAd(new AdDto());
-                        if (ad != null) {
-                            adUrl = String.format(AD_URL, ad.getSeq());
-                        }
-
-                        UserFcmVo fcm = this.userMapper.selectUserFcm(userFcm);
-                        if (fcm == null) {
-                            continue;
-                        }
-
-                        Message message = new Message(title, body, adUrl);
-                        FcmReqForm fcmReqForm = new FcmReqForm(new Data(message), fcm.getFcmToken());
-
-                        CompletableFuture<String> result = this.fcmUtils.send(fcmReqForm);
-
-                        // 발송 로그 저장
-                        SendVo send = new SendVo();
-                        send.setGubun(CommonConstants.SendType.PUSH_UHDB.getValue());
-                        send.setMobile(BlockCipherUtils.decrypt(secretKey, user.getMobile()));
-                        send.setFcmToken(fcm.getFcmToken());
-                        send.setSendMessage(this.mapper.writeValueAsString(fcmReqForm));
-                        send.setResultMessage(result.get());
-                        this.commonService.regSendLog(send);
-
-                        logger.info("<<PUSH 발송>> {}", send.toString());
-                    }
-                }
+                logger.info("<<무인택배함로그API, 사용자 PUSH 발송>> {}", send.toString());
             }
         } catch (Exception e) {
             logger.error("<<SMS 및 FCM 발송 중 오류>>", e);
