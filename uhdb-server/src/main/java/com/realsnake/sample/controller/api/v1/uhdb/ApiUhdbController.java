@@ -257,7 +257,7 @@ public class ApiUhdbController {
             this.uhdbService.sendAlarm4LongBox(param);
             result = "OK";
         } catch (Exception e) {
-            LOGGER.error("<<regNfc, 무인택배함 NFC 삭제 중 오류>>", e);
+            LOGGER.error("<<sendAlarmLongBox, 무인택배함 장기보관 알림 처리 중 오류>>", e);
         }
 
         return result;

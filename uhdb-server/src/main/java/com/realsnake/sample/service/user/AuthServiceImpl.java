@@ -51,7 +51,7 @@ public class AuthServiceImpl implements UserDetailsService {
         param.setUsername(username);
 
         try {
-            UserVo user = this.userService.findUser(param);
+            UserVo user = this.userService.findUser4Auth(param);
 
             if (user == null) {
                 throw new UsernameNotFoundException("User[" + username + "] not found.");

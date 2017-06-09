@@ -123,7 +123,6 @@ public class UhdbServiceImpl implements UhdbService {
             AptVo aptParam = new AptVo();
             aptParam.setAptId(param.getAptId());
             List<AptVo> aptList = this.uhdbMapper.selectAptList(aptParam);
-
             aptsName = aptList.get(0).getAptsNm();
 
             UhdbVo uhdbParam = new UhdbVo();
@@ -131,7 +130,6 @@ public class UhdbServiceImpl implements UhdbService {
             uhdbParam.setAptPosi(param.getAptPosi());
             List<UhdbVo> uhdbList = this.uhdbMapper.selectUhdbList(uhdbParam);
             aptPosiName = uhdbList.get(0).getAptPosiNm();
-
 
             nowYmd = sdf.format(new Date());
         } catch (Exception e) {
@@ -255,7 +253,7 @@ public class UhdbServiceImpl implements UhdbService {
         }
 
         if (StringUtils.isEmpty(body4User)) {
-            logger.info("<<무인택배함API {}, 사용자에게 SMS / PUSH 미발송>>", param.getSafeFunc());
+            logger.info("<<무인택배함 로그 API {}, 사용자에게 SMS / PUSH 미발송>>", param.getSafeFunc());
             return;
         }
 
@@ -297,7 +295,7 @@ public class UhdbServiceImpl implements UhdbService {
                 send.setResultMessage(result.get());
                 this.commonService.regSendLog(send);
 
-                logger.info("<<무인택배함로그API, 사용자 SMS 발송>> {}", send.toString());
+                logger.info("<<무인택배함 로그 API, 사용자 SMS 발송>> {}", send.toString());
 
                 return;
             }
@@ -325,25 +323,12 @@ public class UhdbServiceImpl implements UhdbService {
                 UserFcmVo userFcm = new UserFcmVo();
                 userFcm.setUserSeq(user.getSeq());
 
-                // 광고 조회
-                /* @formatter:off */
-                /**
-                String adUrl = null;
-                AdVo ad = this.adService.findRandomAd(new AdDto());
-                if (ad != null) {
-                    adUrl = String.format(AD_URL, ad.getSeq());
-                }
-                */
-
-                String adUrl = PUSH_AD_URL;
-                /* @formatter:on */
-
                 UserFcmVo fcm = this.userMapper.selectUserFcm(userFcm);
                 if (fcm == null) {
                     continue;
                 }
 
-                Message message = new Message(title4User, body4User, adUrl);
+                Message message = new Message(title4User, body4User, PUSH_AD_URL);
                 FcmReqForm fcmReqForm = new FcmReqForm(new Data(message), fcm.getFcmToken());
 
                 CompletableFuture<String> result = this.fcmUtils.send(fcmReqForm);
@@ -357,7 +342,7 @@ public class UhdbServiceImpl implements UhdbService {
                 send.setResultMessage(result.get());
                 this.commonService.regSendLog(send);
 
-                logger.info("<<무인택배함로그API, 사용자 PUSH 발송>> {}", send.toString());
+                logger.info("<<무인택배함 로그 API, 사용자 PUSH 발송>> {}", send.toString());
             }
         } catch (Exception e) {
             logger.error("<<SMS 및 FCM 발송 중 오류>>", e);
@@ -539,23 +524,30 @@ public class UhdbServiceImpl implements UhdbService {
         */
         /* @formatter:on */
 
-        UhdbLogVo uhdbLogParam = new UhdbLogVo();
-        uhdbLogParam.setAptId(param.getAptId());
-        uhdbLogParam.setAptPosi(param.getAptPosi());
-        uhdbLogParam.setBoxNo(param.getBoxNo());
-
-        UhdbLogVo uhdbLog = this.uhdbMapper.selectUhdbLog(uhdbLogParam);
-
-        String aptsName = StringUtils.EMPTY;
+        // String aptsName = StringUtils.EMPTY;
         String aptPosiName = StringUtils.EMPTY;
-        String nowYmd = StringUtils.EMPTY;
+        // String nowYmd = StringUtils.EMPTY;
+        String userMobile = StringUtils.EMPTY;
+        String userPassword = StringUtils.EMPTY;
+
+        String title4Push = "택배 장기보관 알림";
+        String body4Push = "%s 보관함 %s번함에 3일 이상 보관되어 있는 물품이 있으니 빨리 찾아가세요. 비밀번호:%s";
+        String body4Sms = "%s 보관함 %s번함 3일 이상 보관 빨리 찾아가세요. 비밀번호:%s";
 
         try {
-            AptVo aptParam = new AptVo();
-            aptParam.setAptId(param.getAptId());
-            List<AptVo> aptList = this.uhdbMapper.selectAptList(aptParam);
+            UhdbLogVo uhdbLogParam = new UhdbLogVo();
+            uhdbLogParam.setAptId(param.getAptId());
+            uhdbLogParam.setAptPosi(param.getAptPosi());
+            uhdbLogParam.setBoxNo(param.getBoxNo());
 
-            aptsName = aptList.get(0).getAptsNm();
+            UhdbLogVo uhdbLog = this.uhdbMapper.selectUhdbLog(uhdbLogParam);
+            userMobile = uhdbLog.getHandphone();
+            userPassword = uhdbLog.getPswd();
+
+            // AptVo aptParam = new AptVo();
+            // aptParam.setAptId(param.getAptId());
+            // List<AptVo> aptList = this.uhdbMapper.selectAptList(aptParam);
+            // aptsName = aptList.get(0).getAptsNm();
 
             UhdbVo uhdbParam = new UhdbVo();
             uhdbParam.setAptId(param.getAptId());
@@ -563,15 +555,14 @@ public class UhdbServiceImpl implements UhdbService {
             List<UhdbVo> uhdbList = this.uhdbMapper.selectUhdbList(uhdbParam);
             aptPosiName = uhdbList.get(0).getAptPosiNm();
 
+            // nowYmd = sdf.format(new Date());
 
-            nowYmd = sdf.format(new Date());
+            body4Push = String.format(body4Push, aptPosiName, param.getBoxNo(), userPassword);
+            body4Sms = String.format(body4Sms, aptPosiName, param.getBoxNo(), userPassword);
         } catch (Exception e) {
             logger.error("<<sendAlarm4LongBox 오류>>", e);
+            throw e;
         }
-
-        String title4User = StringUtils.EMPTY;
-        String body4User = StringUtils.EMPTY;
-        String userMobile = uhdbLog.getHandphone();
 
         String secretKey = null;
 
@@ -617,14 +608,12 @@ public class UhdbServiceImpl implements UhdbService {
                 UserFcmVo userFcm = new UserFcmVo();
                 userFcm.setUserSeq(user.getSeq());
 
-                String adUrl = PUSH_AD_URL;
-
                 UserFcmVo fcm = this.userMapper.selectUserFcm(userFcm);
                 if (fcm == null) {
                     continue;
                 }
 
-                Message message = new Message(title4User, body4User, adUrl);
+                Message message = new Message(title4Push, body4Push, PUSH_AD_URL);
                 FcmReqForm fcmReqForm = new FcmReqForm(new Data(message), fcm.getFcmToken());
 
                 CompletableFuture<String> result = this.fcmUtils.send(fcmReqForm);
@@ -638,29 +627,28 @@ public class UhdbServiceImpl implements UhdbService {
                 send.setResultMessage(result.get());
                 this.commonService.regSendLog(send);
 
-                logger.info("<<무인택배함로그API, 사용자 PUSH 발송>> {}", send.toString());
+                logger.info("<<무인택배함 장기보관 알림 API, 사용자 PUSH 발송>> {}", send.toString());
             }
         } catch (Exception e) {
-            logger.error("<<장기보관 API, FCM 발송 중 오류>>", e);
+            logger.error("<<무인택배함 장기보관 알림 API, FCM 발송 중 오류>>", e);
+            throw e;
         }
 
         if ("pushAndSms".equalsIgnoreCase(param.getGubun())) {
             // 문자 발송
             // 테스트 기간 중 SMS 발송 중지
             // 3. 핸드폰번호로도 아파트아이디, 택배함 위치, 동, 호로도 사용자를 찾을 수 없다면 SMS 발송
-            CompletableFuture<String> result = this.smsUtils.send(userMobile, body4User);
+            CompletableFuture<String> result = this.smsUtils.send(userMobile, body4Sms);
 
             // 발송 로그 저장
             SendVo send = new SendVo();
             send.setGubun(CommonConstants.SendType.SMS_UHDB.getValue());
             send.setMobile(userMobile);
-            send.setSendMessage(body4User);
+            send.setSendMessage(body4Sms);
             send.setResultMessage(result.get());
             this.commonService.regSendLog(send);
 
-            logger.info("<<무인택배함로그API, 사용자 SMS 발송>> {}", send.toString());
-
-            return;
+            logger.info("<<무인택배함 장기보관 알림 API, 사용자 SMS 발송>> {}", send.toString());
         }
     }
 

@@ -56,4 +56,6 @@ public interface UserService {
 
     void modifyUserAlarmRecYn(UserVo param) throws Exception;
 
+    UserVo findUser4Auth(UserVo param) throws Exception;
+
 }

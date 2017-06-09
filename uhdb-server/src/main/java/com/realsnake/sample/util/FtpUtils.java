@@ -3,26 +3,10 @@
  */
 package com.realsnake.sample.util;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.net.ftp.FTP;
-import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPFile;
-import org.apache.commons.net.ftp.FTPReply;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import com.realsnake.sample.constants.CommonConstants;
 
 /**
  * <pre>
@@ -60,6 +44,8 @@ public class FtpUtils {
      * @param changeDir
      * @param afterCal
      */
+    /* @formatter:off */
+    /**
     public List<File> downloadFtpFile(String saveDir, String ip, int port, String id, String pw, String changeDir, Long afterTime) {
         FTPClient ftpClient = null;
 
@@ -180,6 +166,8 @@ public class FtpUtils {
 
         return resultFileList;
     }
+    */
+    /* @formatter:on */
 
     /**
      * @author 전강욱(realsnake1975@gmail.com)
