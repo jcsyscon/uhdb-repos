@@ -239,4 +239,28 @@ public class ApiUhdbController {
         }
     }
 
+    /**
+     * 장기보관 알림 발송
+     *
+     * @param aptId
+     * @param aptPosi
+     * @param boxNo
+     * @param gubun onlyPush / pushAndSms
+     * @return
+     * @throws CommonApiException
+     */
+    @PostMapping(value = "/long-box/alarm")
+    public String sendAlarmLongBox(UhdbDto param) throws CommonApiException {
+        String result = "NOK";
+
+        try {
+            this.uhdbService.sendAlarm4LongBox(param);
+            result = "OK";
+        } catch (Exception e) {
+            LOGGER.error("<<regNfc, 무인택배함 NFC 삭제 중 오류>>", e);
+        }
+
+        return result;
+    }
+
 }

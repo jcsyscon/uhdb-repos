@@ -523,4 +523,145 @@ public class UhdbServiceImpl implements UhdbService {
         return uhdbLogList;
     }
 
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void sendAlarm4LongBox(UhdbDto param) throws Exception {
+        /* @formatter:off */
+        /**
+        1. 장기보관 문자전송 프로세스.
+        - 물품보관 된지 한지 3일째 되는 날에 고객에게 PUSH를 한번 더 보낸다.
+          ex) 2017.06.05 보관 -> 2017.06.08 12:30 에 일괄로 push 진행.
+           -- 택배함에서 체크해서 API를 호출할 예정.
+
+         - api 방식으로 처리.(전강욱 책임 API 개발)
+           aptid, aptposi, boxno, 전송구분(push만, push+문자)
+          ※ 앱이 설치되지 않는 고객에게 문자로 전송을 하지는 않는다.
+        */
+        /* @formatter:on */
+
+        UhdbLogVo uhdbLogParam = new UhdbLogVo();
+        uhdbLogParam.setAptId(param.getAptId());
+        uhdbLogParam.setAptPosi(param.getAptPosi());
+        uhdbLogParam.setBoxNo(param.getBoxNo());
+
+        UhdbLogVo uhdbLog = this.uhdbMapper.selectUhdbLog(uhdbLogParam);
+
+        String aptsName = StringUtils.EMPTY;
+        String aptPosiName = StringUtils.EMPTY;
+        String nowYmd = StringUtils.EMPTY;
+
+        try {
+            AptVo aptParam = new AptVo();
+            aptParam.setAptId(param.getAptId());
+            List<AptVo> aptList = this.uhdbMapper.selectAptList(aptParam);
+
+            aptsName = aptList.get(0).getAptsNm();
+
+            UhdbVo uhdbParam = new UhdbVo();
+            uhdbParam.setAptId(param.getAptId());
+            uhdbParam.setAptPosi(param.getAptPosi());
+            List<UhdbVo> uhdbList = this.uhdbMapper.selectUhdbList(uhdbParam);
+            aptPosiName = uhdbList.get(0).getAptPosiNm();
+
+
+            nowYmd = sdf.format(new Date());
+        } catch (Exception e) {
+            logger.error("<<sendAlarm4LongBox 오류>>", e);
+        }
+
+        String title4User = StringUtils.EMPTY;
+        String body4User = StringUtils.EMPTY;
+        String userMobile = uhdbLog.getHandphone();
+
+        String secretKey = null;
+
+        try {
+            // 1. 핸드폰번호로 사용자 찾기
+            UserUhdbVo userUhdb = new UserUhdbVo();
+
+            String mobileNumber = userMobile.substring(0, 3) + "-" + userMobile.substring(3, 7) + "-" + userMobile.substring(7, 11);
+            secretKey = BlockCipherUtils.generateSecretKey(CommonConstants.DEFAULT_AUTH_KEY);
+            String encMobileNumber = BlockCipherUtils.encrypt(secretKey, mobileNumber);
+
+            userUhdb.setMobile(encMobileNumber);
+            List<UserUhdbVo> userUhdbList = this.userMapper.selectUserUhdbList(userUhdb);
+
+            if (userUhdbList == null || userUhdbList.isEmpty()) {
+                // 2. 핸드폰번호에 해당하는 사용자가 없다면 아파트아이디, 택배함 위치, 동, 호로 사용자 찾기
+                userUhdb = new UserUhdbVo();
+                userUhdb.setAptId(param.getAptId());
+                userUhdb.setUhdbId(param.getAptPosi());
+                userUhdb.setDong(param.getDong());
+                userUhdb.setHo(param.getHo());
+                userUhdbList = this.userMapper.selectUserUhdbList(userUhdb);
+            }
+
+            List<Integer> userSeqList = new ArrayList<>();
+
+            for (UserUhdbVo uu : userUhdbList) {
+                userSeqList.add(uu.getUserSeq());
+            }
+
+            UserDto userDto = new UserDto();
+            userDto.setUserSeqList(userSeqList);
+
+            List<UserVo> userList = this.userMapper.selectUserList(userDto);
+
+            if (userList == null || userList.isEmpty()) {
+                // 정말 이상한 경우이다. 나올 수 없는 경우이다.
+                return;
+            }
+
+            // 4. FCM 발송
+            for (UserVo user : userList) {
+                UserFcmVo userFcm = new UserFcmVo();
+                userFcm.setUserSeq(user.getSeq());
+
+                String adUrl = PUSH_AD_URL;
+
+                UserFcmVo fcm = this.userMapper.selectUserFcm(userFcm);
+                if (fcm == null) {
+                    continue;
+                }
+
+                Message message = new Message(title4User, body4User, adUrl);
+                FcmReqForm fcmReqForm = new FcmReqForm(new Data(message), fcm.getFcmToken());
+
+                CompletableFuture<String> result = this.fcmUtils.send(fcmReqForm);
+
+                // 발송 로그 저장
+                SendVo send = new SendVo();
+                send.setGubun(CommonConstants.SendType.PUSH_UHDB.getValue());
+                send.setMobile(BlockCipherUtils.decrypt(secretKey, user.getMobile()));
+                send.setFcmToken(fcm.getFcmToken());
+                send.setSendMessage(this.mapper.writeValueAsString(fcmReqForm));
+                send.setResultMessage(result.get());
+                this.commonService.regSendLog(send);
+
+                logger.info("<<무인택배함로그API, 사용자 PUSH 발송>> {}", send.toString());
+            }
+        } catch (Exception e) {
+            logger.error("<<장기보관 API, FCM 발송 중 오류>>", e);
+        }
+
+        if ("pushAndSms".equalsIgnoreCase(param.getGubun())) {
+            // 문자 발송
+            // 테스트 기간 중 SMS 발송 중지
+            // 3. 핸드폰번호로도 아파트아이디, 택배함 위치, 동, 호로도 사용자를 찾을 수 없다면 SMS 발송
+            CompletableFuture<String> result = this.smsUtils.send(userMobile, body4User);
+
+            // 발송 로그 저장
+            SendVo send = new SendVo();
+            send.setGubun(CommonConstants.SendType.SMS_UHDB.getValue());
+            send.setMobile(userMobile);
+            send.setSendMessage(body4User);
+            send.setResultMessage(result.get());
+            this.commonService.regSendLog(send);
+
+            logger.info("<<무인택배함로그API, 사용자 SMS 발송>> {}", send.toString());
+
+            return;
+        }
+    }
+
 }

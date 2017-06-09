@@ -50,4 +50,6 @@ public interface UhdbService {
 
     List<UhdbLogVo> findUhdbLogList4Mobile(UhdbDto param) throws Exception;
 
+    void sendAlarm4LongBox(UhdbDto param) throws Exception;
+
 }
