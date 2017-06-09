@@ -243,8 +243,8 @@ public class UhdbServiceImpl implements UhdbService {
                 // 발송 로그 저장
                 SendVo send = new SendVo();
                 send.setGubun(CommonConstants.SendType.SMS_UHDB.getValue());
-                send.setMobile(userMobile);
-                send.setSendMessage(body4User);
+                send.setMobile(tbMobile);
+                send.setSendMessage(body4Tb);
                 send.setResultMessage(result.get());
                 this.commonService.regSendLog(send);
 
