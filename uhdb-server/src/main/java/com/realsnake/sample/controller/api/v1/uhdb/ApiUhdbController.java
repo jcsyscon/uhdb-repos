@@ -247,13 +247,18 @@ public class ApiUhdbController {
      * @param boxNo
      * @param gubun onlyPush / pushAndSms
      * @return
-     * @throws CommonApiException
      */
     @PostMapping(value = "/long-box/alarm")
-    public String sendAlarmLongBox(UhdbDto param) throws CommonApiException {
+    public String sendAlarmLongBox(String aptId, String aptPosi, String boxNo, String gubun) {
         String result = "NOK";
 
         try {
+            UhdbDto param = new UhdbDto();
+            param.setAptId(aptId);
+            param.setAptPosi(aptPosi);
+            param.setBoxNo(boxNo);
+            param.setGubun(gubun);
+
             this.uhdbService.sendAlarm4LongBox(param);
             result = "OK";
         } catch (Exception e) {
