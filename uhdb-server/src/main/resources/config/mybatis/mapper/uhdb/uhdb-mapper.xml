@@ -336,6 +336,10 @@
 			, #{perNm}
 			, #{perGb}
 		)
+		ON DUPLICATE KEY UPDATE
+		upddt = NOW()
+		, pernm = #{perNm}
+		, pergb = #{perGb}
 	</update>
 
 	<update id="deleteNfc" parameterType="NfcVo">
