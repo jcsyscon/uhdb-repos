@@ -232,9 +232,9 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void modifyUserFcm(UserFcmVo userFcm) throws Exception {
-        userFcm.setDelUserSeq(userFcm.getUserSeq());
+        // userFcm.setDelUserSeq(userFcm.getUserSeq());
 
-        this.userMapper.deleteUserFcm(userFcm);
+        // this.userMapper.deleteUserFcm(userFcm);
         this.userMapper.insertUserFcm(userFcm);
     }
 

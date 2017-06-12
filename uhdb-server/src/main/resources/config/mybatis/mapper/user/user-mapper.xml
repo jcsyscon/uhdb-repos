@@ -316,6 +316,8 @@
 	        , NOW()
 	        , 'N'
 	    )
+		ON DUPLICATE KEY UPDATE
+		app_version = #{appVersion}
 	</update>
 
 	<update id="deleteUserFcm" parameterType="UserFcmVo">
