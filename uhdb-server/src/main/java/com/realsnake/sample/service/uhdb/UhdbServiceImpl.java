@@ -13,10 +13,13 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -74,6 +77,9 @@ public class UhdbServiceImpl implements UhdbService {
 
     @Autowired
     private CommonService commonService;
+
+    @Resource(name = "redisTemplate")
+    private ValueOperations<String, String> valueOperations;
 
     private static final String PUSH_AD_URL = "/api/v1/ad/gubun/push";
 
@@ -138,6 +144,7 @@ public class UhdbServiceImpl implements UhdbService {
 
         /** 10: 택배보관(택배기사), 20: 택배수령(고객), 30: 택배발송요청(고객), 40: 택배수령(택배기사), 50: 택배반품요청(고객) */
         if (param.getSafeFunc().equals(CommonConstants.SafeFuncType.SAFE_FUNC_10.getCode())) { // 택배보관(택배기사)
+            Date nowDate = new Date();
             userMobile = param.getHandphone();
             title4User = CommonConstants.SafeFuncType.SAFE_FUNC_10.getTitle();
             body4User = String.format(CommonConstants.SafeFuncType.SAFE_FUNC_10.getBody(), aptPosiName, param.getBoxNo(), param.getPswd());
@@ -150,7 +157,7 @@ public class UhdbServiceImpl implements UhdbService {
             body4Tb = String.format(body4Tb, aptsName, aptPosiName, param.getTaekbaePswd());
 
             param.setUseYn("Y");
-            param.setStDt(new Date());
+            param.setStDt(nowDate);
             param.setEnDt(null);
             if (StringUtils.isEmpty(param.getAmtGb())) {
                 param.setAmtGb(null);
@@ -158,6 +165,20 @@ public class UhdbServiceImpl implements UhdbService {
             if (param.getAmt() == null) {
                 param.setAmt((double) 0);
             }
+
+            // <!-- 택배기사에게 하루에 한번만 문자 보내도록 체크
+            String checkTb4SmsKey = param.getTaekbae() + "|" + param.getTaekbaeHandphone();
+            String checkTb4SmsValue = CommonConstants.SHORT_DATE_SDF.format(nowDate);
+
+            String redisValue = this.valueOperations.get(checkTb4SmsKey);
+
+            if (checkTb4SmsValue.equals(redisValue)) {
+                logger.debug("<<택배기사에게 오늘 날짜로 safeFunc 10번 관련 안내 문자를 한번 발송했기 때문에 더 이상 발송하지 않는다>>");
+                body4Tb = StringUtils.EMPTY;
+            } else {
+                this.valueOperations.set(checkTb4SmsKey, checkTb4SmsValue);
+            }
+            // 택배기사에게 하루에 한번만 문자 보내도록 체크 -->
         } else if (param.getSafeFunc().equals(CommonConstants.SafeFuncType.SAFE_FUNC_20.getCode())) { // 택배수령(고객)
             param.setSafeFunc(null);
             param.setUseYn("N");
