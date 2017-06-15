@@ -119,9 +119,12 @@ public class ApiUhdbController {
     }
 
     /**
-     * 무인택배함 락커 열기
+     * 무인택배함 락커 열기(애)
      *
      * @param aptId
+     * @param uhdbId
+     * @param boxNo
+     * @param password
      * @return
      * @throws CommonApiException
      */
@@ -140,6 +143,39 @@ public class ApiUhdbController {
             param.setBoxNo(boxNo);
             param.setPswd(password);
             String result = this.uhdbService.openBox(param);
+
+            ApiResponse<String> apiResponse = new ApiResponse<>();
+            apiResponse.setBody(result);
+
+            return apiResponse;
+        } catch (Exception e) {
+            throw new CommonApiException(ApiResultCode.COMMON_FAIL, e);
+        }
+    }
+
+    /**
+     * 무인택배함 락커 초기화(앱에서 보관함 열기 중 닫기/확인/고객센터 버튼 클릭 시)
+     *
+     * @param aptId
+     * @param uhdbId
+     * @param boxNo
+     * @return
+     * @throws CommonApiException
+     */
+    @PostMapping(value = "/init")
+    public ApiResponse<?> initBox(String aptId, String uhdbId, String boxNo) throws CommonApiException {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication == null) {
+                LOGGER.debug("<<무인택배함 락커 초기화(/uhdb/init)>> 인증 실패");
+                throw new CommonApiException(ApiResultCode.NOTFOUND_USER);
+            }
+
+            UhdbLogVo param = new UhdbLogVo();
+            param.setAptId(aptId);
+            param.setAptPosi(uhdbId);
+            param.setBoxNo(boxNo);
+            String result = this.uhdbService.initBox(param);
 
             ApiResponse<String> apiResponse = new ApiResponse<>();
             apiResponse.setBody(result);

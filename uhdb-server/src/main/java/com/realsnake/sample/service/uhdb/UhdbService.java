@@ -38,6 +38,8 @@ public interface UhdbService {
 
     String openBox(UhdbLogVo param);
 
+    String initBox(UhdbLogVo param);
+
     void modifyUhdbGonginIp(UhdbVo param) throws Exception;
 
     String findUhdbUserPassword(UhdbLogVo param) throws Exception;

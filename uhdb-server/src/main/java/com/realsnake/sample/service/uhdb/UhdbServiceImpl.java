@@ -450,6 +450,73 @@ public class UhdbServiceImpl implements UhdbService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public String initBox(UhdbLogVo param) {
+        try {
+            // 1. 아파트아이디와 무인택배함아이디로 무인택배함의 공인아이피 조회
+            UhdbVo uv = new UhdbVo();
+            uv.setAptId(param.getAptId());
+            uv.setAptPosi(param.getAptPosi());
+            List<UhdbVo> uhdbList = this.uhdbMapper.selectUhdbList(uv);
+
+            if (uhdbList == null || uhdbList.isEmpty()) {
+                // 무인택배함 부재
+                return "UHDB NOT FOUND";
+            }
+
+            // logger.debug("<<무인택배함 정보>> {}", uhdbList.get(0).toString());
+            String gonginIp = uhdbList.get(0).getGonginIp();
+            String portFw = StringUtils.defaultIfEmpty(uhdbList.get(0).getPortFw(), "3306");
+
+            if (StringUtils.isEmpty(gonginIp)) {
+                return "PUBLIC IP NOT FOUND";
+            }
+
+            // 2. safeFunc 20번 실행
+            UhdbLogVo uhdbLogParam = new UhdbLogVo();
+            uhdbLogParam.setAptId(param.getAptId());
+            uhdbLogParam.setAptPosi(param.getAptPosi());
+            uhdbLogParam.setBoxNo(param.getBoxNo());
+            uhdbLogParam.setSafeFunc(null);
+            uhdbLogParam.setUseYn("N");
+            uhdbLogParam.setStDt(null);
+            uhdbLogParam.setEnDt(new Date());
+            uhdbLogParam.setDong(null);
+            uhdbLogParam.setHo(null);
+            uhdbLogParam.setAmtGb(null);
+            uhdbLogParam.setAmt((double) 0);
+            uhdbLogParam.setTaekbaeHandphone(null);
+            uhdbLogParam.setTaekbaePswd(null);
+            uhdbLogParam.setTaekbae(null);
+            uhdbLogParam.setHandphone(null);
+            uhdbLogParam.setPswd(null);
+
+            this.uhdbMapper.updateUhdbLog(uhdbLogParam);
+
+            // 3. 락커 초기화 실행(DB 업데이트)
+            int updateCount = 0;
+
+            try {
+                JdbcUtils ju = new JdbcUtils();
+                updateCount = ju.initBox(gonginIp, portFw, param.getAptId(), param.getAptPosi(), param.getBoxNo());
+            } catch (Exception e) {
+                logger.error("<<무인택배함 보관함 초기화 실패>>", e);
+                return e.getMessage();
+            }
+
+            if (updateCount > 0) {
+                logger.info("<<{} {} 무인택배함 {} 번 보관함이 초기화되었습니다.>>", param.getAptId(), param.getAptPosi(), param.getBoxNo());
+                return "OK";
+            } else {
+                return "NOK";
+            }
+        } catch (Exception e) {
+            logger.error("<<무인택배함 보관함 초기화 실패>>", e);
+            return e.getMessage();
+        }
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void modifyUhdbGonginIp(UhdbVo param) throws Exception {
         this.uhdbMapper.updateUhdbGonginIp(param);
         logger.info("<<무인택배함 공인아이피 수정>> {}", param.toString());

@@ -87,7 +87,7 @@ public class JdbcUtils {
         return result;
     }
 
-    private static final String BOX_OPEN_UPDATE_QUERY = "UPDATE tb_cd0102 SET code_nm = ? WHERE aptid = ? AND code = ? AND code_type = 'BOX_DATA_INIT'";
+    private static final String BOX_OPEN_UPDATE_QUERY = "UPDATE tb_cd0102 SET code_nm = ? WHERE aptid = ? AND code = ? AND code_type = 'BOX_OPEN'";
 
     public int openBox(String gonginIp, String port, String aptId, String aptPosi, String boxNo) throws Exception {
         Connection conn = this.getConnection(gonginIp, port);
@@ -98,6 +98,28 @@ public class JdbcUtils {
         }
 
         PreparedStatement ps = conn.prepareStatement(BOX_OPEN_UPDATE_QUERY);
+        ps.setString(1, boxNo);
+        ps.setString(2, aptId);
+        ps.setString(3, aptPosi);
+        int result = ps.executeUpdate();
+        ps.close();
+
+        this.closeConnection(conn);
+
+        return result;
+    }
+
+    private static final String BOX_INIT_UPDATE_QUERY = "UPDATE tb_cd0102 SET code_nm = ? WHERE aptid = ? AND code = ? AND code_type = 'BOX_DATA_INIT'";
+
+    public int initBox(String gonginIp, String port, String aptId, String aptPosi, String boxNo) throws Exception {
+        Connection conn = this.getConnection(gonginIp, port);
+
+        if (conn == null) {
+            logger.info("<<DB Connection 가져오기 실패, gonginIp: {}, port: {}>>", gonginIp, port);
+            return 0;
+        }
+
+        PreparedStatement ps = conn.prepareStatement(BOX_INIT_UPDATE_QUERY);
         ps.setString(1, boxNo);
         ps.setString(2, aptId);
         ps.setString(3, aptPosi);
