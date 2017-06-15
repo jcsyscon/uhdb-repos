@@ -53,9 +53,11 @@ public class CommonAdvice {
             if (MobilePagingHelper.class.isAssignableFrom(param.getClass())) {
                 mobilePagingHelper = (MobilePagingHelper) param;
             }
+
             if (PagingHelper.class.isAssignableFrom(param.getClass())) {
                 pagingHelper = (PagingHelper) param;
             }
+
             if (CommonDto.class.isAssignableFrom(param.getClass())) {
                 commonDto = (CommonDto) param;
             }
@@ -63,7 +65,8 @@ public class CommonAdvice {
 
         if (commonDto != null) {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (authentication != null) {
+            // if (authentication != null) {
+            if (authentication != null && !"anonymousUser".equalsIgnoreCase(authentication.getPrincipal().toString())) {
                 LoginUser loginUser = (LoginUser) authentication.getPrincipal();
                 commonDto.setLoginUser(loginUser);
             }
