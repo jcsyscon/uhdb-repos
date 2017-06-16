@@ -217,7 +217,7 @@ public class UhdbServiceImpl implements UhdbService {
             // 아파트명 택배함설치장소명 2017.07.08 1201동 1301호 001번 보관함에 물품 배송이 되었습니다.
             // - tb_ap0101.aptSnm tb_ap0102.aptPosiNM 현재날자 tb_bx0201.dong동 tb_bx0201.ho호 tb_bx0201.boxno번 보관함에 물품 배송이 되었습니다.
             body4User = "%s %s %s %s동 %s호 %s번 보관함 물품이 배송되었습니다.";
-            body4User = String.format(body4Tb, aptsName, aptPosiName, nowYmd, param.getDong(), param.getHo(), param.getBoxNo(), param.getTaekbaePswd());
+            body4User = String.format(body4User, aptsName, aptPosiName, nowYmd, param.getDong(), param.getHo(), param.getBoxNo(), param.getTaekbaePswd());
 
             param.setSafeFunc(null);
             param.setUseYn("N");
