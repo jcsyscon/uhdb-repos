@@ -585,8 +585,15 @@ public class UhdbServiceImpl implements UhdbService {
         param.setDong(dong);
         param.setHo(ho);
 
-        param.getMobilePagingHelper().setTotalCount(this.uhdbMapper.selectUhdbLogListCount4Mobile(param));
-        List<UhdbLogVo> uhdbLogList = this.uhdbMapper.selectUhdbLogList4Mobile(param);
+        List<UhdbLogVo> uhdbLogList = null;
+
+        if ("now".equalsIgnoreCase(param.getGubun())) {
+            param.getMobilePagingHelper().setTotalCount(this.uhdbMapper.selectUhdbLogListCount4Mobile(param));
+            uhdbLogList = this.uhdbMapper.selectUhdbLogList4Mobile(param);
+        } else {
+            param.getMobilePagingHelper().setTotalCount(this.uhdbMapper.selectPastUhdbLogListCount4Mobile(param));
+            uhdbLogList = this.uhdbMapper.selectPastUhdbLogList4Mobile(param);
+        }
 
         int nextPageToken = 0;
 

@@ -51,4 +51,8 @@ public interface UhdbMapper {
 
     List<UhdbLogVo> selectUhdbLogList4Mobile(UhdbDto param);
 
+    int selectPastUhdbLogListCount4Mobile(UhdbDto param);
+
+    List<UhdbLogVo> selectPastUhdbLogList4Mobile(UhdbDto param);
+
 }

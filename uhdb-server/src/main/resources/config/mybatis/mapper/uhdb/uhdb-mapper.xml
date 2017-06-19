@@ -446,4 +446,130 @@
 		LIMIT 0, #{mobilePagingHelper.pageSize}
 	</select>
 
+
+
+	<select id="selectPastUhdbLogListCount4Mobile" parameterType="UhdbDto" resultType="int">
+		SELECT /* selectPastUhdbLogListCount4Mobile, 전강욱(realsnake1975@gmail.com) */ COUNT(*)
+		FROM (
+			SELECT *, @rownum:=@rownum+1 AS seq
+			FROM (
+				SELECT upddt AS upd_dt,
+				aptid AS apt_id,
+				aptposi AS apt_posi,
+				boxno AS box_no,
+				safefunc AS safe_func,
+				useyn AS use_yn,
+				stdt AS st_dt,
+				endt AS en_dt,
+				dong,
+				ho,
+				amtgb AS amt_gb,
+				amt,
+				taekbae_handphone,
+				taekbae_pswd,
+				handphone,
+				taekbae,
+				pswd
+				FROM tb_bx0201h
+			    <where>
+			    	<if test=' aptId != null and !"".equals(aptId) '>AND aptid = #{aptId}</if>
+			        <if test=' aptPosi != null and !"".equals(aptPosi) '>AND aptposi = #{aptPosi}</if>
+			        <if test=' dong != null and !"".equals(dong) '>AND dong = #{dong}</if>
+			        <if test=' ho != null and !"".equals(ho) '>AND ho = #{ho}</if>
+			        AND safefunc = '10'
+			    </where>
+				UNION ALL
+				SELECT upddt AS upd_dt,
+				aptid AS apt_id,
+				aptposi AS apt_posi,
+				boxno AS box_no,
+				safefunc AS safe_func,
+				NULL AS use_yn,
+				stdt AS st_dt,
+				endt AS en_dt,
+				dong,
+				ho,
+				amtgb AS amt_gb,
+				amt,
+				taekbae_handphone,
+				taekbae_pswd,
+				handphone,
+				taekbae,
+				pswd
+				FROM tb_bx0202
+			    <where>
+			    	<if test=' aptId != null and !"".equals(aptId) '>AND aptid = #{aptId}</if>
+			        <if test=' aptPosi != null and !"".equals(aptPosi) '>AND aptposi = #{aptPosi}</if>
+			        <if test=' dong != null and !"".equals(dong) '>AND dong = #{dong}</if>
+			        <if test=' ho != null and !"".equals(ho) '>AND ho = #{ho}</if>
+			        AND safefunc = '40'
+			    </where>
+			) A, (SELECT @rownum := 0) R
+		) A
+	</select>
+
+	<select id="selectPastUhdbLogList4Mobile" parameterType="UhdbDto" resultType="UhdbLogVo">
+		SELECT /* selectPastUhdbLogList4Mobile, 전강욱(realsnake1975@gmail.com) */ *
+		FROM (
+			SELECT *, @rownum:=@rownum+1 AS seq
+			FROM (
+				SELECT upddt AS upd_dt,
+				aptid AS apt_id,
+				aptposi AS apt_posi,
+				boxno AS box_no,
+				safefunc AS safe_func,
+				useyn AS use_yn,
+				stdt AS st_dt,
+				endt AS en_dt,
+				dong,
+				ho,
+				amtgb AS amt_gb,
+				amt,
+				taekbae_handphone,
+				taekbae_pswd,
+				handphone,
+				taekbae,
+				pswd
+				FROM tb_bx0201h
+			    <where>
+			    	<if test=' aptId != null and !"".equals(aptId) '>AND aptid = #{aptId}</if>
+			        <if test=' aptPosi != null and !"".equals(aptPosi) '>AND aptposi = #{aptPosi}</if>
+			        <if test=' dong != null and !"".equals(dong) '>AND dong = #{dong}</if>
+			        <if test=' ho != null and !"".equals(ho) '>AND ho = #{ho}</if>
+			        AND safefunc = '10'
+			    </where>
+				UNION ALL
+				SELECT upddt AS upd_dt,
+				aptid AS apt_id,
+				aptposi AS apt_posi,
+				boxno AS box_no,
+				safefunc AS safe_func,
+				NULL AS use_yn,
+				stdt AS st_dt,
+				endt AS en_dt,
+				dong,
+				ho,
+				amtgb AS amt_gb,
+				amt,
+				taekbae_handphone,
+				taekbae_pswd,
+				handphone,
+				taekbae,
+				pswd
+				FROM tb_bx0202
+			    <where>
+			    	<if test=' aptId != null and !"".equals(aptId) '>AND aptid = #{aptId}</if>
+			        <if test=' aptPosi != null and !"".equals(aptPosi) '>AND aptposi = #{aptPosi}</if>
+			        <if test=' dong != null and !"".equals(dong) '>AND dong = #{dong}</if>
+			        <if test=' ho != null and !"".equals(ho) '>AND ho = #{ho}</if>
+			        AND safefunc = '40'
+			    </where>
+			) A, (SELECT @rownum := 0) R
+			ORDER BY upd_dt ASC
+		) A
+		WHERE seq &lt; #{mobilePagingHelper.nextPageToken}
+		ORDER BY upd_dt DESC
+		LIMIT 0, #{mobilePagingHelper.pageSize}
+	</select>
+
 </mapper>

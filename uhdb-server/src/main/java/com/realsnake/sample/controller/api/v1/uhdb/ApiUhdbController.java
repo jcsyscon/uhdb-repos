@@ -257,7 +257,7 @@ public class ApiUhdbController {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (authentication == null) {
-                LOGGER.debug("<<무인택배함 사용내역 조회(/log/{gubun}/{userSeq})>> 인증 실패");
+                LOGGER.debug("<<무인택배함 사용내역 조회(/log/{}/{})>> 인증 실패", gubun, userSeq);
                 throw new CommonApiException(ApiResultCode.NOTFOUND_USER);
             }
 
