@@ -153,6 +153,10 @@
 	    		<when test=' pswd != null and !"".equals(pswd) '>, pswd = #{pswd}</when>
 	    		<otherwise>, pswd = NULL</otherwise>
 	    	</choose>
+	    	<choose>
+	    		<when test=' userId != null and !"".equals(userId) '>, userid = #{userId}</when>
+	    		<otherwise>, userid = NULL</otherwise>
+	    	</choose>
 			, upddt = NOW()
 		</set>
 		WHERE aptid = #{aptId}
@@ -179,6 +183,33 @@
 	    taekbae,
 	    pswd
 		FROM tb_bx0201
+		WHERE aptid = #{aptId}
+			AND aptposi = #{aptPosi}
+			<if test=' boxNo != null and !"".equals(boxNo) '>AND boxno = #{boxNo}</if>
+			<if test=' pswd != null and !"".equals(pswd) '>AND pswd = #{pswd}</if>
+	    ORDER BY upddt DESC
+	    LIMIT 1
+	</select>
+
+	<select id="selectUhdbLogHistory" parameterType="UhdbLogVo" resultType="UhdbLogVo">
+		SELECT /* selectUhdbLogHistory, 전강욱(realsnake1975@gmail.com) */ upddt AS upd_dt,
+	    aptid AS apt_id,
+	    aptposi AS apt_posi,
+	    boxno AS box_no,
+	    safefunc AS safe_func,
+	    useyn AS use_yn,
+	    stdt AS st_dt,
+	    endt AS en_dt,
+	    dong,
+	    ho,
+	    amtgb AS amt_gb,
+	    amt,
+	    taekbae_handphone,
+	    taekbae_pswd,
+	    handphone,
+	    taekbae,
+	    pswd
+		FROM tb_bx0201h
 		WHERE aptid = #{aptId}
 			AND aptposi = #{aptPosi}
 			<if test=' boxNo != null and !"".equals(boxNo) '>AND boxno = #{boxNo}</if>

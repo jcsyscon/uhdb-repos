@@ -750,4 +750,41 @@ public class UhdbServiceImpl implements UhdbService {
         }
     }
 
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void restoreBox(UhdbLogVo param, String updateDatetime) throws Exception {
+        UhdbLogVo uhdbLogParam = new UhdbLogVo();
+        uhdbLogParam.setAptId(param.getAptId());
+        uhdbLogParam.setAptPosi(param.getAptPosi());
+        uhdbLogParam.setBoxNo(param.getBoxNo());
+        if (StringUtils.isEmpty(updateDatetime)) {
+            uhdbLogParam.setUpdDt(new Date());
+        } else {
+            try {
+                uhdbLogParam.setUpdDt(CommonConstants.DEFAULT_SDF.parse(updateDatetime));
+            } catch (Exception e) {
+                uhdbLogParam.setUpdDt(new Date());
+            }
+        }
+        uhdbLogParam.setUserId(param.getUserId());
+
+        UhdbLogVo uhdbLog = this.uhdbMapper.selectUhdbLogHistory(param);
+
+        uhdbLogParam.setSafeFunc(uhdbLog.getSafeFunc());
+        uhdbLogParam.setUseYn(uhdbLog.getUseYn());
+        uhdbLogParam.setStDt(uhdbLog.getStDt());
+        uhdbLogParam.setEnDt(uhdbLog.getEnDt());
+        uhdbLogParam.setDong(uhdbLog.getDong());
+        uhdbLogParam.setHo(uhdbLog.getHo());
+        uhdbLogParam.setAmtGb(uhdbLog.getAmtGb());
+        uhdbLogParam.setAmt(uhdbLog.getAmt());
+        uhdbLogParam.setTaekbaeHandphone(uhdbLog.getTaekbaeHandphone());
+        uhdbLogParam.setTaekbaePswd(uhdbLog.getTaekbaePswd());
+        uhdbLogParam.setTaekbae(uhdbLog.getTaekbae());
+        uhdbLogParam.setHandphone(uhdbLog.getHandphone());
+        uhdbLogParam.setPswd(uhdbLog.getPswd());
+
+        this.uhdbMapper.updateUhdbLog(uhdbLogParam);
+    }
+
 }

@@ -2,6 +2,7 @@ package com.realsnake.sample.controller.api.v1.uhdb;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.realsnake.sample.constants.ApiResultCode;
@@ -119,7 +121,7 @@ public class ApiUhdbController {
     }
 
     /**
-     * 무인택배함 락커 열기(애)
+     * 무인택배함 보관함 열기(앱)
      *
      * @param aptId
      * @param uhdbId
@@ -133,7 +135,7 @@ public class ApiUhdbController {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (authentication == null) {
-                LOGGER.debug("<<무인택배함 락커 열기(/uhdb/open)>> 인증 실패");
+                LOGGER.debug("<<무인택배함 보관함 열기(/uhdb/open)>> 인증 실패");
                 throw new CommonApiException(ApiResultCode.NOTFOUND_USER);
             }
 
@@ -154,7 +156,26 @@ public class ApiUhdbController {
     }
 
     /**
-     * 무인택배함 락커 초기화(앱에서 보관함 열기 중 닫기/확인/고객센터 버튼 클릭 시)
+     * 무인택배함 보관함 열기(관리자웹)
+     *
+     * @param param (aptId, aptPosi, boxNo)
+     * @return
+     */
+    @PostMapping(value = "/admin/open")
+    public String openBox4Admin(UhdbLogVo param) {
+        String result = "NOK";
+
+        try {
+            result = this.uhdbService.openBox(param);
+        } catch (Exception e) {
+            LOGGER.error("<<openBox4Admin, 관리자 무인택배함 보관함 열기 중 오류>>", e);
+        }
+
+        return result;
+    }
+
+    /**
+     * 무인택배함 보관함 초기화(앱에서 보관함 열기 중 닫기/확인/고객센터 버튼 클릭 시)
      *
      * @param aptId
      * @param uhdbId
@@ -167,7 +188,7 @@ public class ApiUhdbController {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (authentication == null) {
-                LOGGER.debug("<<무인택배함 락커 초기화(/uhdb/init)>> 인증 실패");
+                LOGGER.debug("<<무인택배함 보관함 초기화(/uhdb/init)>> 인증 실패");
                 throw new CommonApiException(ApiResultCode.NOTFOUND_USER);
             }
 
@@ -299,6 +320,27 @@ public class ApiUhdbController {
             result = "OK";
         } catch (Exception e) {
             LOGGER.error("<<sendAlarmLongBox, 무인택배함 장기보관 알림 처리 중 오류>>", e);
+        }
+
+        return result;
+    }
+
+    /**
+     * 무인택배함 보관함 복구(관리자웹)
+     *
+     * @param param (aptId, aptPosi, boxNo, userId)
+     * @param updateDatetime yyyyMMddHHmmss
+     * @return
+     */
+    @PostMapping(value = "/restore")
+    public String restoreBox(UhdbLogVo param, @RequestParam(value = "updateDatetime", required = false, defaultValue = StringUtils.EMPTY) String updateDatetime) {
+        String result = "NOK";
+
+        try {
+            this.uhdbService.restoreBox(param, updateDatetime);
+            result = "OK";
+        } catch (Exception e) {
+            LOGGER.error("<<restoreBox, 무인택배함 보관함 복구(관리자웹) 중 오류>>", e);
         }
 
         return result;

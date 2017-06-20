@@ -39,6 +39,8 @@ public interface UhdbMapper {
 
     UhdbLogVo selectUhdbLog(UhdbLogVo param);
 
+    UhdbLogVo selectUhdbLogHistory(UhdbLogVo param);
+
     String selectUhdbUserPassword(UhdbLogVo param);
 
     int updateUhdbUserPassword(UhdbLogVo param);

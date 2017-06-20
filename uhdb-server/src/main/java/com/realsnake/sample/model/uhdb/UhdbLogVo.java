@@ -60,6 +60,7 @@ public class UhdbLogVo implements Serializable {
     private String pswd;
     // private String plcAddr;
     // private String sendStatus;
+    private String userId;
 
     public Integer getSeq() {
         return seq;
@@ -203,6 +204,14 @@ public class UhdbLogVo implements Serializable {
 
     public void setPswd(String pswd) {
         this.pswd = pswd;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     @Override

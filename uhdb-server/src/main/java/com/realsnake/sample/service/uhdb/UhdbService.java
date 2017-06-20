@@ -54,4 +54,6 @@ public interface UhdbService {
 
     void sendAlarm4LongBox(UhdbDto param) throws Exception;
 
+    void restoreBox(UhdbLogVo param, String updateDatetime) throws Exception;
+
 }
