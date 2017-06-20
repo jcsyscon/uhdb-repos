@@ -382,13 +382,15 @@
 			AND perid = #{perId}
 	</update>
 
+
+
 	<sql id="whereClauseOfUhdbLog4Mobile">
 	    <where>
-	    	<if test=' "past".equals(gubun) '>seq &lt; #{mobilePagingHelper.nextPageToken}</if>
 	    	<if test=' aptId != null and !"".equals(aptId) '>AND aptid = #{aptId}</if>
 	        <if test=' aptPosi != null and !"".equals(aptPosi) '>AND aptposi = #{aptPosi}</if>
 	        <if test=' dong != null and !"".equals(dong) '>AND dong = #{dong}</if>
 	        <if test=' ho != null and !"".equals(ho) '>AND ho = #{ho}</if>
+	        <if test=' "now".equals(gubun) '>AND safefunc = '10'</if>
 		    <choose>
 		    	<when test=' mobilePagingHelper.search.startDate != null and !"".equals(mobilePagingHelper.search.startDate) '>
 			    	AND reg_date &gt;= CONCAT(#{mobilePagingHelper.search.startDate}, ' 00:00:00')
@@ -437,10 +439,7 @@
 
 	<select id="selectUhdbLogListCount4Mobile" parameterType="UhdbDto" resultType="int">
 	    SELECT /* selectUhdbLogListCount4Mobile, 전강욱(realsnake1975@gmail.com) */ COUNT(*)
-	    <choose>
-	    	<when test=' "now".equals(gubun) '>FROM tb_bx0201</when>
-	    	<otherwise>FROM tb_bx0201h</otherwise>
-	    </choose>
+		FROM tb_bx0201
 	    <include refid="whereClauseOfUhdbLog4Mobile" />
 	</select>
 
@@ -462,16 +461,8 @@
 	    handphone,
 	    taekbae,
 	    pswd,
-	    <choose>
-	    	<when test=' "now".equals(gubun) '>
-	    		0 AS seq
-	    		FROM tb_bx0201
-	    	</when>
-	    	<otherwise>
-	    		seq
-	    		FROM tb_bx0201h
-	    	</otherwise>
-	    </choose>
+	    0 AS seq
+	    FROM tb_bx0201
 	    <include refid="whereClauseOfUhdbLog4Mobile" />
 	    <include refid="orderClauseOfUhdbLog4Mobile" />
 		LIMIT 0, #{mobilePagingHelper.pageSize}
@@ -508,6 +499,7 @@
 			        <if test=' dong != null and !"".equals(dong) '>AND dong = #{dong}</if>
 			        <if test=' ho != null and !"".equals(ho) '>AND ho = #{ho}</if>
 			        AND safefunc = '10'
+			        AND useyn = 'Y'
 			    </where>
 				UNION ALL
 				SELECT upddt AS upd_dt,
@@ -568,6 +560,7 @@
 			        <if test=' dong != null and !"".equals(dong) '>AND dong = #{dong}</if>
 			        <if test=' ho != null and !"".equals(ho) '>AND ho = #{ho}</if>
 			        AND safefunc = '10'
+			        AND useyn = 'Y'
 			    </where>
 				UNION ALL
 				SELECT upddt AS upd_dt,
