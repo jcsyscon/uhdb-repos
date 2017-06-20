@@ -498,6 +498,7 @@ public class UhdbServiceImpl implements UhdbService {
             uhdbLogParam.setTaekbae(null);
             uhdbLogParam.setHandphone(null);
             uhdbLogParam.setPswd(null);
+            uhdbLogParam.setUserId("SAFEAUTO");
 
             this.uhdbMapper.updateUhdbLog(uhdbLogParam);
 
