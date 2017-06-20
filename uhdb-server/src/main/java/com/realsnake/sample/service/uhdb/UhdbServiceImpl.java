@@ -257,6 +257,12 @@ public class UhdbServiceImpl implements UhdbService {
         this.uhdbMapper.updateUhdbLog(param);
         // logger.info("<<무인택배함 로그 저장 완료>>");
 
+        if ("SAFE_INS".equalsIgnoreCase(param.getUserId())) {
+            logger.debug("<<보관함 데이터 초기화>>");
+            this.initBox(param);
+            return;
+        }
+
         if (StringUtils.isNotEmpty(body4Tb)) {
             try {
                 // 택배기사용 문자 발송
@@ -474,7 +480,7 @@ public class UhdbServiceImpl implements UhdbService {
                 return "PUBLIC IP NOT FOUND";
             }
 
-            // 2. safeFunc 20번 실행
+            // 2. 무인택배함 보관함 로그 업데이트
             UhdbLogVo uhdbLogParam = new UhdbLogVo();
             uhdbLogParam.setAptId(param.getAptId());
             uhdbLogParam.setAptPosi(param.getAptPosi());
