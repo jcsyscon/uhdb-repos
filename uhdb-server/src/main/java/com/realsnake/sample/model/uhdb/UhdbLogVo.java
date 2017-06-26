@@ -13,6 +13,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.ibatis.type.Alias;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
@@ -61,6 +62,8 @@ public class UhdbLogVo implements Serializable {
     // private String plcAddr;
     // private String sendStatus;
     private String userId;
+    @JsonIgnore
+    private String tbcode;
 
     public Integer getSeq() {
         return seq;
@@ -212,6 +215,14 @@ public class UhdbLogVo implements Serializable {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getTbcode() {
+        return tbcode;
+    }
+
+    public void setTbcode(String tbcode) {
+        this.tbcode = tbcode;
     }
 
     @Override

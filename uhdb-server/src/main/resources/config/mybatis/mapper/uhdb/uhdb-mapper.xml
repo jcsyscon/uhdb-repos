@@ -596,4 +596,19 @@
 		LIMIT 0, #{mobilePagingHelper.pageSize}
 	</select>
 
+	<update id="updateAuthcode" parameterType="UhdbLogVo">
+		UPDATE /* updateAuthcode, 전강욱(realsnake1975@gmail.com) */ tb_ap0102
+		SET tbcode = #{tbcode}
+		WHERE aptid = #{aptId}
+			AND aptposi = #{aptPosi}
+	</update>
+
+	<select id="selectAuthcode" parameterType="UhdbLogVo" resultType="UhdbLogVo">
+		SELECT /* selectAuthcode, 전강욱(realsnake1975@gmail.com) */ *
+		FROM tb_ap0102
+		WHERE aptid = #{aptId}
+			AND aptposi = #{aptPosi}
+	    LIMIT 1
+	</select>
+
 </mapper>

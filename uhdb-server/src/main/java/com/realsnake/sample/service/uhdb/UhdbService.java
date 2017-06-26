@@ -56,4 +56,6 @@ public interface UhdbService {
 
     void restoreBox(UhdbLogVo param, String updateDatetime) throws Exception;
 
+    void modifyAuthcode(UhdbLogVo param) throws Exception;
+
 }

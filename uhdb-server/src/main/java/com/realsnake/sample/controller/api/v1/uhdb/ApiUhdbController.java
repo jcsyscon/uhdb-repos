@@ -131,7 +131,8 @@ public class ApiUhdbController {
      * @throws CommonApiException
      */
     @PostMapping(value = "/open")
-    public ApiResponse<?> openBox(String aptId, String uhdbId, String boxNo, String password) throws CommonApiException {
+    public ApiResponse<?> openBox(String aptId, String uhdbId, String boxNo, String password, @RequestParam(value = "tbcode", required = false, defaultValue = StringUtils.EMPTY) String tbcode)
+            throws CommonApiException {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (authentication == null) {
@@ -144,6 +145,7 @@ public class ApiUhdbController {
             param.setAptPosi(uhdbId);
             param.setBoxNo(boxNo);
             param.setPswd(password);
+            param.setTbcode(tbcode);
             String result = this.uhdbService.openBox(param);
 
             ApiResponse<String> apiResponse = new ApiResponse<>();
@@ -341,6 +343,27 @@ public class ApiUhdbController {
             result = "OK";
         } catch (Exception e) {
             LOGGER.error("<<restoreBox, 무인택배함 보관함 복구(관리자웹) 중 오류>>", e);
+        }
+
+        return result;
+    }
+
+    /**
+     * 인증코드 업데이트(무인택배함)
+     *
+     * @param param (aptId, aptPosi)
+     * @param tbcode tb_ap0102에 tbcode 컬럼
+     * @return
+     */
+    @PostMapping(value = "/authcode/modify")
+    public String modifyAuthCode(UhdbLogVo param) {
+        String result = "NOK";
+
+        try {
+            this.uhdbService.modifyAuthcode(param);
+            result = "OK";
+        } catch (Exception e) {
+            LOGGER.error("<<modifyAuthCode, 무인택배함 인증코드 업데이트 중 오류>>", e);
         }
 
         return result;

@@ -57,4 +57,8 @@ public interface UhdbMapper {
 
     List<UhdbLogVo> selectPastUhdbLogList4Mobile(UhdbDto param);
 
+    int updateAuthcode(UhdbLogVo param);
+
+    UhdbLogVo selectAuthcode(UhdbLogVo param);
+
 }

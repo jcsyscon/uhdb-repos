@@ -408,8 +408,19 @@ public class UhdbServiceImpl implements UhdbService {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public String openBox(UhdbLogVo param) {
         try {
+            // 0. 인증코드 조회
+            UhdbLogVo uhdbLog = null;
+
+            if (StringUtils.isNotBlank(param.getTbcode())) {
+                uhdbLog = this.uhdbMapper.selectAuthcode(param);
+
+                if (uhdbLog == null || StringUtils.isBlank(uhdbLog.getTbcode())) {
+                    return "AUTHCODE NOT FOUND";
+                }
+            }
+
             // 1. 무인택배함 사용기록 조회
-            UhdbLogVo uhdbLog = this.uhdbMapper.selectUhdbLog(param);
+            uhdbLog = this.uhdbMapper.selectUhdbLog(param);
 
             if (uhdbLog == null) {
                 return "USER NOT FOUND";
@@ -792,6 +803,11 @@ public class UhdbServiceImpl implements UhdbService {
         uhdbLogParam.setPswd(uhdbLog.getPswd());
 
         this.uhdbMapper.updateUhdbLog(uhdbLogParam);
+    }
+
+    @Override
+    public void modifyAuthcode(UhdbLogVo param) {
+        this.uhdbMapper.updateAuthcode(param);
     }
 
 }

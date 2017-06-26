@@ -131,4 +131,26 @@ public class JdbcUtils {
         return result;
     }
 
+    private static final String AUTHCODE_UPDATE_QUERY = "UPDATE tb_ap0102 SET tbcode = ? WHERE aptid = ? AND aptposi = ?";
+
+    public int updateAuthCode(String gonginIp, String port, String aptId, String aptPosi, String tbcode) throws Exception {
+        Connection conn = this.getConnection(gonginIp, port);
+
+        if (conn == null) {
+            logger.info("<<DB Connection 가져오기 실패, gonginIp: {}, port: {}>>", gonginIp, port);
+            return 0;
+        }
+
+        PreparedStatement ps = conn.prepareStatement(AUTHCODE_UPDATE_QUERY);
+        ps.setString(1, tbcode);
+        ps.setString(2, aptId);
+        ps.setString(3, aptPosi);
+        int result = ps.executeUpdate();
+        ps.close();
+
+        this.closeConnection(conn);
+
+        return result;
+    }
+
 }
