@@ -414,9 +414,13 @@ public class UhdbServiceImpl implements UhdbService {
             if (ul == null || StringUtils.isBlank(ul.getTbcode())) {
                 return "AUTHCODE NOT FOUND";
             }
+            if (!ul.getTbcode().equals(param.getTbcode())) {
+                logger.info("<<AUTHCODE NOT MATCH>>");
+                return "AUTHCODE NOT MATCH";
+            }
 
             // 1. 무인택배함 사용기록 조회
-            UhdbLogVo uhdbLog = this.uhdbMapper.selectUhdbLog4OpenBox(param);
+            UhdbLogVo uhdbLog = this.uhdbMapper.selectUhdbLog(param);
 
             if (uhdbLog == null) {
                 return "USER NOT FOUND";
