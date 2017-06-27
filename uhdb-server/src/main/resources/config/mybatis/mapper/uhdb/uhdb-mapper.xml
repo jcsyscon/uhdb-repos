@@ -191,6 +191,32 @@
 	    LIMIT 1
 	</select>
 
+	<select id="selectUhdbLog4OpenBox" parameterType="UhdbLogVo" resultType="UhdbLogVo">
+		SELECT /* selectUhdbLog4OpenBox, 전강욱(realsnake1975@gmail.com) */ upddt AS upd_dt,
+	    aptid AS apt_id,
+	    aptposi AS apt_posi,
+	    boxno AS box_no,
+	    safefunc AS safe_func,
+	    useyn AS use_yn,
+	    stdt AS st_dt,
+	    endt AS en_dt,
+	    dong,
+	    ho,
+	    amtgb AS amt_gb,
+	    amt,
+	    taekbae_handphone,
+	    taekbae_pswd,
+	    handphone,
+	    taekbae,
+	    pswd
+		FROM tb_bx0201
+		WHERE aptid = #{aptId}
+			AND aptposi = #{aptPosi}
+			AND boxno = #{boxNo}
+	    ORDER BY upddt DESC
+	    LIMIT 1
+	</select>
+
 	<select id="selectUhdbLogHistory" parameterType="UhdbLogVo" resultType="UhdbLogVo">
 		SELECT /* selectUhdbLogHistory, 전강욱(realsnake1975@gmail.com) */ upddt AS upd_dt,
 	    aptid AS apt_id,

@@ -409,18 +409,14 @@ public class UhdbServiceImpl implements UhdbService {
     public String openBox(UhdbLogVo param) {
         try {
             // 0. 인증코드 조회
-            UhdbLogVo uhdbLog = null;
+            UhdbLogVo ul = this.uhdbMapper.selectAuthcode(param);
 
-            if (StringUtils.isNotBlank(param.getTbcode())) {
-                uhdbLog = this.uhdbMapper.selectAuthcode(param);
-
-                if (uhdbLog == null || StringUtils.isBlank(uhdbLog.getTbcode())) {
-                    return "AUTHCODE NOT FOUND";
-                }
+            if (ul == null || StringUtils.isBlank(ul.getTbcode())) {
+                return "AUTHCODE NOT FOUND";
             }
 
             // 1. 무인택배함 사용기록 조회
-            uhdbLog = this.uhdbMapper.selectUhdbLog(param);
+            UhdbLogVo uhdbLog = this.uhdbMapper.selectUhdbLog4OpenBox(param);
 
             if (uhdbLog == null) {
                 return "USER NOT FOUND";

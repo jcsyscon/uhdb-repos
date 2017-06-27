@@ -39,6 +39,8 @@ public interface UhdbMapper {
 
     UhdbLogVo selectUhdbLog(UhdbLogVo param);
 
+    UhdbLogVo selectUhdbLog4OpenBox(UhdbLogVo param);
+
     UhdbLogVo selectUhdbLogHistory(UhdbLogVo param);
 
     String selectUhdbUserPassword(UhdbLogVo param);
