@@ -81,7 +81,7 @@
 	</sql>
 
 	<select id="selectUser" parameterType="UserVo" resultType="UserVo">
-	    SELECT /* selectUserList, 전강욱(realsnake1975@gmail.com) */ seq
+	    SELECT /* selectUser, 전강욱(realsnake1975@gmail.com) */ seq
 	    , username
 	    , password
 	    , name

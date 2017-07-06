@@ -311,8 +311,8 @@ public class UhdbServiceImpl implements UhdbService {
             }
 
             /* @formatter:off */
-            /**
             if (userUhdbList == null || userUhdbList.isEmpty()) {
+            	/**
                 // 테스트 기간 중 SMS 발송 중지
                 // 3. 핸드폰번호로도 아파트아이디, 택배함 위치, 동, 호로도 사용자를 찾을 수 없다면 SMS 발송
                 CompletableFuture<String> result = this.smsUtils.send(userMobile, body4User);
@@ -326,10 +326,11 @@ public class UhdbServiceImpl implements UhdbService {
                 this.commonService.regSendLog(send);
 
                 logger.info("<<무인택배함 로그 API, 사용자 SMS 발송>> {}", send.toString());
+                */
 
+            	logger.info("<<무인택배함 로그 API, 회원미가입자에게 SMS 발송해야하지만 현재 SMS 발송은 주석처리되어 있으므로 SMS 발송하지 않고 종료>>");
                 return;
             }
-            */
             /* @formatter:on */
 
             List<Integer> userSeqList = new ArrayList<>();
