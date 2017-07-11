@@ -1,6 +1,7 @@
 package com.realsnake.sample.controller.api.v1.uhdb;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -16,15 +17,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.realsnake.sample.constants.ApiResultCode;
+import com.realsnake.sample.constants.CommonConstants;
 import com.realsnake.sample.exception.CommonApiException;
+import com.realsnake.sample.model.common.SendVo;
 import com.realsnake.sample.model.common.api.ApiResponse;
 import com.realsnake.sample.model.uhdb.AptVo;
 import com.realsnake.sample.model.uhdb.NfcVo;
 import com.realsnake.sample.model.uhdb.UhdbDto;
 import com.realsnake.sample.model.uhdb.UhdbLogVo;
 import com.realsnake.sample.model.uhdb.UhdbVo;
+import com.realsnake.sample.service.common.CommonService;
 import com.realsnake.sample.service.uhdb.UhdbService;
 import com.realsnake.sample.util.MobilePagingHelper;
+import com.realsnake.sample.util.SmsUtils;
 
 @RestController("ApiV1UhdbController")
 @RequestMapping(value = "/api/v1/uhdb")
@@ -34,6 +39,12 @@ public class ApiUhdbController {
 
     @Autowired
     private UhdbService uhdbService;
+
+    @Autowired
+    private CommonService commonService;
+
+    @Autowired
+    private SmsUtils smsUtils;
 
     /**
      * 아파트 조회
@@ -367,6 +378,33 @@ public class ApiUhdbController {
         }
 
         return result;
+    }
+
+    /**
+     * SMS를 발송한다.
+     *
+     * @param mobileNumber
+     * @param body
+     * @return
+     */
+    @PostMapping(value = "/sms-send")
+    public String sendSms(String mobileNumber, String body) {
+        try {
+            CompletableFuture<String> result = this.smsUtils.send(mobileNumber, body);
+
+            SendVo send = new SendVo();
+            send.setGubun(CommonConstants.SendType.SMS_REQUEST.getValue());
+            send.setMobile(mobileNumber);
+            send.setSendMessage(body);
+            send.setResultMessage(result.get());
+            this.commonService.regSendLog(send);
+
+            return "OK";
+        } catch (Exception e) {
+            LOGGER.error("<<sendSms, 무인택배함 SMS 발송 요청 중 오류>>", e);
+
+            return "NOK";
+        }
     }
 
 }
