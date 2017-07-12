@@ -13,6 +13,7 @@ import com.realsnake.sample.model.uhdb.NfcVo;
 import com.realsnake.sample.model.uhdb.UhdbDto;
 import com.realsnake.sample.model.uhdb.UhdbLogVo;
 import com.realsnake.sample.model.uhdb.UhdbVo;
+import com.realsnake.sample.model.user.UserUhdbVo;
 
 /**
  * <pre>
@@ -57,5 +58,7 @@ public interface UhdbService {
     void restoreBox(UhdbLogVo param, String updateDatetime) throws Exception;
 
     void modifyAuthcode(UhdbLogVo param) throws Exception;
+
+    UserUhdbVo findMemberYn(UhdbLogVo param) throws Exception;
 
 }

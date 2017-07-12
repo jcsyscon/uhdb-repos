@@ -136,4 +136,11 @@ public interface UserMapper {
      */
     UserFcmVo selectUserFcm(UserFcmVo param);
 
+    /**
+     * 회원가입여부(user_uhdb 데이타)를 조회한다.
+     *
+     * @param param
+     */
+    UserUhdbVo selectMemberYn(UserUhdbVo param);
+
 }

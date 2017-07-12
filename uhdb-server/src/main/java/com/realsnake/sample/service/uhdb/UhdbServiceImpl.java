@@ -811,4 +811,22 @@ public class UhdbServiceImpl implements UhdbService {
         this.uhdbMapper.updateAuthcode(param);
     }
 
+    @Override
+    public UserUhdbVo findMemberYn(UhdbLogVo param) throws Exception {
+        // 아파트아이디와 핸드폰번호로 사용자 찾기
+
+        String userMobile = param.getHandphone();
+
+        UserUhdbVo userUhdbParam = new UserUhdbVo();
+
+        String mobileNumber = userMobile.substring(0, 3) + "-" + userMobile.substring(3, 7) + "-" + userMobile.substring(7, 11);
+        String secretKey = BlockCipherUtils.generateSecretKey(CommonConstants.DEFAULT_AUTH_KEY);
+        String encMobileNumber = BlockCipherUtils.encrypt(secretKey, mobileNumber);
+
+        userUhdbParam.setAptId(param.getAptId());
+        userUhdbParam.setMobile(encMobileNumber);
+
+        return this.userMapper.selectMemberYn(userUhdbParam);
+    }
+
 }

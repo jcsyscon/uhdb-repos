@@ -300,6 +300,25 @@
 	    </where>
 	</select>
 
+	<select id="selectMemberYn" parameterType="UserUhdbVo" resultType="UserUhdbVo">
+	    SELECT /* selectUserUhdbList, 전강욱(realsnake1975@gmail.com) */ seq
+    	, user_seq
+        , apt_id
+        , uhdb_id
+        , dong
+        , ho
+        , reg_user_seq
+        , reg_date
+        , del_yn
+        , del_user_seq
+        , del_date
+	    FROM user_uhdb
+	    WHERE apt_id = #{aptId}
+			AND user_seq IN (SELECT seq FROM user WHERE mobile = #{mobile})
+			AND del_yn = 'N'
+		ORDER BY seq DESC
+		LIMIT 1
+	</select>
 
 
 	<update id="insertUserFcm" parameterType="UserFcmVo" useGeneratedKeys="true" keyProperty="seq">

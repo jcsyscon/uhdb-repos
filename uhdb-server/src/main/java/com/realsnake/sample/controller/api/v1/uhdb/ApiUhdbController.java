@@ -26,6 +26,7 @@ import com.realsnake.sample.model.uhdb.NfcVo;
 import com.realsnake.sample.model.uhdb.UhdbDto;
 import com.realsnake.sample.model.uhdb.UhdbLogVo;
 import com.realsnake.sample.model.uhdb.UhdbVo;
+import com.realsnake.sample.model.user.UserUhdbVo;
 import com.realsnake.sample.service.common.CommonService;
 import com.realsnake.sample.service.uhdb.UhdbService;
 import com.realsnake.sample.util.MobilePagingHelper;
@@ -402,6 +403,34 @@ public class ApiUhdbController {
             return "OK";
         } catch (Exception e) {
             LOGGER.error("<<sendSms, 무인택배함 SMS 발송 요청 중 오류>>", e);
+
+            return "NOK";
+        }
+    }
+
+    /**
+     * 회원가입여부를 조회한다.
+     *
+     * @param aptId
+     * @param mobileNumber
+     * @return
+     */
+    @PostMapping(value = "/member-yn")
+    public String getMemberYn(String aptId, String mobileNumber) {
+        try {
+            UhdbLogVo param = new UhdbLogVo();
+            param.setAptId(aptId);
+            param.setHandphone(mobileNumber);
+
+            UserUhdbVo userUhdb = this.uhdbService.findMemberYn(param);
+
+            if (userUhdb == null) {
+                return "NOK";
+            } else {
+                return "OK";
+            }
+        } catch (Exception e) {
+            LOGGER.error("<<getMemberYn, 회원가입여부 조회 중 오류>>", e);
 
             return "NOK";
         }
