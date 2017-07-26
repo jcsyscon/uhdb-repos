@@ -555,6 +555,7 @@
 			    </where>
 			) A, (SELECT @rownum := 0) R
 		) A
+		WHERE upd_dt &gt; (NOW() - INTERVAL 3 DAY)
 	</select>
 
 	<select id="selectPastUhdbLogList4Mobile" parameterType="UhdbDto" resultType="UhdbLogVo">
@@ -618,6 +619,7 @@
 			ORDER BY upd_dt ASC
 		) A
 		WHERE seq &lt; #{mobilePagingHelper.nextPageToken}
+			AND upd_dt &gt; (NOW() - INTERVAL 3 DAY)
 		ORDER BY upd_dt DESC
 		LIMIT 0, #{mobilePagingHelper.pageSize}
 	</select>
