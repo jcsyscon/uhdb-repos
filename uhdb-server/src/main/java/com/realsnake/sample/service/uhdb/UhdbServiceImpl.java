@@ -147,13 +147,13 @@ public class UhdbServiceImpl implements UhdbService {
             Date nowDate = new Date();
             userMobile = param.getHandphone();
             title4User = CommonConstants.SafeFuncType.SAFE_FUNC_10.getTitle();
-            body4User = String.format(CommonConstants.SafeFuncType.SAFE_FUNC_10.getBody(), aptPosiName, param.getBoxNo(), param.getPswd());
+            body4User = String.format(CommonConstants.SafeFuncType.SAFE_FUNC_10.getBody(), aptPosiName, param.getBoxNo(), param.getPswd(), param.getDong(), param.getHo(), param.getTaekbae());
 
             tbMobile = param.getTaekbaeHandphone();
             // 택배기사 발송 문자
             // 아파트명 택배함설치장소명 인증번호:taekbae_PSWD 물품교체/보관함 열리지 않았을때 사용
             // - tb_ap0101.aptSnm tb_ap0102.aptPosiNM 인증번호:tb_bx0201.taekbae_pswd 물품교체/보관함이 열리지 않았을 때 사용
-            body4Tb = "%s %s 인증번호:%s 물품교체/보관함 열리지 않았을때 사용";
+            body4Tb = "%s %s 인증번호:%s 물품교체/보관함 열리지 않았을때 사용<고객용비번아님>";
             body4Tb = String.format(body4Tb, aptsName, aptPosiName, param.getTaekbaePswd());
 
             param.setUseYn("Y");
@@ -312,9 +312,8 @@ public class UhdbServiceImpl implements UhdbService {
 
             /* @formatter:off */
             if (userUhdbList == null || userUhdbList.isEmpty()) {
-            	/**
                 // 테스트 기간 중 SMS 발송 중지
-                // 3. 핸드폰번호로도 아파트아이디, 택배함 위치, 동, 호로도 사용자를 찾을 수 없다면 SMS 발송
+                // 3. 핸드폰번호로도 아파트아이디/택배함위치/동/호로도 사용자를 찾을 수 없다면(회원미가입자) SMS 발송
                 CompletableFuture<String> result = this.smsUtils.send(userMobile, body4User);
 
                 // 발송 로그 저장
@@ -326,9 +325,8 @@ public class UhdbServiceImpl implements UhdbService {
                 this.commonService.regSendLog(send);
 
                 logger.info("<<무인택배함 로그 API, 사용자 SMS 발송>> {}", send.toString());
-                */
 
-            	logger.info("<<무인택배함 로그 API, 회원미가입자에게 SMS 발송해야하지만 현재 SMS 발송은 주석처리되어 있으므로 SMS 발송하지 않고 종료>>");
+//            	logger.info("<<무인택배함 로그 API, 회원미가입자에게 SMS 발송해야하지만 현재 SMS 발송은 주석처리되어 있으므로 SMS 발송하지 않고 종료>>");
                 return;
             }
             /* @formatter:on */
