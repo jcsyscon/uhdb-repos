@@ -99,6 +99,14 @@ public class UhdbServiceImpl implements UhdbService {
         return this.uhdbMapper.selectUhdbList(param);
     }
 
+    private String removeZero(String param) {
+        try {
+            return StringUtils.remove(param, "0");
+        } catch (Exception e) {
+            return param;
+        }
+    }
+
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void modifyUhdbLog(UhdbLogVo param) throws Exception {
@@ -147,7 +155,8 @@ public class UhdbServiceImpl implements UhdbService {
             Date nowDate = new Date();
             userMobile = param.getHandphone();
             title4User = CommonConstants.SafeFuncType.SAFE_FUNC_10.getTitle();
-            body4User = String.format(CommonConstants.SafeFuncType.SAFE_FUNC_10.getBody(), aptPosiName, param.getBoxNo(), param.getPswd(), param.getDong(), param.getHo(), param.getTaekbae());
+            body4User = String.format(CommonConstants.SafeFuncType.SAFE_FUNC_10.getBody(), aptPosiName, this.removeZero(param.getBoxNo()), param.getPswd(), param.getDong(), param.getHo(),
+                    param.getTaekbae());
 
             tbMobile = param.getTaekbaeHandphone();
             // 택배기사 발송 문자
@@ -199,7 +208,7 @@ public class UhdbServiceImpl implements UhdbService {
             // 아파트명 택배함설치장소명 2017.07.08 1201동 1301호 001번함 택배보관 PW:12345(taekbae_pswd)
             // - tb_ap0101.aptSnm tb_ap0102.aptPosiNM 현재날자 tb_bx0201.dong동 tb_bx0201.ho호 tb_bx0201.boxno번함 택배보관 PW:tb_bx0201. taekbae_pswd
             body4Tb = "%s %s %s %s동 %s호 %s번함 택배보관, PW:%s";
-            body4Tb = String.format(body4Tb, aptsName, aptPosiName, nowYmd, param.getDong(), param.getHo(), param.getBoxNo(), param.getTaekbaePswd());
+            body4Tb = String.format(body4Tb, aptsName, aptPosiName, nowYmd, param.getDong(), param.getHo(), this.removeZero(param.getBoxNo()), param.getTaekbaePswd());
 
             param.setUseYn("Y");
             param.setStDt(new Date());
@@ -220,7 +229,7 @@ public class UhdbServiceImpl implements UhdbService {
             // - tb_ap0101.aptSnm tb_ap0102.aptPosiNM 현재날자 tb_bx0201.dong동 tb_bx0201.ho호 tb_bx0201.boxno번 보관함에 물품 배송이 되었습니다.
 
             body4User = "%s %s %s %s동 %s호 %s번 보관함 물품이 배송되었습니다.";
-            body4User = String.format(body4User, aptsName, aptPosiName, nowYmd, uhdbLog.getDong(), uhdbLog.getHo(), param.getBoxNo(), uhdbLog.getTaekbaePswd());
+            body4User = String.format(body4User, aptsName, aptPosiName, nowYmd, uhdbLog.getDong(), uhdbLog.getHo(), this.removeZero(param.getBoxNo()), uhdbLog.getTaekbaePswd());
 
             param.setSafeFunc(null);
             param.setUseYn("N");
@@ -241,7 +250,7 @@ public class UhdbServiceImpl implements UhdbService {
             // 아파트명 택배함설치장소명 2017.07.08 1201동 1301호 001번함 반품택배보관 PW:12345(taekbae_pswd)
             // - tb_ap0101.aptSnm tb_ap0102.aptPosiNM 현재날자 tb_bx0201.dong동 tb_bx0201.ho호 tb_bx0201.boxno번함 택배보관 PW:tb_bx0201. taekbae_pswd
             body4Tb = "%s %s %s %s동 %s호 %s번함 반품택배보관, PW:%s";
-            body4Tb = String.format(body4Tb, aptsName, aptPosiName, nowYmd, param.getDong(), param.getHo(), param.getBoxNo(), param.getTaekbaePswd());
+            body4Tb = String.format(body4Tb, aptsName, aptPosiName, nowYmd, param.getDong(), param.getHo(), this.removeZero(param.getBoxNo()), param.getTaekbaePswd());
 
             param.setUseYn("Y");
             param.setStDt(new Date());
@@ -326,7 +335,23 @@ public class UhdbServiceImpl implements UhdbService {
 
                 logger.info("<<무인택배함 로그 API, 사용자 SMS 발송>> {}", send.toString());
 
-//            	logger.info("<<무인택배함 로그 API, 회원미가입자에게 SMS 발송해야하지만 현재 SMS 발송은 주석처리되어 있으므로 SMS 발송하지 않고 종료>>");
+                // <!-- 택배요 설치 문자 발송
+                String applyText = "택배요 앱을 다운,설치하세요 https://play.google.com/store/apps/details?id=kr.co.tbyo.and";
+
+                CompletableFuture<String> applyResult = this.smsUtils.send(userMobile, applyText);
+
+                // 발송 로그 저장
+                send = new SendVo();
+                send.setGubun(CommonConstants.SendType.SMS_APPLY.getValue());
+                send.setMobile(userMobile);
+                send.setSendMessage(applyText);
+                send.setResultMessage(applyResult.get());
+                this.commonService.regSendLog(send);
+
+                logger.info("<<무인택배함 로그 API, 앱설치권유 SMS 발송>> {}", send.toString());
+                // 택배요 설치 문자 발송 -->
+
+                // logger.info("<<무인택배함 로그 API, 회원미가입자에게 SMS 발송해야하지만 현재 SMS 발송은 주석처리되어 있으므로 SMS 발송하지 않고 종료>>");
                 return;
             }
             /* @formatter:on */
