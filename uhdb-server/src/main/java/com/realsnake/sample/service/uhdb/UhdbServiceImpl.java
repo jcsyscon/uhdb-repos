@@ -604,9 +604,8 @@ public class UhdbServiceImpl implements UhdbService {
     public List<UhdbLogVo> findUhdbLogList4Mobile(UhdbDto param) throws Exception {
         logger.info("<<무인택배함 사용내역 조회>> {}", param.toString());
 
-        // <!-- 20170810, 전화번호 조회로 번경
+        // <!-- 20170810, 아파트아이디, 택배함위치, 전화번호 조회로 번경
         /* @formatter:on */
-        /**
         List<Map<String, Object>> userUhdbList = this.uhdbMapper.selectAptUhdbUserList(param.getUserSeq());
 
         if (userUhdbList == null || userUhdbList.isEmpty()) {
@@ -616,16 +615,15 @@ public class UhdbServiceImpl implements UhdbService {
         Map<String, Object> temp = userUhdbList.get(0);
         String aptId = (String) temp.get("aptId");
         String aptPosi = (String) temp.get("aptPosi");
-        String dong = (String) temp.get("dong");
-        String ho = (String) temp.get("ho");
+//        String dong = (String) temp.get("dong");
+//        String ho = (String) temp.get("ho");
 
         param.setAptId(aptId);
         param.setAptPosi(aptPosi);
-        param.setDong(dong);
-        param.setHo(ho);
-        */
+//        param.setDong(dong);
+//        param.setHo(ho);
         /* @formatter:off */
-        // 20170810, 전화번호 조회로 번경 -->
+        // 20170810, 아파트아이디, 택배함위치, 전화번호 조회로 번경 -->
         
         UserVo userParam = new UserVo();
         userParam.setSeq(param.getUserSeq());
