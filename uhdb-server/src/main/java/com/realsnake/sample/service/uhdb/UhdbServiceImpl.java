@@ -309,8 +309,11 @@ public class UhdbServiceImpl implements UhdbService {
             userUhdb.setMobile(encMobileNumber);
             List<UserUhdbVo> userUhdbList = this.userMapper.selectUserUhdbList(userUhdb);
 
+            /* @formatter:off */
+            /**
             if (userUhdbList == null || userUhdbList.isEmpty()) {
-                // 2. 핸드폰번호에 해당하는 사용자가 없다면 아파트아이디, 택배함 위치, 동, 호로 사용자 찾기
+                // 2. 핸드폰번호에 해당하는 사용자가 없다면 아파트아이디, 택배함 위치, 동, 호로 사용자 찾기 
+                // -> 20170810, 핸드폰번호에 해당하는 회원가입자가 없다면 해당 번호로 문자만 발송으로 변경
                 userUhdb = new UserUhdbVo();
                 userUhdb.setAptId(param.getAptId());
                 userUhdb.setUhdbId(param.getAptPosi());
@@ -318,6 +321,8 @@ public class UhdbServiceImpl implements UhdbService {
                 userUhdb.setHo(param.getHo());
                 userUhdbList = this.userMapper.selectUserUhdbList(userUhdb);
             }
+            */
+            /* @formatter:on */
 
             /* @formatter:off */
             if (userUhdbList == null || userUhdbList.isEmpty()) {
