@@ -44,7 +44,8 @@ public class UhdbDto extends CommonDto implements Serializable {
     private String gubun = "past";
 
     private String boxNo;
-
+    private String handphone;
+    
     public Integer getUserSeq() {
         return userSeq;
     }
@@ -101,7 +102,15 @@ public class UhdbDto extends CommonDto implements Serializable {
         this.boxNo = boxNo;
     }
 
-    @Override
+    public String getHandphone() {
+		return handphone;
+	}
+
+	public void setHandphone(String handphone) {
+		this.handphone = handphone;
+	}
+
+	@Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }

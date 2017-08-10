@@ -604,21 +604,13 @@ public class UhdbServiceImpl implements UhdbService {
     public List<UhdbLogVo> findUhdbLogList4Mobile(UhdbDto param) throws Exception {
         logger.info("<<무인택배함 사용내역 조회>> {}", param.toString());
 
+        // <!-- 20170810, 전화번호 조회로 번경
+        /* @formatter:on */
+        /**
         List<Map<String, Object>> userUhdbList = this.uhdbMapper.selectAptUhdbUserList(param.getUserSeq());
 
         if (userUhdbList == null || userUhdbList.isEmpty()) {
             return null;
-        }
-
-        if (param.getMobilePagingHelper().getSortList() == null || param.getMobilePagingHelper().getSortList().isEmpty()) {
-            Sort sort = new Sort();
-            sort.setColumn("upddt");
-            sort.setAscOrDesc(CommonConstants.SortType.DESC.getValue());
-
-            List<Sort> sortList = new ArrayList<>();
-            sortList.add(sort);
-
-            param.getMobilePagingHelper().setSortList(sortList);
         }
 
         Map<String, Object> temp = userUhdbList.get(0);
@@ -631,6 +623,25 @@ public class UhdbServiceImpl implements UhdbService {
         param.setAptPosi(aptPosi);
         param.setDong(dong);
         param.setHo(ho);
+        */
+        /* @formatter:off */
+        // 20170810, 전화번호 조회로 번경 -->
+        
+        UserVo userParam = new UserVo();
+        userParam.setSeq(param.getUserSeq());
+        UserVo user = this.userMapper.selectUser(userParam);
+        param.setHandphone(StringUtils.remove(user.getDecMobile(), "-"));
+        
+        if (param.getMobilePagingHelper().getSortList() == null || param.getMobilePagingHelper().getSortList().isEmpty()) {
+            Sort sort = new Sort();
+            sort.setColumn("upddt");
+            sort.setAscOrDesc(CommonConstants.SortType.DESC.getValue());
+
+            List<Sort> sortList = new ArrayList<>();
+            sortList.add(sort);
+
+            param.getMobilePagingHelper().setSortList(sortList);
+        }
 
         List<UhdbLogVo> uhdbLogList = null;
 

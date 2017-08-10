@@ -416,6 +416,7 @@
 	        <if test=' aptPosi != null and !"".equals(aptPosi) '>AND aptposi = #{aptPosi}</if>
 	        <if test=' dong != null and !"".equals(dong) '>AND dong = #{dong}</if>
 	        <if test=' ho != null and !"".equals(ho) '>AND ho = #{ho}</if>
+	        <if test=' handphone != null and !"".equals(handphone) '>AND handphone = #{handphone}</if>
 	        <if test=' "now".equals(gubun) '>AND safefunc = '10'</if>
 		    <choose>
 		    	<when test=' mobilePagingHelper.search.startDate != null and !"".equals(mobilePagingHelper.search.startDate) '>
@@ -524,6 +525,7 @@
 			        <if test=' aptPosi != null and !"".equals(aptPosi) '>AND aptposi = #{aptPosi}</if>
 			        <if test=' dong != null and !"".equals(dong) '>AND dong = #{dong}</if>
 			        <if test=' ho != null and !"".equals(ho) '>AND ho = #{ho}</if>
+			        <if test=' handphone != null and !"".equals(handphone) '>AND handphone = #{handphone}</if>
 			        AND safefunc = '10'
 			        AND useyn = 'Y'
 			    </where>
@@ -551,6 +553,7 @@
 			        <if test=' aptPosi != null and !"".equals(aptPosi) '>AND aptposi = #{aptPosi}</if>
 			        <if test=' dong != null and !"".equals(dong) '>AND dong = #{dong}</if>
 			        <if test=' ho != null and !"".equals(ho) '>AND ho = #{ho}</if>
+			        <if test=' handphone != null and !"".equals(handphone) '>AND handphone = #{handphone}</if>
 			        AND safefunc = '40'
 			    </where>
 			) A, (SELECT @rownum := 0) R
@@ -586,6 +589,7 @@
 			        <if test=' aptPosi != null and !"".equals(aptPosi) '>AND aptposi = #{aptPosi}</if>
 			        <if test=' dong != null and !"".equals(dong) '>AND dong = #{dong}</if>
 			        <if test=' ho != null and !"".equals(ho) '>AND ho = #{ho}</if>
+			        <if test=' handphone != null and !"".equals(handphone) '>AND handphone = #{handphone}</if>
 			        AND safefunc = '10'
 			        AND useyn = 'Y'
 			    </where>
@@ -613,6 +617,7 @@
 			        <if test=' aptPosi != null and !"".equals(aptPosi) '>AND aptposi = #{aptPosi}</if>
 			        <if test=' dong != null and !"".equals(dong) '>AND dong = #{dong}</if>
 			        <if test=' ho != null and !"".equals(ho) '>AND ho = #{ho}</if>
+			        <if test=' handphone != null and !"".equals(handphone) '>AND handphone = #{handphone}</if>
 			        AND safefunc = '40'
 			    </where>
 			) A, (SELECT @rownum := 0) R
