@@ -21,6 +21,12 @@ $(document).ready(function() {
 	});
 });
 
+function secedeUser(userSeq) {
+	if (confirm(" 회원을 탈퇴시키겠습니까? ")) {
+		location.href = "/user/secede/" + userSeq;
+	}
+}
+
 /*]]>*/
 </script>
 </head>
@@ -109,6 +115,7 @@ $(document).ready(function() {
 	                  <label>
 	                    <input type="checkbox" id="cb-secede-yn" disabled="disabled" /> 탈퇴 여부
 	                    <input type="hidden" id="secedeYn" name="secedeYn" th:value="${user.secedeYn}" />
+	                    &nbsp;&nbsp;
 	                    <span th:if="${user.secedeDate} != null" th:text="${#dates.format(user.secedeDate, 'yyyy-MM-dd HH:mm')}"></span>
 	                  </label>
 	                </div>
@@ -119,9 +126,10 @@ $(document).ready(function() {
               <!-- /.box-body -->
 
               <div class="box-footer">
-              	<div class="col-sm-offset-2 col-sm-4">
+              	<div class="col-sm-offset-2 col-sm-10">
               		<!--<button type="submit" class="btn btn-primary pull-right">저장</button>-->
-              		<a href="javascript:history.back();" class="btn btn-info pull-right">회원 목록</a>
+              		<a href="javascript:history.back();" class="btn btn-info">회원 목록</a>
+              		<a th:if="${ user.secedeYn eq 'N' }" th:href="${'javascript:secedeUser(' + user.seq + ')'}" class="btn btn-danger pull-right">회원 탈퇴</a>
               	</div>
               </div>
             </form>

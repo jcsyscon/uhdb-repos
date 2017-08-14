@@ -3,13 +3,19 @@ package com.realsnake.sample.controller.web.user;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.realsnake.sample.constants.ApiResultCode;
+import com.realsnake.sample.exception.CommonApiException;
+import com.realsnake.sample.model.common.api.ApiResponse;
 import com.realsnake.sample.model.user.UserVo;
 import com.realsnake.sample.service.user.UserService;
 
@@ -44,4 +50,21 @@ public class UserController {
         return "user/view";
     }
 
+    /**
+     * 회원 탈퇴
+     *
+     * @param seq
+     * @return
+     * @throws Exception
+     */
+    @GetMapping(value = "/secede/{seq}")
+    public String secedeUserByAdmin(@PathVariable("seq") Integer seq) throws Exception {
+        UserVo user = new UserVo();
+        user.setSeq(seq);
+
+        this.userService.secedeUser(user);
+        
+        return "redirect:/main";
+    }
+    
 }

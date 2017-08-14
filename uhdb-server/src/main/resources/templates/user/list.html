@@ -109,7 +109,8 @@ $(document).ready(function() {
                   <td th:text="${#dates.format(user.regDate, 'yyyy-MM-dd HH:mm')}"> 4</td>
                   <td th:text="${user.birthDate}">Trident</td>
                   <td th:text="${user.sex}">Trident</td>
-                  <td th:text="${user.secedeYn}">Trident</td>
+                  <td th:if="${ user.secedeYn eq 'Y' }">탈퇴회원</td>
+                  <td th:if="${ user.secedeYn eq 'N' }">회원</td>
                 </tr>
                 </tbody>
 <!--
