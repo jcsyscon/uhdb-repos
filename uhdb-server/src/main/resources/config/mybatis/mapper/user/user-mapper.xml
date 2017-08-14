@@ -169,6 +169,11 @@
 	    UPDATE /* secedeUser, 전강욱(realsnake1975@gmail.com) */ user
 	    SET secede_yn = 'Y'
 	    , secede_date = NOW()
+	    <if test=' secedeYnByAdmin != null and !"".equals(secedeYnByAdmin) '>, secede_yn_by_admin = 'Y'</if>
+	    , password = NULL
+	    , name = NULL
+	    , mobile = NULL
+	    , email = NULL
 	    <where>
 			<choose>
 				<when test=' seq != null and seq > 0 '>AND seq = #{seq}</when>

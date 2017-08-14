@@ -63,6 +63,9 @@ public class UserVo implements Serializable {
     /** 사용자권한 */
     private Collection<? extends GrantedAuthority> authorities;
 
+    /** 관리에 의한 탈퇴여부 */
+    private String secedeYnByAdmin = "N";
+    
     public Integer getSeq() {
         return seq;
     }
@@ -167,7 +170,15 @@ public class UserVo implements Serializable {
         this.authorities = authorities;
     }
 
-    /**
+    public String getSecedeYnByAdmin() {
+		return secedeYnByAdmin;
+	}
+
+	public void setSecedeYnByAdmin(String secedeYnByAdmin) {
+		this.secedeYnByAdmin = secedeYnByAdmin;
+	}
+
+	/**
      * 복호화한 사용자 이름
      *
      * @return
