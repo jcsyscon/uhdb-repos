@@ -133,6 +133,10 @@ public class UhdbServiceImpl implements UhdbService {
         String aptPosiName = StringUtils.EMPTY;
         String nowYmd = StringUtils.EMPTY;
 
+        String aptId = param.getAptId();
+        String dong = param.getDong();
+        String ho = param.getHo();
+
         try {
             AptVo aptParam = new AptVo();
             aptParam.setAptId(param.getAptId());
@@ -312,7 +316,7 @@ public class UhdbServiceImpl implements UhdbService {
             /* @formatter:off */
             /**
             if (userUhdbList == null || userUhdbList.isEmpty()) {
-                // 2. 핸드폰번호에 해당하는 사용자가 없다면 아파트아이디, 택배함 위치, 동, 호로 사용자 찾기 
+                // 2. 핸드폰번호에 해당하는 사용자가 없다면 아파트아이디, 택배함 위치, 동, 호로 사용자 찾기
                 // -> 20170810, 핸드폰번호에 해당하는 회원가입자가 없다면 해당 번호로 문자만 발송으로 변경
                 userUhdb = new UserUhdbVo();
                 userUhdb.setAptId(param.getAptId());
@@ -326,8 +330,7 @@ public class UhdbServiceImpl implements UhdbService {
 
             /* @formatter:off */
             if (userUhdbList == null || userUhdbList.isEmpty()) {
-                // 테스트 기간 중 SMS 발송 중지
-                // 3. 핸드폰번호로도 아파트아이디/택배함위치/동/호로도 사용자를 찾을 수 없다면(회원미가입자) SMS 발송
+                // 2. 핸드폰번호로 사용자를 찾을 수 없다면(회원미가입자) 택배+앱설치권유 SMS 발송
                 CompletableFuture<String> result = this.smsUtils.send(userMobile, body4User);
 
                 // 발송 로그 저장
@@ -338,7 +341,7 @@ public class UhdbServiceImpl implements UhdbService {
                 send.setResultMessage(result.get());
                 this.commonService.regSendLog(send);
 
-                logger.info("<<무인택배함 로그 API, 사용자 SMS 발송>> {}", send.toString());
+                logger.info("<<무인택배함 로그 API, 사용자 SMS 발송, 회원미가입자>> {}", send.toString());
 
                 // <!-- 택배요 설치 문자 발송
                 String applyText = "택배요 앱을 다운,설치하세요 https://play.google.com/store/apps/details?id=kr.co.tbyo.and";
@@ -358,6 +361,25 @@ public class UhdbServiceImpl implements UhdbService {
 
                 // logger.info("<<무인택배함 로그 API, 회원미가입자에게 SMS 발송해야하지만 현재 SMS 발송은 주석처리되어 있으므로 SMS 발송하지 않고 종료>>");
                 return;
+            }
+            else {
+                userUhdb = userUhdbList.get(0);
+
+                if ( !(StringUtils.equals(userUhdb.getAptId(), aptId) && StringUtils.equals(userUhdb.getDong(), dong) && StringUtils.equals(userUhdb.getHo(), ho) ) ) {
+                    // 2. 핸드폰번호로 사용자를 찾았는데 아파트아이디/동/호가 틀리다면 택배 SMS 발송
+                    CompletableFuture<String> result = this.smsUtils.send(userMobile, body4User);
+
+                    // 발송 로그 저장
+                    SendVo send = new SendVo();
+                    send.setGubun(CommonConstants.SendType.SMS_UHDB.getValue());
+                    send.setMobile(userMobile);
+                    send.setSendMessage(body4User);
+                    send.setResultMessage(result.get());
+                    this.commonService.regSendLog(send);
+
+                    logger.info("<<무인택배함 로그 API, 사용자 SMS 발송, 핸드폰번호로 사용자를 찾았는데 아파트아이디/동/호가 다른 경우>> {}", send.toString());
+                    return;
+                }
             }
             /* @formatter:on */
 
@@ -615,21 +637,21 @@ public class UhdbServiceImpl implements UhdbService {
         Map<String, Object> temp = userUhdbList.get(0);
         String aptId = (String) temp.get("aptId");
         String aptPosi = (String) temp.get("aptPosi");
-//        String dong = (String) temp.get("dong");
-//        String ho = (String) temp.get("ho");
+        // String dong = (String) temp.get("dong");
+        // String ho = (String) temp.get("ho");
 
         param.setAptId(aptId);
         param.setAptPosi(aptPosi);
-//        param.setDong(dong);
-//        param.setHo(ho);
+        // param.setDong(dong);
+        // param.setHo(ho);
         /* @formatter:off */
         // 20170810, 아파트아이디, 택배함위치, 전화번호 조회로 번경 -->
-        
+
         UserVo userParam = new UserVo();
         userParam.setSeq(param.getUserSeq());
         UserVo user = this.userMapper.selectUser(userParam);
         param.setHandphone(StringUtils.remove(user.getDecMobile(), "-"));
-        
+
         if (param.getMobilePagingHelper().getSortList() == null || param.getMobilePagingHelper().getSortList().isEmpty()) {
             Sort sort = new Sort();
             sort.setColumn("upddt");
