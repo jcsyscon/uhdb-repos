@@ -304,14 +304,14 @@ public class UhdbServiceImpl implements UhdbService {
 
         try {
             // 1. 핸드폰번호로 사용자 찾기
-            UserUhdbVo userUhdb = new UserUhdbVo();
+            UserUhdbVo userUhdbParam = new UserUhdbVo();
 
             String mobileNumber = userMobile.substring(0, 3) + "-" + userMobile.substring(3, 7) + "-" + userMobile.substring(7, 11);
             secretKey = BlockCipherUtils.generateSecretKey(CommonConstants.DEFAULT_AUTH_KEY);
             String encMobileNumber = BlockCipherUtils.encrypt(secretKey, mobileNumber);
 
-            userUhdb.setMobile(encMobileNumber);
-            List<UserUhdbVo> userUhdbList = this.userMapper.selectUserUhdbList(userUhdb);
+            userUhdbParam.setMobile(encMobileNumber);
+            List<UserUhdbVo> userUhdbList = this.userMapper.selectUserUhdbList(userUhdbParam);
 
             /* @formatter:off */
             /**
@@ -363,9 +363,13 @@ public class UhdbServiceImpl implements UhdbService {
                 return;
             }
             else {
-                userUhdb = userUhdbList.get(0);
+            	userUhdbParam.setAptId(aptId);
+            	userUhdbParam.setDong(dong);
+            	userUhdbParam.setHo(ho);
+            	
+            	UserUhdbVo userUhdb = this.userMapper.selectMemberYn(userUhdbParam);
 
-                if ( !(StringUtils.equals(userUhdb.getAptId(), aptId) && StringUtils.equals(userUhdb.getDong(), dong) && StringUtils.equals(userUhdb.getHo(), ho) ) ) {
+                if ( userUhdb == null ) {
                     // 2. 핸드폰번호로 사용자를 찾았는데 아파트아이디/동/호가 틀리다면 택배 SMS 발송
                     CompletableFuture<String> result = this.smsUtils.send(userMobile, body4User);
 

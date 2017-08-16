@@ -320,6 +320,8 @@
         , del_date
 	    FROM user_uhdb
 	    WHERE apt_id = #{aptId}
+			<if test=' dong != null and !"".equals(dong) '>AND dong = #{dong}</if>
+			<if test=' ho != null and !"".equals(ho) '>AND ho = #{ho}</if>
 			AND user_seq IN (SELECT seq FROM user WHERE mobile = #{mobile})
 			AND del_yn = 'N'
 		ORDER BY seq DESC
