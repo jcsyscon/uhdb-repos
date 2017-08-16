@@ -303,10 +303,11 @@
 				<otherwise>AND seq = 0</otherwise>
 			</choose>
 	    </where>
+	    ORDER BY seq DESC
 	</select>
 
 	<select id="selectMemberYn" parameterType="UserUhdbVo" resultType="UserUhdbVo">
-	    SELECT /* selectUserUhdbList, 전강욱(realsnake1975@gmail.com) */ seq
+	    SELECT /* selectMemberYn, 전강욱(realsnake1975@gmail.com) */ seq
     	, user_seq
         , apt_id
         , uhdb_id
