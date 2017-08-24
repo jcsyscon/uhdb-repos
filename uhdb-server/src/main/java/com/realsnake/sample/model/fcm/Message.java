@@ -41,6 +41,8 @@ public class Message implements Serializable {
     private String body;
 
     private String adUrl;
+    
+    private String addedText = "택배도착! 아래로 드래그해서 내용을 확인하세요!";
 
     public Message(String title, String body) {
         super();
@@ -77,7 +79,15 @@ public class Message implements Serializable {
         this.adUrl = adUrl;
     }
 
-    @Override
+    public String getAddedText() {
+		return addedText;
+	}
+
+	public void setAddedText(String addedText) {
+		this.addedText = addedText;
+	}
+
+	@Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
