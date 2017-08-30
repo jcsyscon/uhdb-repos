@@ -145,10 +145,11 @@ public class SampleController {
     public String sampleFcm(HttpServletRequest request, Model model) throws Exception {
         // 유저 푸시키
         // String fcmToken = "eQlH-IUu9rA:APA91bEwml0h7rAYnoOn9hc4jN_tOlPLQexLNJgLptSn21IYF5S39l5wu-3BeiB_Ax-iqGiMNEz3GX4xuP5C_WMXXY1ISpwxS_Y0GKh_Q02vCNYrFNN7c5FkQHP_0hj1xvKxUdGOK1UA";
-        String fcmToken = "exdNrcEuDEQ:APA91bEOovHnVbtlqYv6mNzAF2PfLsdwNx-gW9lNhb1OuDbr07_rd8XOS9XYmFTBo84E7oRzOtZh3g2tuD4yPrmNL0W9TqykbwNwYo8pcXSEx9AcG3Jk7i5LsFykm5vYX5uY8D9On4FS";
+        String fcmToken = "cfuY7Xjt9T0:APA91bFYnIO78aJciRtyRGP8XBoY4K4cmicNfAWFHr-FTQU9elSsSXlFJ_vUbQB9qxl0UUVw9rKiuF-zbWlDkWadXenOczpi_St1XykQJkBYgAUT51mTy2Q_y-ZSnZhNPkNiA5mKGEcN";
 
 
-        Message message = new Message("제목입니다.", "내용입니다.");
+        // Message message = new Message("택배보관", "사무실택배함 19번 비밀번호:12345 109동 1001호 HANJIN");
+        Message message = new Message("택배보관", "사무실택배함 19번 비밀번호:12345 109동 1001호 HANJIN", "/api/v1/ad/gubun/push");
         FcmReqForm fcmReqForm = new FcmReqForm(new Data(message), fcmToken);
 
         CompletableFuture<String> result = this.fcmUtils.send(fcmReqForm);
