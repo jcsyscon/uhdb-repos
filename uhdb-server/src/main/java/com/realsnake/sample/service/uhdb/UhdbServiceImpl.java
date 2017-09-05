@@ -162,7 +162,7 @@ public class UhdbServiceImpl implements UhdbService {
             // body4User = String.format(CommonConstants.SafeFuncType.SAFE_FUNC_10.getBody(), aptPosiName, this.removeZero(param.getBoxNo()), param.getPswd(), param.getDong(), param.getHo(),
             // param.getTaekbae());
 
-            body4User = String.format(CommonConstants.SafeFuncType.SAFE_FUNC_10.getBody(), aptsName, param.getDong(), param.getHo(), this.removeZero(param.getBoxNo()));
+            body4User = String.format(CommonConstants.SafeFuncType.SAFE_FUNC_10.getBody(), aptsName, param.getDong(), param.getHo(), this.removeZero(param.getBoxNo()), param.getPswd());
             tbMobile = param.getTaekbaeHandphone();
             // 택배기사 발송 문자
             // 아파트명 택배함설치장소명 인증번호:taekbae_PSWD 물품교체/보관함 열리지 않았을때 사용
