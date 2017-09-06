@@ -101,7 +101,8 @@ public class UhdbServiceImpl implements UhdbService {
 
     private String removeZero(String param) {
         try {
-            return StringUtils.remove(param, "0");
+            int num = Integer.parseInt(param);
+            return Integer.toString(num);
         } catch (Exception e) {
             return param;
         }
