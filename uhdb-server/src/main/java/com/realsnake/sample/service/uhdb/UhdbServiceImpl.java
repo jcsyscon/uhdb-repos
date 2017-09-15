@@ -672,6 +672,7 @@ public class UhdbServiceImpl implements UhdbService {
         List<UhdbLogVo> uhdbLogList = null;
 
         if ("now".equalsIgnoreCase(param.getGubun())) {
+            param.getMobilePagingHelper().setPageSize(1000);
             param.getMobilePagingHelper().setTotalCount(this.uhdbMapper.selectUhdbLogListCount4Mobile(param));
             uhdbLogList = this.uhdbMapper.selectUhdbLogList4Mobile(param);
         } else {
