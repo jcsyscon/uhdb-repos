@@ -110,14 +110,15 @@ public class FcmUtils {
     */
     /* @formatter:on */
 
-    private HttpHeaders headers = new HttpHeaders();
+    // private HttpHeaders headers = new HttpHeaders();
 
     private ObjectMapper mapper = new ObjectMapper();
 
     @Async
     public CompletableFuture<String> send(FcmReqForm fcmReqForm) {
-        this.headers.add(FCM_HEADER_KEY, String.format(FCM_HEADER_VALUE, this.fcmServerKey));
-        this.headers.add(FCM_CONTENT_TYPE, FcmContentType.JSON.getValue());
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(FCM_HEADER_KEY, String.format(FCM_HEADER_VALUE, this.fcmServerKey));
+        headers.add(FCM_CONTENT_TYPE, FcmContentType.JSON.getValue());
 
         HttpEntity<String> entity = null;
         ResponseEntity<String> responseEntity = null;
@@ -126,7 +127,7 @@ public class FcmUtils {
             String fcmReqStr = this.mapper.writeValueAsString(fcmReqForm);
             logger.debug("<<FCM메시지>> {}", fcmReqStr);
 
-            entity = new HttpEntity<>(fcmReqStr, this.headers);
+            entity = new HttpEntity<>(fcmReqStr, headers);
             responseEntity = this.restTemplate.exchange(FCM_URL, HttpMethod.POST, entity, String.class);
 
             return CompletableFuture.completedFuture(responseEntity.getBody());
