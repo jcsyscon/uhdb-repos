@@ -2,7 +2,7 @@ package com.realsnake.sample.controller.api.v1.uhdb;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-
+import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.realsnake.sample.constants.ApiResultCode;
 import com.realsnake.sample.constants.CommonConstants;
 import com.realsnake.sample.exception.CommonApiException;
@@ -119,10 +118,18 @@ public class ApiUhdbController {
     }
 
     @PostMapping(value = "/public-ip/modify")
-    public String modifyUhdbPublicIp(UhdbVo param) {
+    public String modifyUhdbPublicIp(HttpServletRequest request, UhdbVo param) {
         String result = "NOK";
 
         try {
+            String reqIp = request.getHeader("X-FORWARDED-FOR");
+            if (StringUtils.isEmpty(reqIp)) {
+                reqIp = request.getRemoteAddr();
+            }
+            LOGGER.info("############################################################################################################");
+            LOGGER.info("<<무인택배함 공인아이피 수정 요청IP>> {}", reqIp);
+            LOGGER.info("############################################################################################################");
+
             this.uhdbService.modifyUhdbGonginIp(param);
             result = "OK";
         } catch (Exception e) {
@@ -143,8 +150,7 @@ public class ApiUhdbController {
      * @throws CommonApiException
      */
     @PostMapping(value = "/open")
-    public ApiResponse<?> openBox(String aptId, String uhdbId, String boxNo, String password, @RequestParam(value = "tbcode", required = false, defaultValue = StringUtils.EMPTY) String tbcode)
-            throws CommonApiException {
+    public ApiResponse<?> openBox(String aptId, String uhdbId, String boxNo, String password, @RequestParam(value = "tbcode", required = false, defaultValue = StringUtils.EMPTY) String tbcode) throws CommonApiException {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (authentication == null) {
@@ -287,8 +293,7 @@ public class ApiUhdbController {
      * @throws CommonApiException
      */
     @PostMapping(value = "/log/{gubun}/{userSeq}")
-    public ApiResponse<?> searchUhdbLogList(@PathVariable("gubun") String gubun, @PathVariable("userSeq") Integer userSeq, MobilePagingHelper mobilePagingHelper, UhdbDto param)
-            throws CommonApiException {
+    public ApiResponse<?> searchUhdbLogList(@PathVariable("gubun") String gubun, @PathVariable("userSeq") Integer userSeq, MobilePagingHelper mobilePagingHelper, UhdbDto param) throws CommonApiException {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (authentication == null) {
