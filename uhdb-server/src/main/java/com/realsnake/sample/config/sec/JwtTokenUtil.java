@@ -196,6 +196,24 @@ public class JwtTokenUtil {
         return this.generateToken(claims);
     }
 
+    /**
+     * 핸드폰번호와 Session id로 JWT 생성
+     *
+     * @param mobileNo
+     * @param sessionId
+     * @Param userSeq
+     * @return
+     */
+    public String generateToken(String mobileNo, String sessionId, Integer userSeq) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put(CLAIM_KEY_ISSUER, CLAIM_VALUE_ISSUER);
+        claims.put(CLAIM_KEY_AUDIENCE, mobileNo);
+        claims.put(CLAIM_KEY_ISSUEDAT, new Date());
+        claims.put(CLAIM_KEY_JWTID, sessionId);
+        claims.put("seq", userSeq);
+        return this.generateToken(claims);
+    }
+
     private String generateToken(Map<String, Object> claims) {
         logger.debug(claims.toString());
 

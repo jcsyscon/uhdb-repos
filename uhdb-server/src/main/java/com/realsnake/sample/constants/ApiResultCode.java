@@ -6,6 +6,7 @@ public enum ApiResultCode {
     COMMON_SUCCESS("00", "SUCCESS")
     , COMMON_FAIL("99", "FAIL")
     , NOTFOUND_USER("01", "USER NOT FOUND")
+    , AUTH_FAIL("02", "AUTH FAIL")
     ;
     /* @formatter:on */
 

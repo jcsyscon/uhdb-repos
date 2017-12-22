@@ -2,6 +2,9 @@ package com.realsnake.sample.model.common.api;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 public class ApiResponse<T> implements Serializable {
 
     /** SID */
@@ -9,8 +12,10 @@ public class ApiResponse<T> implements Serializable {
 
     private ApiResponseHeader header;
 
+    @JsonInclude(Include.NON_NULL)
     private T body;
 
+    @JsonInclude(Include.NON_NULL)
     private ApiResponseFooter footer;
 
     public ApiResponse() {

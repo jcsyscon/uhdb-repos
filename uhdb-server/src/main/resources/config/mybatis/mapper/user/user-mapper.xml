@@ -103,6 +103,7 @@
 				<otherwise>AND seq = 0</otherwise>
 			</choose>
 	    </where>
+	    LIMIT 1
 	</select>
 
 	<select id="selectUserListCount" parameterType="UserDto" resultType="int">

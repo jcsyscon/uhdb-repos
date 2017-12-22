@@ -13,6 +13,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.ibatis.type.Alias;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.realsnake.sample.constants.CommonConstants.UserDeviceType;
 
 /**
  * @author 전강욱(realsnake1975@gmail.com) <br />
@@ -33,6 +34,8 @@ public class UserFcmVo implements Serializable {
     private String fcmToken;
     /** 앱버전 */
     private String appVersion;
+    /** 디바이스유형(안드로이드/아이폰/none) */
+    private String deviceType = UserDeviceType.ANDROID.getValue();
     /** 등록일시 */
     private Date regDate;
 
@@ -102,6 +105,14 @@ public class UserFcmVo implements Serializable {
 
     public void setDelDate(Date delDate) {
         this.delDate = delDate;
+    }
+
+    public String getDeviceType() {
+        return deviceType;
+    }
+
+    public void setDeviceType(String deviceType) {
+        this.deviceType = deviceType;
     }
 
     @Override
