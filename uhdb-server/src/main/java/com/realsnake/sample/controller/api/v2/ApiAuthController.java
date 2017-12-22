@@ -20,12 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.realsnake.sample.config.sec.JwtToken;
 import com.realsnake.sample.config.sec.JwtTokenUtil;
 import com.realsnake.sample.constants.ApiResultCode;
-import com.realsnake.sample.constants.CommonConstants;
 import com.realsnake.sample.exception.CommonApiException;
 import com.realsnake.sample.model.user.LoginUser;
-import com.realsnake.sample.model.user.UserVo;
-import com.realsnake.sample.service.user.UserService;
-import com.realsnake.sample.util.crypto.BlockCipherUtils;
 
 @RestController("ApiV2AuthController")
 @RequestMapping(value = "/api/v2")
@@ -42,8 +38,8 @@ public class ApiAuthController {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
-    @Autowired
-    private UserService userService;
+    // @Autowired
+    // private UserService userService;
 
     /**
      * 간편인증: 핸드폰번호로만 인증한다.<br />
@@ -51,29 +47,21 @@ public class ApiAuthController {
      *
      * @param session
      * @param device
-     * @param mobileNo 핸드폰번호(v2에서의 username)
+     * @param usernameOrMobileNo 회원ID 또는 핸드폰번호(v1은 회원ID, v2는 핸드폰번호, 포맷: 010-XXXX-XXXX)
      * @return
      * @throws CommonApiException
      */
     @PostMapping(value = "/auth")
-    public ResponseEntity<?> createAuthToken(HttpSession session, Device device, String mobileNo) throws CommonApiException {
-        LOGGER.debug("<</auth, 핸드폰번호>>, {}", mobileNo);
+    public ResponseEntity<?> createAuthToken(HttpSession session, Device device, String usernameOrMobileNo) throws CommonApiException {
+        LOGGER.debug("<</auth, 회원ID 또는 핸드폰번호>>, {}", usernameOrMobileNo);
 
         try {
-            UserVo userParam = new UserVo();
-            userParam.setMobile(BlockCipherUtils.encrypt(BlockCipherUtils.generateSecretKey(CommonConstants.DEFAULT_AUTH_KEY), mobileNo));
-            UserVo user = this.userService.findUser(userParam);
-
-            if (user == null || "Y".equals(user.getSecedeYn())) {
-                throw new CommonApiException(ApiResultCode.NOTFOUND_USER);
-            }
-
-            UsernamePasswordAuthenticationToken requestToken = new UsernamePasswordAuthenticationToken(mobileNo, user.getPassword()); // password는 핸드폰번호를 해싱한 값
+            UsernamePasswordAuthenticationToken requestToken = new UsernamePasswordAuthenticationToken(usernameOrMobileNo, usernameOrMobileNo); // 일단 패스워드는 usernameOrMobileNo와 동일하게
             Authentication authentication = this.authenticationManager.authenticate(requestToken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
             LoginUser loginUser = (LoginUser) authentication.getPrincipal();
-            final String accessToken = this.jwtTokenUtil.generateToken(mobileNo, session.getId(), loginUser.getSeq());
+            final String accessToken = this.jwtTokenUtil.generateToken(usernameOrMobileNo, session.getId(), loginUser.getSeq());
             LOGGER.debug("<<accessToken>> {}", accessToken);
 
             return ResponseEntity.ok(new JwtToken(accessToken));

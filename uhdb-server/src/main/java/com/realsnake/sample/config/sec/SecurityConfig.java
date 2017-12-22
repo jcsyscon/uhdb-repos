@@ -85,6 +85,8 @@ public class SecurityConfig {
                     .antMatchers("/api/v1/user/search/uhdb").permitAll()
                     .antMatchers("/api/v1/user/join").permitAll()
                     .antMatchers("/api/v1/uhdb/**").permitAll()
+                    .antMatchers("/api/v2/auth").permitAll()
+                    .antMatchers("/api/v2/public/**").permitAll()
                     .anyRequest().authenticated()
                 .and()
                 .logout()

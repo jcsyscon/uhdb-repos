@@ -50,6 +50,10 @@ public class CommonAdvice {
         CommonDto commonDto = null;
 
         for (Object param : params) {
+            if (param == null) {
+                continue;
+            }
+
             if (MobilePagingHelper.class.isAssignableFrom(param.getClass())) {
                 mobilePagingHelper = (MobilePagingHelper) param;
             }

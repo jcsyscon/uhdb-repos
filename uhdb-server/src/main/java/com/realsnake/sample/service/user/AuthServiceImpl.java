@@ -47,17 +47,22 @@ public class AuthServiceImpl implements UserDetailsService {
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserVo param = new UserVo();
-        param.setUsername(username);
+        // UserVo param = new UserVo();
+        // param.setUsername(username);
 
         try {
-            UserVo user = this.userService.findUser4Auth(param);
+            // UserVo user = this.userService.findUser4Auth(param);
+            UserVo user = this.userService.findUser(username);
 
             if (user == null) {
                 throw new UsernameNotFoundException("User[" + username + "] not found.");
             }
+            if (user != null && "Y".equalsIgnoreCase(user.getSecedeYn())) {
+                logger.info("<<인증불가 - 탈퇴한 사용자>> {}", user.toString());
+            }
 
-            return new LoginUser(username, user.getPassword(), user.getAuthorities(), user.getSeq());
+            // return new LoginUser(username, user.getPassword(), user.getAuthorities(), user.getSeq());
+            return new LoginUser(username, username, user.getAuthorities(), user.getSeq());
         } catch (Exception e) {
             logger.error("<<로그인 중 오류>> {}", e.getMessage());
         }
