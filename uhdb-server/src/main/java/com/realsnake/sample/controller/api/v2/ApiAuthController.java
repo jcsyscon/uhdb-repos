@@ -22,7 +22,12 @@ import com.realsnake.sample.config.sec.JwtTokenUtil;
 import com.realsnake.sample.constants.ApiResultCode;
 import com.realsnake.sample.exception.CommonApiException;
 import com.realsnake.sample.model.user.LoginUser;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 
+@Api(value="인증", description="무인택배앱 사용자 인증 API")
 @RestController("ApiV2AuthController")
 @RequestMapping(value = "/api/v2")
 public class ApiAuthController {
@@ -51,6 +56,10 @@ public class ApiAuthController {
      * @return
      * @throws CommonApiException
      */
+    @ApiOperation(value = "핸드폰번호로를 통한 간편인증")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "usernameOrMobileNo", value = "사용자ID 또는 핸드폰번호", required = true, dataType = "string", paramType = "query", defaultValue = ""),
+    })
     @PostMapping(value = "/auth")
     public ResponseEntity<?> createAuthToken(HttpSession session, Device device, String usernameOrMobileNo) throws CommonApiException {
         LOGGER.debug("<</auth, 회원ID 또는 핸드폰번호>>, {}", usernameOrMobileNo);
@@ -78,6 +87,7 @@ public class ApiAuthController {
      * @return
      * @throws CommonApiException
      */
+    @ApiOperation(value = "Access 토큰(JWT, x-access-token) 갱신 요청")
     @PostMapping(value = "/auth/refresh")
     public ResponseEntity<?> refreshAuthToken(HttpServletRequest request) throws CommonApiException {
         try {

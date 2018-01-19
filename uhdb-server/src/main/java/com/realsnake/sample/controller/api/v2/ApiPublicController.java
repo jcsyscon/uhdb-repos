@@ -28,7 +28,12 @@ import com.realsnake.sample.service.uhdb.UhdbService;
 import com.realsnake.sample.service.user.UserService;
 import com.realsnake.sample.util.RandomKeys;
 import com.realsnake.sample.util.SmsUtils;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 
+@Api(value="인증이 필요없는 API들", description="인증이 필요없는 API들")
 @RestController("ApiV2PublicController")
 @RequestMapping(value = "/api/v2/public")
 public class ApiPublicController {
@@ -53,6 +58,10 @@ public class ApiPublicController {
      * @param mobileNo 핸드폰번호(포맷: 010-XXXX-XXXX)
      * @return
      */
+    @ApiOperation(value = "핸드폰번호 중복체크(UNKNOWN/NONEXIST/EXIST)", response = ApiResponse.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "mobileNo", value = "핸드폰번호", required = true, dataType = "string", paramType = "query", defaultValue = "")
+    })
     @PostMapping(value = "/double-check")
     public ApiResponse<?> doubleCheckProcessing(String mobileNo) {
         ApiResponse<String> apiResponse = new ApiResponse<>();
@@ -78,6 +87,10 @@ public class ApiPublicController {
      * @param mobileNo 핸드폰번호
      * @return
      */
+    @ApiOperation(value = "모바일 인증번호 발송", response = ApiResponse.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "mobileNo", value = "핸드폰번호", required = true, dataType = "string", paramType = "query", defaultValue = "")
+    })
     @PostMapping(value = "/mobile-auth-num")
     public ApiResponse<?> getMobileAuthNum(String mobileNo) {
         ApiResponse<Map<String, String>> apiResponse = new ApiResponse<>();
@@ -122,6 +135,11 @@ public class ApiPublicController {
      * @param key 32자리 랜덤키
      * @return
      */
+    @ApiOperation(value = "모바일 인증번호 검증", response = ApiResponse.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "code", value = "6자리 인증번호", required = true, dataType = "string", paramType = "query", defaultValue = "")
+        , @ApiImplicitParam(name = "key", value = "32자리 랜덤키", required = true, dataType = "string", paramType = "query", defaultValue = "")
+    })
     @PostMapping(value = "/mobile-auth-num/check")
     public ApiResponse<?> checkMobileAuthNum(String code, String key) {
         ApiResponse<String> apiResponse = new ApiResponse<>();
@@ -150,6 +168,10 @@ public class ApiPublicController {
      * @param uhdbNo 무인택배함번호
      * @return
      */
+    @ApiOperation(value = "무인택배함 찾기(NONEXIST/EXIST)", response = ApiResponse.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "uhdbNo", value = "무인택배함번호", required = true, dataType = "string", paramType = "path", defaultValue = "")
+    })
     @GetMapping(value = "/search/uhdb/{uhdbNo}")
     public ApiResponse<?> searchUhdb(@PathVariable("uhdbNo") String uhdbNo) {
         ApiResponse<String> apiResponse = new ApiResponse<>();
@@ -188,6 +210,14 @@ public class ApiPublicController {
      * @param deviceType 디바이스유형(android/ios/none)
      * @return
      */
+    @ApiOperation(value = "회원정보 등록", response = ApiResponse.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "mobileNo", value = "핸드폰번호", required = true, dataType = "string", paramType = "query", defaultValue = "")
+        , @ApiImplicitParam(name = "uhdbNo", value = "무인택배함번호", required = true, dataType = "string", paramType = "query", defaultValue = "")
+        , @ApiImplicitParam(name = "fcmToken", value = "FCM토큰", required = true, dataType = "string", paramType = "query", defaultValue = "")
+        , @ApiImplicitParam(name = "appVersion", value = "앱버전", required = true, dataType = "string", paramType = "query", defaultValue = "")
+        , @ApiImplicitParam(name = "deviceType", value = "디바이스유형(android/ios/none)", required = true, dataType = "string", paramType = "query", defaultValue = "")
+    })
     @PostMapping(value = "/join")
     public ApiResponse<?> regUser(String mobileNo, String uhdbNo, String fcmToken, String appVersion, String deviceType) {
         ApiResponse<UserVo> apiResponse = new ApiResponse<>();
