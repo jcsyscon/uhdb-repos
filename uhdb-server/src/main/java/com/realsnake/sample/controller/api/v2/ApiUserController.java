@@ -1,4 +1,4 @@
-package com.realsnake.sample.controller.api.v2.user;
+package com.realsnake.sample.controller.api.v2;
 
 import java.util.HashMap;
 import java.util.List;
@@ -257,15 +257,20 @@ public class ApiUserController {
     }
 
     /**
-     * 회원 무인택배함 정보수정
+     * 회원 무인택배함 추가
      *
      * @param userSeq
-     * @param userUhdb
+     * @param uhdbNo TODO: 형식: 아파트아이디-무인택배함일련번호
      * @return
      * @throws CommonApiException
      */
-    @PostMapping(value = "/modify/{userSeq}/uhdb")
-    public ApiResponse<?> modifyUserUhdb(@PathVariable("userSeq") Integer userSeq, UserUhdbVo userUhdb) throws CommonApiException {
+    @ApiOperation(value = "회원 무인택배함 추가", response = ApiResponse.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "userSeq", value = "회원일련번호", required = true, dataType = "int", paramType = "path", defaultValue = "")
+        , @ApiImplicitParam(name = "uhdbNo", value = "무인택배함번호(아파트아이디-무인택배함일련번호)", required = true, dataType = "string", paramType = "query", defaultValue = "")
+    })
+    @PostMapping(value = "/add/{userSeq}/uhdb")
+    public ApiResponse<?> addUserUhdb(@PathVariable("userSeq") Integer userSeq, String uhdbNo) throws CommonApiException {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (authentication == null) {
@@ -273,6 +278,7 @@ public class ApiUserController {
                 throw new CommonApiException(ApiResultCode.AUTH_FAIL);
             }
 
+            UserUhdbVo userUhdb = new UserUhdbVo();
             this.userService.modifyUserUhdb(userUhdb);
 
             ApiResponse<UserVo> apiResponse = new ApiResponse<>();
