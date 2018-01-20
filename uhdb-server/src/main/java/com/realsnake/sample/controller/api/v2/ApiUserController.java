@@ -260,14 +260,14 @@ public class ApiUserController {
      * 회원 무인택배함 추가
      *
      * @param userSeq
-     * @param uhdbNo TODO: 형식: 아파트아이디-무인택배함일련번호
+     * @param uhdbNo TODO: 형식: 아파트아이디-아파트위치
      * @return
      * @throws CommonApiException
      */
     @ApiOperation(value = "회원 무인택배함 추가", response = ApiResponse.class)
     @ApiImplicitParams({
         @ApiImplicitParam(name = "userSeq", value = "회원일련번호", required = true, dataType = "int", paramType = "path", defaultValue = "")
-        , @ApiImplicitParam(name = "uhdbNo", value = "무인택배함번호(아파트아이디-무인택배함일련번호)", required = true, dataType = "string", paramType = "query", defaultValue = "")
+        , @ApiImplicitParam(name = "uhdbNo", value = "무인택배함번호(아파트아이디-아파트위치)", required = true, dataType = "string", paramType = "query", defaultValue = "")
     })
     @PostMapping(value = "/add/{userSeq}/uhdb")
     public ApiResponse<?> addUserUhdb(@PathVariable("userSeq") Integer userSeq, String uhdbNo) throws CommonApiException {

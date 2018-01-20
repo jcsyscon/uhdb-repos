@@ -895,4 +895,50 @@ public class UhdbServiceImpl implements UhdbService {
         return this.userMapper.selectMemberYn(userUhdbParam);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<UhdbLogVo> findUhdbLogList4MobileV2(UhdbDto param) throws Exception {
+        logger.info("<<무인택배함 사용내역 조회>> {}", param.toString());
+
+        UserVo userParam = new UserVo();
+        userParam.setSeq(param.getUserSeq());
+        
+        UserVo user = this.userMapper.selectUser(userParam);
+        param.setHandphone(StringUtils.remove(user.getDecMobile(), "-"));
+
+        if (param.getMobilePagingHelper().getSortList() == null || param.getMobilePagingHelper().getSortList().isEmpty()) {
+            Sort sort = new Sort();
+            sort.setColumn("upddt");
+            sort.setAscOrDesc(CommonConstants.SortType.DESC.getValue());
+
+            List<Sort> sortList = new ArrayList<>();
+            sortList.add(sort);
+
+            param.getMobilePagingHelper().setSortList(sortList);
+        }
+
+        List<UhdbLogVo> uhdbLogList = null;
+
+        if ("now".equalsIgnoreCase(param.getGubun())) {
+            param.getMobilePagingHelper().setPageSize(1000);
+            param.getMobilePagingHelper().setTotalCount(this.uhdbMapper.selectUhdbLogListCount4Mobile(param));
+            
+            uhdbLogList = this.uhdbMapper.selectUhdbLogList4Mobile(param);
+        } else {
+            param.getMobilePagingHelper().setTotalCount(this.uhdbMapper.selectPastUhdbLogListCount4Mobile(param));
+            
+            uhdbLogList = this.uhdbMapper.selectPastUhdbLogList4Mobile(param);
+        }
+
+        int nextPageToken = 0;
+
+        if (uhdbLogList != null && !uhdbLogList.isEmpty()) {
+            nextPageToken = uhdbLogList.get(uhdbLogList.size() - 1).getSeq();
+        }
+
+        param.getMobilePagingHelper().setNextPageToken(nextPageToken);
+
+        return uhdbLogList;
+    }
+    
 }

@@ -61,4 +61,6 @@ public interface UhdbService {
 
     UserUhdbVo findMemberYn(UhdbLogVo param) throws Exception;
 
+    List<UhdbLogVo> findUhdbLogList4MobileV2(UhdbDto param) throws Exception;
+    
 }
