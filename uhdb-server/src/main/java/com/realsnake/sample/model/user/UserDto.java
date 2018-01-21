@@ -38,12 +38,22 @@ public class UserDto extends CommonDto implements Serializable {
 
     private List<Integer> userSeqList;
 
+    private String userSearchText;
+    
     public List<Integer> getUserSeqList() {
         return userSeqList;
     }
 
     public void setUserSeqList(List<Integer> userSeqList) {
         this.userSeqList = userSeqList;
+    }
+
+    public String getUserSearchText() {
+        return userSearchText;
+    }
+
+    public void setUserSearchText(String userSearchText) {
+        this.userSearchText = userSearchText;
     }
 
     @Override

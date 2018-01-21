@@ -32,6 +32,9 @@
 	                #{userSeq}
 	            </foreach>
 			</if>
+			<if test=' userSearchText != null and !"".equals(userSearchText) '>
+				AND mobile = #{userSearchText}
+			</if>
 			<if test=' pagingHelper != null and pagingHelper.search != null '>
 			    <choose>
 			    	<when test=' pagingHelper.search.startDate != null and !"".equals(pagingHelper.search.startDate) '>

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
+import org.springframework.web.bind.annotation.RequestParam;
 import com.realsnake.sample.model.user.UserDto;
 import com.realsnake.sample.model.user.UserVo;
 import com.realsnake.sample.service.user.UserService;
@@ -37,13 +37,15 @@ public class WebIndexController {
         return "login";
     }
 
-    @GetMapping(value = "/main")
-    public String moveMainPage(Model model, PagingHelper pagingHelper, UserDto param) throws Exception {
+    @RequestMapping(value = "/main")
+    public String moveMainPage(Model model, PagingHelper pagingHelper, UserDto param, @RequestParam(required = false, defaultValue = "") String userSearchText) throws Exception {
         LOGGER.debug("<<UserDto>> {}", param.toString());
 
         List<UserVo> userList = this.userService.findUserList(param);
         model.addAttribute("userList", userList);
 
+        model.addAttribute("paging", param.getPagingHelper());
+        
         // return "main";
         return "user/list";
     }

@@ -143,7 +143,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserVo> findUserList(UserDto param) throws Exception {
         // TODO: 페이징이 필요할 시 페이징 처리
-        param.getPagingHelper().setEndNum(Integer.MAX_VALUE);
+//        param.getPagingHelper().setEndNum(Integer.MAX_VALUE);
+        param.getPagingHelper().setEndNum(20);
         Sort sort = new Sort();
         sort.setColumn("seq");
         sort.setAscOrDesc(CommonConstants.SortType.DESC.getValue());
@@ -151,6 +152,10 @@ public class UserServiceImpl implements UserService {
         sortList.add(sort);
         param.getPagingHelper().setSortList(sortList);
         // TODO: 페이징이 필요할 시 페이징 처리
+        
+        String mobileNo = param.getUserSearchText();
+        String secretKey = BlockCipherUtils.generateSecretKey(CommonConstants.DEFAULT_AUTH_KEY);
+        param.setUserSearchText(BlockCipherUtils.encrypt(secretKey, mobileNo));
 
         param.getPagingHelper().setTotalCount(this.userMapper.selectUserListCount(param));
         return this.userMapper.selectUserList(param);

@@ -2,60 +2,59 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4" layout:decorate="~{layout/layout}">
 <head>
 <title>회원 가입자 목록</title>
+<style>
+/*페이징*/
+.paging {width:100%; margin:50px auto; text-align:center}
+.paging a { display:inline-block; *zoom:1; *display:inline; width:28px; height:28px; line-height:28px; color:#777; font-size:13px; font-weight:normal; vertical-align:middle; text-align:center; cursor:pointer}
+.paging .active { color:#1aaada; font-weight:800}
+.paging img { vertical-align:middle}
+</style>
 <!-- page script -->
+<script type="text/javascript" src="/static/js/jquery.simplePagination.js" th:src="@{/js/jquery.simplePagination.js}"></script>
 <script type="text/javascript" th:inline="javascript">
 /*<![CDATA[*/
-/**
-$(function() {
-    $("#userList").DataTable({
-        "paging": false,
-        "lengthChange": false,
-        "searching": false,
-        "ordering": false,
-        "info": false,
-        "autoWidth": false
-    });
-});
-*/
+
+var c_url = '/';
+
 $(document).ready(function() {
+	// 페이징 처리
+	var pageSizeVal = /*[[${paging.pageSize}]]*/ 20;
+	var totalCountVal = /*[[${paging.totalCount}]]*/ 0;
+	var pageNumVal = /*[[${paging.pageNum}]]*/ 0;
 
-	$("#userList").DataTable({
-		"lengthChange": false
-		, "info": false
-		, "language": {
-			"loadingRecords": "Please wait - loading..."
-			, "search": "검색 "
-			/**
-		    , lengthMenu: "출력 <select class=\"form-control input-sm\">" +
-		    	"<option value=\"10\">10</option>" +
-		    	"<option value=\"20\">20</option>" +
-		    	"<option value=\"50\">50</option>" +
-		    	"<option value=\"-1\">All</option>" +
-		    	"</select> 개"
-		    */
-			// , "info": "총 _PAGES_ 중 _PAGE_ 번째 페이지" // Showing _START_ to _END_ of _TOTAL_ entries
-		    , "paginate": {
-		    	"first": "First page"
-		    	, "last": "Last page"
-		    	, "previous": "이전"
-		    	, "next": "다음"
-		    }
-		}
-		, "ordering": false
-	});
+	pagingHtml(pageSizeVal, totalCountVal, pageNumVal);
+});
 
 /**
-    $("#userList").DataTable({
-        "paging": true
-        , "lengthChange": true
-        , "searching": true
-        , "ordering": true
-        , "info": true
-        , "autoWidth": true
-    });
-*/
+ * 검색
+ */
+function search() {
+	$("#searchForm").submit();
+}
+/**
+ * 페이징 버튼 클릭
+ */
+function paging(pageNum) {
+	$("#pageNum").val(pageNum);
+	search();
+}
+/**
+ * 페이징 렌더
+ */
+function pagingHtml(pageSize, totalCount, pageNum) {
+	// Common Paging
+	// $('#_paging').find(".paging").pagination({
+	$('#_paging').pagination({
+        items: totalCount,
+        itemsOnPage: pageSize,
+        displayedPages: 10,
+		edges: 0,
+		currentPage: pageNum,
+		hrefTextPrefix: 'javascript:paging(',
+		hrefTextSuffix: ');',
+	});
+}
 
-});
 /*]]>*/
 </script>
 </head>
@@ -89,6 +88,16 @@ $(document).ready(function() {
             </div>
             <!-- /.box-header -->
             <div class="box-body">
+			  <div class="col-sm-12">
+			  	<div id="userList_filter" class="dataTables_filter">
+					<form id="searchForm" name="searchForm" method="post" action="">
+				  		<label><input type="search" id="userSearchText" name="userSearchText" class="form-control input-sm" placeholder="" aria-controls="userList"></label>
+				  		&nbsp; <button type="submit" class="btn btn-primary btn-sm pull-right">검색</button>
+				  		
+				  		<input type="hidden" id="pageNum" name="pageNum" th:value="${paging.pageNum}" />
+			  		</form>
+			  	</div>
+			  </div>
               <table id="userList" class="table table-bordered table-hover">
                 <thead>
                 <tr>
@@ -128,10 +137,14 @@ $(document).ready(function() {
 -->
               </table>
             </div>
-            <!-- /.box-body -->
+            <!-- /.box-body -->  
+            
+            <!-- paging start -->
+            <div id="_paging" class="paging"></div> 
+            <br style="height:10px;" />
+            <!-- paging end -->       
           </div>
           <!-- /.box -->
-
         </div>
         <!-- /.col -->
       </div>
