@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.realsnake.sample.constants.ApiResultCode;
 import com.realsnake.sample.constants.CommonConstants;
+import com.realsnake.sample.exception.CommonApiException;
 import com.realsnake.sample.model.common.SendVo;
 import com.realsnake.sample.model.common.api.ApiResponse;
 import com.realsnake.sample.model.common.api.ApiResponseHeader;
@@ -163,41 +164,31 @@ public class ApiPublicController {
     }
 
     /**
-     * 무인택배함 찾기(NONEXIST/EXIST)
+     * 아파트아이디로 무인택배함 조회
      *
-     * @param uhdbNo 무인택배함번호
+     * @param aptId
      * @return
+     * @throws CommonApiException
      */
-    @ApiOperation(value = "무인택배함 찾기(NONEXIST/EXIST)", response = ApiResponse.class)
+    @ApiOperation(value = "아파트아이디로 무인택배함 조회", response = ApiResponse.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "uhdbNo", value = "무인택배함번호", required = true, dataType = "string", paramType = "path", defaultValue = "")
+        @ApiImplicitParam(name = "aptId", value = "아파트아이디", required = true, dataType = "string", paramType = "path", defaultValue = "")
     })
-    @GetMapping(value = "/search/uhdb/{uhdbNo}")
-    public ApiResponse<?> searchUhdb(@PathVariable("uhdbNo") String uhdbNo) {
-        ApiResponse<String> apiResponse = new ApiResponse<>();
-
+    @GetMapping(value = "/{aptId}")
+    public ApiResponse<?> searchUhdbByAptId(@PathVariable("aptId") String aptId) throws CommonApiException {
         try {
-            UhdbVo uhdbParam = new UhdbVo();
-            uhdbParam.setAptId(uhdbNo);
+            UhdbVo param = new UhdbVo();
+            param.setAptId(aptId);
 
-            LOGGER.debug(uhdbParam.toString());
+            List<UhdbVo> uhdbList = this.uhdbService.findUhdbList(param);
 
-            List<UhdbVo> uhdbList = this.uhdbService.findUhdbList(uhdbParam);
-            if (uhdbList == null || uhdbList.isEmpty()) {
-                apiResponse.setBody("NONEXIST");
-            } else {
-                apiResponse.setBody("EXIST");
-            }
+            ApiResponse<List<UhdbVo>> apiResponse = new ApiResponse<>();
+            apiResponse.setBody(uhdbList);
+
+            return apiResponse;
         } catch (Exception e) {
-            LOGGER.error("[무인택배함 찾기 API 오류]", e);
-
-            ApiResponseHeader header = new ApiResponseHeader();
-            header.setResultCode(ApiResultCode.COMMON_FAIL.getCode());
-            header.setResultMessage(e.getMessage());
-            apiResponse.setHeader(header);
+            throw new CommonApiException(ApiResultCode.COMMON_FAIL, e);
         }
-
-        return apiResponse;
     }
 
     /**

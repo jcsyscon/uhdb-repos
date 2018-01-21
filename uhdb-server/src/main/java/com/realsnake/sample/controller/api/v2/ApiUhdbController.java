@@ -20,10 +20,12 @@ import com.realsnake.sample.model.uhdb.UhdbLogVo;
 import com.realsnake.sample.model.uhdb.UhdbVo;
 import com.realsnake.sample.service.uhdb.UhdbService;
 import com.realsnake.sample.util.MobilePagingHelper;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
+@Api(value="무인택배보관함", description="무인택배보관함 관련 API들")
 @RestController("ApiV2UhdbController")
 @RequestMapping(value = "/api/v2/uhdb")
 public class ApiUhdbController {
@@ -32,7 +34,7 @@ public class ApiUhdbController {
 
     @Autowired
     private UhdbService uhdbService;
-
+    
     /**
      * 무인택배함 조회
      *
@@ -45,6 +47,7 @@ public class ApiUhdbController {
         @ApiImplicitParam(name = "uhdbNo", value = "무인택배함번호(아파트아이디-아파트위치)", required = true, dataType = "string", paramType = "path", defaultValue = "")
     })
     @PostMapping(value = "/{uhdbNo}")
+    @Deprecated
     public ApiResponse<?> getUhdb(@PathVariable("uhdbNo") String uhdbNo) throws CommonApiException {
         try {            
             String[] temps = uhdbNo.split("-", -1);
