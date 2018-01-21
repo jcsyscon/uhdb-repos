@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -170,12 +169,12 @@ public class ApiPublicController {
      * @return
      * @throws CommonApiException
      */
-    @ApiOperation(value = "아파트아이디로 무인택배함 조회", response = ApiResponse.class)
+    @ApiOperation(value = "아파트아이디로 무인택배함 목록 조회", response = ApiResponse.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "aptId", value = "아파트아이디", required = true, dataType = "string", paramType = "path", defaultValue = "")
+        @ApiImplicitParam(name = "aptId", value = "아파트아이디", required = true, dataType = "string", paramType = "query", defaultValue = "")
     })
-    @GetMapping(value = "/{aptId}")
-    public ApiResponse<?> searchUhdbByAptId(@PathVariable("aptId") String aptId) throws CommonApiException {
+    @GetMapping(value = "/search-uhdb")
+    public ApiResponse<?> searchUhdbByAptId(String aptId) throws CommonApiException {
         try {
             UhdbVo param = new UhdbVo();
             param.setAptId(aptId);
@@ -195,7 +194,7 @@ public class ApiPublicController {
      * 회원정보 등록
      *
      * @param mobileNo 핸드폰번호
-     * @param uhdbNo 무인택배함번호
+     * @param uhdbNo 무인택배함번호(아파트아이디-아파트위치)
      * @param fcmToken FCM토큰
      * @param appVersion 앱버전
      * @param deviceType 디바이스유형(android/ios/none)
@@ -204,7 +203,7 @@ public class ApiPublicController {
     @ApiOperation(value = "회원정보 등록", response = ApiResponse.class)
     @ApiImplicitParams({
         @ApiImplicitParam(name = "mobileNo", value = "핸드폰번호", required = true, dataType = "string", paramType = "query", defaultValue = "")
-        , @ApiImplicitParam(name = "uhdbNo", value = "무인택배함번호", required = true, dataType = "string", paramType = "query", defaultValue = "")
+        , @ApiImplicitParam(name = "uhdbNo", value = "무인택배함번호(아파트아이디-아파트위치)", required = true, dataType = "string", paramType = "query", defaultValue = "")
         , @ApiImplicitParam(name = "fcmToken", value = "FCM토큰", required = true, dataType = "string", paramType = "query", defaultValue = "")
         , @ApiImplicitParam(name = "appVersion", value = "앱버전", required = true, dataType = "string", paramType = "query", defaultValue = "")
         , @ApiImplicitParam(name = "deviceType", value = "디바이스유형(android/ios/none)", required = true, dataType = "string", paramType = "query", defaultValue = "")
@@ -220,9 +219,13 @@ public class ApiPublicController {
             userParam.setPassword(mobileNo); // 핸드폰번호를 해싱 처리, 아래 서비스 단에서 해싱 처리
             userParam.setMobile(mobileNo); // 아래 서비스 단에서 암호화
 
+            String[] temps = uhdbNo.split("-", -1);
+            String aptId = temps[0];
+            String aptPosi = temps[1];
+            
             UserUhdbVo userUhdbParam = new UserUhdbVo();
-            userUhdbParam.setAptId(uhdbNo);
-            // userUhdbParam.setUhdbId(uhdbNo);
+            userUhdbParam.setAptId(aptId); // 아파트아이디
+            userUhdbParam.setUhdbId(aptPosi); // 아파트위치
             // userUhdbParam.setDong(dong);
             // userUhdbParam.setHo(ho);
 

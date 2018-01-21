@@ -12,7 +12,8 @@ See here for more details: http://gordondickens.com/wordpress/2013/03/27/sawing-
 
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <!-- <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern> -->
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-4level [%logger.%method:%line]- %msg%n</pattern>
         </encoder>
     </appender>
 
@@ -25,7 +26,8 @@ See here for more details: http://gordondickens.com/wordpress/2013/03/27/sawing-
         </rollingPolicy>
 
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n</pattern>
+            <!-- <pattern>%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n</pattern> -->
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-4level [%logger.%method:%line]- %msg%n</pattern>
         </encoder>
     </appender>
 

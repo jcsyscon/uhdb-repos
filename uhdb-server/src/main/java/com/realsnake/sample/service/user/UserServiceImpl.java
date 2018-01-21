@@ -81,9 +81,9 @@ public class UserServiceImpl implements UserService {
 
         user.setAuthorities(this.userMapper.selectUserAuthNameList(user.getSeq()));
 
-        logger.debug("<<사용자 정보>> {}", user.toString());
-        logger.debug("<<사용자 이름>> {}", user.getDecName());
-        logger.debug("<<사용자 핸드폰번호>> {}", user.getDecMobile());
+//        logger.debug("<<사용자 정보>> {}", user.toString());
+//        logger.debug("<<사용자 이름>> {}", user.getDecName());
+        logger.info("<<사용자 핸드폰번호>> {}", user.getDecMobile());
 
         return user;
     }

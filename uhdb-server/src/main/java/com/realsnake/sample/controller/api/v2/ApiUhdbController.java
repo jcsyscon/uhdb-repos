@@ -25,7 +25,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
-@Api(value="무인택배보관함", description="무인택배보관함 관련 API들")
+@Api(value="무인택배함", description="무인택배함 관련 API들")
 @RestController("ApiV2UhdbController")
 @RequestMapping(value = "/api/v2/uhdb")
 public class ApiUhdbController {
@@ -85,7 +85,7 @@ public class ApiUhdbController {
     @ApiOperation(value = "무인택배함 보관함 열기(앱)", response = ApiResponse.class)
     @ApiImplicitParams({
         @ApiImplicitParam(name = "uhdbNo", value = "무인택배함번호(아파트아이디-아파트위치)", required = true, dataType = "string", paramType = "query", defaultValue = "")
-        , @ApiImplicitParam(name = "boxNo", value = "무인택배함 박스번호", required = true, dataType = "string", paramType = "query", defaultValue = "")
+        , @ApiImplicitParam(name = "boxNo", value = "무인택배함 보관함번호", required = true, dataType = "string", paramType = "query", defaultValue = "")
         , @ApiImplicitParam(name = "password", value = "비밀번호", required = true, dataType = "string", paramType = "query", defaultValue = "")
         , @ApiImplicitParam(name = "tbcode", value = "tb코드", required = true, dataType = "string", paramType = "query", defaultValue = "")
     })
@@ -130,7 +130,7 @@ public class ApiUhdbController {
     @ApiOperation(value = "무인택배함 보관함 초기화(앱에서 보관함 열기 중 닫기/확인/고객센터 버튼 클릭 시)", response = ApiResponse.class)
     @ApiImplicitParams({
         @ApiImplicitParam(name = "uhdbNo", value = "무인택배함번호(아파트아이디-아파트위치)", required = true, dataType = "string", paramType = "query", defaultValue = "")
-        , @ApiImplicitParam(name = "boxNo", value = "무인택배함 박스번호", required = true, dataType = "string", paramType = "query", defaultValue = "")
+        , @ApiImplicitParam(name = "boxNo", value = "무인택배함 보관함번호", required = true, dataType = "string", paramType = "query", defaultValue = "")
     })
     @PostMapping(value = "/init")
     public ApiResponse<?> initBox(String uhdbNo, String boxNo) throws CommonApiException {

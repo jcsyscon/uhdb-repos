@@ -120,7 +120,7 @@ public class UhdbServiceImpl implements UhdbService {
             throw new Exception("택배함 아이디는 필수입니다!");
         }
         if (StringUtils.isEmpty(param.getBoxNo())) {
-            throw new Exception("보관함 번호는 필수입니다!");
+            throw new Exception("무인택배함 보관함 번호는 필수입니다!");
         }
 
         String title4User = StringUtils.EMPTY;
@@ -152,7 +152,7 @@ public class UhdbServiceImpl implements UhdbService {
 
             nowYmd = sdf.format(new Date());
         } catch (Exception e) {
-            logger.error("<<modifyUhdbLog 오류>>", e);
+            logger.error("<<modifyUhdbLog 오류>> {}", e.getMessage());
         }
 
         /** 10: 택배보관(택배기사), 20: 택배수령(고객), 30: 택배발송요청(고객), 40: 택배수령(택배기사), 50: 택배반품요청(고객) */
@@ -364,6 +364,7 @@ public class UhdbServiceImpl implements UhdbService {
                 // logger.info("<<무인택배함 로그 API, 회원미가입자에게 SMS 발송해야하지만 현재 SMS 발송은 주석처리되어 있으므로 SMS 발송하지 않고 종료>>");
                 return;
             }
+            // TODO: 2018-01-21, 핸드폰번호로만 사용자를 조회하므로 아래 로직은 삭제
             else {
             	userUhdbParam.setAptId(aptId);
             	userUhdbParam.setDong(dong);
@@ -432,7 +433,7 @@ public class UhdbServiceImpl implements UhdbService {
                 logger.info("<<무인택배함 로그 API, 사용자 PUSH 발송>> {}", send.toString());
             }
         } catch (Exception e) {
-            logger.error("<<SMS 및 FCM 발송 중 오류>>", e);
+            logger.error("<<SMS 및 FCM 발송 중 오류>> {}", e.getMessage());
         }
     }
 
@@ -509,7 +510,7 @@ public class UhdbServiceImpl implements UhdbService {
                 JdbcUtils ju = new JdbcUtils();
                 updateCount = ju.openBox(gonginIp, portFw, param.getAptId(), param.getAptPosi(), param.getBoxNo());
             } catch (Exception e) {
-                logger.error("<<무인택배함 보관함 열기 실패>>", e);
+                logger.error("<<무인택배함 보관함 열기 실패>> {}", e.getMessage());
                 return e.getMessage();
             }
 
@@ -520,7 +521,7 @@ public class UhdbServiceImpl implements UhdbService {
                 return "NOK";
             }
         } catch (Exception e) {
-            logger.error("<<무인택배함 보관함 열기 실패>>", e);
+            logger.error("<<무인택배함 보관함 열기 실패>> {}", e.getMessage());
             return e.getMessage();
         }
     }
@@ -577,7 +578,7 @@ public class UhdbServiceImpl implements UhdbService {
                 JdbcUtils ju = new JdbcUtils();
                 updateCount = ju.initBox(gonginIp, portFw, param.getAptId(), param.getAptPosi(), param.getBoxNo());
             } catch (Exception e) {
-                logger.error("<<무인택배함 보관함 초기화 실패>>", e);
+                logger.error("<<무인택배함 보관함 초기화 실패>> {}", e.getMessage());
                 return e.getMessage();
             }
 
@@ -588,7 +589,7 @@ public class UhdbServiceImpl implements UhdbService {
                 return "NOK";
             }
         } catch (Exception e) {
-            logger.error("<<무인택배함 보관함 초기화 실패>>", e);
+            logger.error("<<무인택배함 보관함 초기화 실패>> {}", e.getMessage());
             return e.getMessage();
         }
     }
@@ -743,7 +744,7 @@ public class UhdbServiceImpl implements UhdbService {
             body4Push = String.format(body4Push, aptPosiName, param.getBoxNo(), userPassword);
             body4Sms = String.format(body4Sms, aptPosiName, param.getBoxNo(), userPassword);
         } catch (Exception e) {
-            logger.error("<<sendAlarm4LongBox 오류>>", e);
+            logger.error("<<sendAlarm4LongBox 오류>> {}", e.getMessage());
             throw e;
         }
 
@@ -813,7 +814,7 @@ public class UhdbServiceImpl implements UhdbService {
                 logger.info("<<무인택배함 장기보관 알림 API, 사용자 PUSH 발송>> {}", send.toString());
             }
         } catch (Exception e) {
-            logger.error("<<무인택배함 장기보관 알림 API, FCM 발송 중 오류>>", e);
+            logger.error("<<무인택배함 장기보관 알림 API, FCM 발송 중 오류>> {}", e.getMessage());
             throw e;
         }
 

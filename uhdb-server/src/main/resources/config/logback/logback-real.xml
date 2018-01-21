@@ -12,7 +12,7 @@ See here for more details: http://gordondickens.com/wordpress/2013/03/27/sawing-
 
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-4level [%logger.%method:%line]- %msg%n</pattern>
         </encoder>
     </appender>
 
@@ -25,7 +25,7 @@ See here for more details: http://gordondickens.com/wordpress/2013/03/27/sawing-
         </rollingPolicy>
 
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-4level [%logger.%method:%line]- %msg%n</pattern>
         </encoder>
     </appender>
 
@@ -36,10 +36,10 @@ See here for more details: http://gordondickens.com/wordpress/2013/03/27/sawing-
 	<logger name="sun" level="info" additivity="false" />
 	<logger name="javax.activation" level="info" />
 	<!-- 루트 패키지 입력 -->
-	<logger name="com.realsnake" level="debug" />
-	<logger name="kr.co.tbyo" level="debug" />
+	<logger name="com.realsnake" level="info" />
+	<logger name="kr.co.tbyo" level="info" />
 
-    <root level="debug">
+    <root level="info">
     	<appender-ref ref="console" />
         <appender-ref ref="FILE" />
     </root>
