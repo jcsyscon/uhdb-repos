@@ -153,10 +153,17 @@ public class UserServiceImpl implements UserService {
         param.getPagingHelper().setSortList(sortList);
         // TODO: 페이징이 필요할 시 페이징 처리
         
-        String mobileNo = param.getUserSearchText();
-        String secretKey = BlockCipherUtils.generateSecretKey(CommonConstants.DEFAULT_AUTH_KEY);
-        param.setUserSearchText(BlockCipherUtils.encrypt(secretKey, mobileNo));
-
+        if (StringUtils.isNotBlank(param.getUserSearchText())) {
+            try {
+                String mobileNo = param.getUserSearchText();
+                String secretKey = BlockCipherUtils.generateSecretKey(CommonConstants.DEFAULT_AUTH_KEY);
+                param.setUserSearchText(BlockCipherUtils.encrypt(secretKey, mobileNo));     
+            }
+            catch (Exception e) {
+                logger.error("<<사용자 목록 검색 중 복호화 오류>> {}", e.getMessage());
+            }
+        }
+        
         param.getPagingHelper().setTotalCount(this.userMapper.selectUserListCount(param));
         return this.userMapper.selectUserList(param);
     }
