@@ -11,6 +11,7 @@
 	        , email
 	        , birth_date
 	        , sex
+	        , api_version
 	        , reg_date
 	    ) VALUES (
 	    	#{username}
@@ -20,6 +21,7 @@
 	        , #{email}
 	        , #{birthDate}
 	        , #{sex}
+	        , IFNULL(#{apiVersion}, 'V1')
 	        , NOW()
 	    )
 	</update>
@@ -93,6 +95,7 @@
         , birth_date
         , sex
         , alarm_rec_yn
+        , api_version
 	    , reg_date
 	    , secede_yn
 	    , secede_date
@@ -100,12 +103,13 @@
 	    <where>
 			<choose>
 				<when test=' seq != null and seq > 0 '>AND seq = #{seq}</when>
-				<when test=' username != null and !"".equals(username) '>AND username = #{username}</when>
+				<when test=' username != null and !"".equals(username) '>AND (username = #{username} <if test=' mobile != null and !"".equals(mobile) '>OR mobile = #{mobile}</if>)</when>
 				<when test=' email != null and !"".equals(email) '>AND email = #{email}</when>
 				<when test=' mobile != null and !"".equals(mobile) '>AND mobile = #{mobile}</when>
 				<otherwise>AND seq = 0</otherwise>
 			</choose>
 	    </where>
+	    ORDER BY seq DESC
 	    LIMIT 1
 	</select>
 
@@ -125,6 +129,7 @@
         , birth_date
         , sex
         , alarm_rec_yn
+        , api_version
 	    , reg_date
 	    , secede_yn
 	    , secede_date
@@ -144,7 +149,8 @@
 	    	<if test=' email != null and !"".equals(email) '>email = #{email},</if>
 	    	<if test=' birthDate != null and !"".equals(birthDate) '>birth_date = #{birthDate},</if>
 	    	<if test=' "M".equals(sex) or "F".equals(sex) '>sex = #{sex},</if>
-	    	<if test=' "Y".equals(alarmRecYn) or "N".equals(alarmRecYn) '>alarm_rec_yn = #{alarmRecYn}</if>
+	    	<if test=' "Y".equals(alarmRecYn) or "N".equals(alarmRecYn) '>alarm_rec_yn = #{alarmRecYn},</if>
+	    	<if test=' apiVersion != null and !"".equals(apiVersion) '>api_version = #{apiVersion}</if>
 	    </set>
 	    <where>
 			<choose>
@@ -219,7 +225,7 @@
 	</select>
 
 
-
+	<!-- uhdb_id: 무인택배함 위치 -->
 	<update id="insertUserUhdb" parameterType="UserUhdbVo" useGeneratedKeys="true" keyProperty="seq">
 	    INSERT /* insertUserUhdb, 전강욱(realsnake1975@gmail.com) */ INTO user_uhdb (
 	    	user_seq
@@ -236,7 +242,7 @@
 	        , #{uhdbId}
 	        , #{dong}
 	        , #{ho}
-	        , #{regUserSeq}
+	        , IFNULL(#{regUserSeq}, #{userSeq})
 	        , NOW()
 	        , 'N'
 	    )
@@ -337,18 +343,20 @@
 	    INSERT /* insertUserFcm, 전강욱(realsnake1975@gmail.com) */ INTO user_fcm (
 	    	user_seq
 	        , fcm_token
+	        , device_type
 	        , app_version
 	        , reg_date
 	        , del_yn
 	    ) VALUES (
 	    	#{userSeq}
 	        , #{fcmToken}
+	        , #{deviceType}
 	        , #{appVersion}
 	        , NOW()
 	        , 'N'
 	    )
 		ON DUPLICATE KEY UPDATE
-		app_version = #{appVersion}
+		user_seq = #{userSeq}
 	</update>
 
 	<update id="deleteUserFcm" parameterType="UserFcmVo">
@@ -369,6 +377,7 @@
 	    SELECT /* selectUserFcm, 전강욱(realsnake1975@gmail.com) */ seq
     	user_seq
         , fcm_token
+        , device_type
         , app_version
         , reg_date
         , del_yn

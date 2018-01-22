@@ -65,7 +65,11 @@ public class UserVo implements Serializable {
 
     /** 관리에 의한 탈퇴여부 */
     private String secedeYnByAdmin = "N";
-    
+
+    /** API 버전 */
+    @JsonIgnore
+    private String apiVersion;
+
     public Integer getSeq() {
         return seq;
     }
@@ -171,14 +175,22 @@ public class UserVo implements Serializable {
     }
 
     public String getSecedeYnByAdmin() {
-		return secedeYnByAdmin;
-	}
+        return secedeYnByAdmin;
+    }
 
-	public void setSecedeYnByAdmin(String secedeYnByAdmin) {
-		this.secedeYnByAdmin = secedeYnByAdmin;
-	}
+    public void setSecedeYnByAdmin(String secedeYnByAdmin) {
+        this.secedeYnByAdmin = secedeYnByAdmin;
+    }
 
-	/**
+    public String getApiVersion() {
+        return apiVersion;
+    }
+
+    public void setApiVersion(String apiVersion) {
+        this.apiVersion = apiVersion;
+    }
+
+    /**
      * 복호화한 사용자 이름
      *
      * @return

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017 realsnake1975@gmail.com
+ * Copyright (c) 2017 JAHA SMART CORP., LTD ALL RIGHT RESERVED
  *
  * 2017. 4. 29.
  */
@@ -16,8 +16,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * <pre>
- * Class Name : FcmReqForm.java
- * Description : 안드로이드용 FCM 요청폼
+ * Class Name : Notification.java
+ * Description : IOS용 FCM 메시지
  *
  * Modification Information
  *
@@ -31,36 +31,50 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  * @version 1.0
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class FcmReqForm implements Serializable {
+public class Notification implements Serializable {
 
     /** SID */
-    private static final long serialVersionUID = 8050391999357765387L;
+    private static final long serialVersionUID = 585319736318142103L;
 
-    private Data data;
+    private String title;
 
-    /** FCM 토큰 */
-    private String to;
+    private String body;
 
-    public FcmReqForm(Data data, String to) {
+    private String click_action;
+
+    public Notification(String title, String body) {
         super();
-        this.data = data;
-        this.to = to;
+        this.title = title;
+        this.body = body;
     }
 
-    public Data getData() {
-        return data;
+    public Notification(String title, String body, String click_action) {
+        this(title, body);
+        this.click_action = click_action;
     }
 
-    public void setData(Data data) {
-        this.data = data;
+    public String getTitle() {
+        return title;
     }
 
-    public String getTo() {
-        return to;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public void setTo(String to) {
-        this.to = to;
+    public String getBody() {
+        return body;
+    }
+
+    public void setBody(String body) {
+        this.body = body;
+    }
+
+    public String getClick_action() {
+        return click_action;
+    }
+
+    public void setClick_action(String click_action) {
+        this.click_action = click_action;
     }
 
     @Override

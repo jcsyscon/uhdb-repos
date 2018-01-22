@@ -24,12 +24,13 @@ import com.realsnake.sample.model.user.UserVo;
 import com.realsnake.sample.service.uhdb.UhdbService;
 import com.realsnake.sample.service.user.UserService;
 import com.realsnake.sample.util.PasswordHash;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
-@Api(value="회원", description="회원 관련 API들")
+@Api(value = "회원", description = "회원 관련 API들")
 @RestController("ApiV2UserController")
 @RequestMapping(value = "/api/v2/user")
 public class ApiUserController {
@@ -49,9 +50,7 @@ public class ApiUserController {
      * @return
      */
     @ApiOperation(value = "회원 무인택배함 목록조회", response = ApiResponse.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "userSeq", value = "회원일련번호", required = true, dataType = "int", paramType = "path", defaultValue = "")
-    })
+    @ApiImplicitParams({@ApiImplicitParam(name = "userSeq", value = "회원일련번호", required = true, dataType = "int", paramType = "path", defaultValue = "")})
     @GetMapping(value = "/{userSeq}/uhdb/list")
     public ApiResponse<?> getAptUhdbUserList(@PathVariable("userSeq") Integer userSeq) throws CommonApiException {
         try {
@@ -79,9 +78,7 @@ public class ApiUserController {
      * @throws CommonApiException
      */
     @ApiOperation(value = "회원정보 조회", response = ApiResponse.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "userSeq", value = "회원일련번호", required = true, dataType = "int", paramType = "path", defaultValue = "")
-    })
+    @ApiImplicitParams({@ApiImplicitParam(name = "userSeq", value = "회원일련번호", required = true, dataType = "int", paramType = "path", defaultValue = "")})
     @GetMapping(value = "/{userSeq}")
     public ApiResponse<?> gerUser(@PathVariable("userSeq") Integer userSeq) throws CommonApiException {
         try {
@@ -116,10 +113,7 @@ public class ApiUserController {
      * @throws CommonApiException
      */
     @ApiOperation(value = "회원정보 수정", response = ApiResponse.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "userSeq", value = "회원일련번호", required = true, dataType = "int", paramType = "path", defaultValue = "")
-        , @ApiImplicitParam(name = "mobileNo", value = "핸드폰번호", required = true, dataType = "string", paramType = "query", defaultValue = "")
-    })
+    @ApiImplicitParams({@ApiImplicitParam(name = "userSeq", value = "회원일련번호", required = true, dataType = "int", paramType = "path", defaultValue = ""), @ApiImplicitParam(name = "mobileNo", value = "핸드폰번호", required = true, dataType = "string", paramType = "query", defaultValue = "")})
     @PostMapping(value = "/modify/{userSeq}")
     public ApiResponse<?> modifyUser(@PathVariable("userSeq") Integer userSeq, String mobileNo) throws CommonApiException {
         try {
@@ -153,9 +147,7 @@ public class ApiUserController {
      * @throws CommonApiException
      */
     @ApiOperation(value = "회원탈퇴", response = ApiResponse.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "userSeq", value = "회원일련번호", required = true, dataType = "int", paramType = "path", defaultValue = "")
-    })
+    @ApiImplicitParams({@ApiImplicitParam(name = "userSeq", value = "회원일련번호", required = true, dataType = "int", paramType = "path", defaultValue = "")})
     @PostMapping(value = "/secede/{userSeq}")
     public ApiResponse<?> secedeUser(@PathVariable("userSeq") Integer userSeq) throws CommonApiException {
         try {
@@ -187,10 +179,7 @@ public class ApiUserController {
      * @throws CommonApiException
      */
     @ApiOperation(value = "회원 알림설정(수신여부) 수정", response = ApiResponse.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "userSeq", value = "회원일련번호", required = true, dataType = "int", paramType = "path", defaultValue = "")
-        , @ApiImplicitParam(name = "alarmRecYn", value = "알람 수신 여부(Y/N)", required = true, dataType = "string", paramType = "query", defaultValue = "")
-    })
+    @ApiImplicitParams({@ApiImplicitParam(name = "userSeq", value = "회원일련번호", required = true, dataType = "int", paramType = "path", defaultValue = ""), @ApiImplicitParam(name = "alarmRecYn", value = "알람 수신 여부(Y/N)", required = true, dataType = "string", paramType = "query", defaultValue = "")})
     @PostMapping(value = "/modify/{userSeq}/alarm-rec-yn")
     public ApiResponse<?> modifyAlarmRecYn(@PathVariable("userSeq") Integer userSeq, String alarmRecYn) throws CommonApiException {
         try {
@@ -217,22 +206,17 @@ public class ApiUserController {
     /**
      * 회원 FCM토큰/앱버전/디바이스유형 수정
      *
-     * @param userSeq 회원 일련번호
+     * @param userSeq 회원일련번호
      * @param fcmToken FCM토큰
-     * @param appVersion 앱버전
      * @param deviceType 디바이스유형(android/ios/none)
+     * @param appVersion 앱버전
      * @return
      * @throws CommonApiException
      */
     @ApiOperation(value = "회원 FCM토큰/앱버전/디바이스유형 수정", response = ApiResponse.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "userSeq", value = "회원일련번호", required = true, dataType = "int", paramType = "path", defaultValue = "")
-        , @ApiImplicitParam(name = "fcmToken", value = "FCM토큰", required = true, dataType = "string", paramType = "query", defaultValue = "")
-        , @ApiImplicitParam(name = "appVersion", value = "앱버전", required = true, dataType = "string", paramType = "query", defaultValue = "")
-        , @ApiImplicitParam(name = "deviceType", value = "디바이스유형(android/ios/none)", required = true, dataType = "string", paramType = "query", defaultValue = "")
-    })
+    @ApiImplicitParams({@ApiImplicitParam(name = "userSeq", value = "회원일련번호", required = true, dataType = "int", paramType = "path", defaultValue = ""), @ApiImplicitParam(name = "fcmToken", value = "FCM토큰", required = true, dataType = "string", paramType = "query", defaultValue = ""), @ApiImplicitParam(name = "appVersion", value = "앱버전", required = true, dataType = "string", paramType = "query", defaultValue = ""), @ApiImplicitParam(name = "deviceType", value = "디바이스유형(android/ios/none)", required = true, dataType = "string", paramType = "query", defaultValue = "")})
     @PostMapping(value = "/modify/{userSeq}/fcm-token")
-    public ApiResponse<?> modifyUserFcm(@PathVariable("userSeq") Integer userSeq, String fcmToken, String appVersion, String deviceType) throws CommonApiException {
+    public ApiResponse<?> modifyUserFcm(@PathVariable("userSeq") Integer userSeq, String fcmToken, String deviceType, String appVersion) throws CommonApiException {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (authentication == null) {
@@ -265,11 +249,9 @@ public class ApiUserController {
      * @throws CommonApiException
      */
     @ApiOperation(value = "회원 무인택배함 추가", response = ApiResponse.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "userSeq", value = "회원일련번호", required = true, dataType = "int", paramType = "path", defaultValue = "")
-        , @ApiImplicitParam(name = "uhdbNo", value = "무인택배함번호(아파트아이디-아파트위치)", required = true, dataType = "string", paramType = "query", defaultValue = "")
-    })
+    @ApiImplicitParams({@ApiImplicitParam(name = "userSeq", value = "회원일련번호", required = true, dataType = "int", paramType = "path", defaultValue = ""), @ApiImplicitParam(name = "uhdbNo", value = "무인택배함번호(아파트아이디-아파트위치)", required = true, dataType = "string", paramType = "query", defaultValue = "")})
     @PostMapping(value = "/add/{userSeq}/uhdb")
+    @Deprecated
     public ApiResponse<?> addUserUhdb(@PathVariable("userSeq") Integer userSeq, String uhdbNo) throws CommonApiException {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -278,8 +260,15 @@ public class ApiUserController {
                 throw new CommonApiException(ApiResultCode.AUTH_FAIL);
             }
 
-            UserUhdbVo userUhdb = new UserUhdbVo();
-            this.userService.modifyUserUhdb(userUhdb);
+            String[] temps = uhdbNo.split("-", -1);
+            String aptId = temps[0];
+            String aptPosi = temps[1];
+
+            UserUhdbVo userUhdbParam = new UserUhdbVo();
+            userUhdbParam.setUserSeq(userSeq);
+            userUhdbParam.setAptId(aptId); // 아파트아이디
+            userUhdbParam.setUhdbId(aptPosi); // 아파트위치
+            this.userService.modifyUserUhdb(userUhdbParam);
 
             ApiResponse<UserVo> apiResponse = new ApiResponse<>();
             // apiResponse.setBody(user);

@@ -81,8 +81,8 @@ public class UserServiceImpl implements UserService {
 
         user.setAuthorities(this.userMapper.selectUserAuthNameList(user.getSeq()));
 
-//        logger.debug("<<사용자 정보>> {}", user.toString());
-//        logger.debug("<<사용자 이름>> {}", user.getDecName());
+        // logger.debug("<<사용자 정보>> {}", user.toString());
+        // logger.debug("<<사용자 이름>> {}", user.getDecName());
         logger.info("<<사용자 핸드폰번호>> {}", user.getDecMobile());
 
         return user;
@@ -102,9 +102,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public UserVo findUser(String username) throws Exception {
+    public UserVo findUser(String usernameOrMobileNo) throws Exception {
         UserVo param = new UserVo();
-        param.setUsername(username);
+        param.setUsername(usernameOrMobileNo);
+        String secretKey = BlockCipherUtils.generateSecretKey(CommonConstants.DEFAULT_AUTH_KEY);
+        param.setMobile(BlockCipherUtils.encrypt(secretKey, usernameOrMobileNo));
         return this.findUser(param);
     }
 
@@ -143,7 +145,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserVo> findUserList(UserDto param) throws Exception {
         // TODO: 페이징이 필요할 시 페이징 처리
-//        param.getPagingHelper().setEndNum(Integer.MAX_VALUE);
+        // param.getPagingHelper().setEndNum(Integer.MAX_VALUE);
         param.getPagingHelper().setEndNum(20);
         Sort sort = new Sort();
         sort.setColumn("seq");
@@ -152,18 +154,17 @@ public class UserServiceImpl implements UserService {
         sortList.add(sort);
         param.getPagingHelper().setSortList(sortList);
         // TODO: 페이징이 필요할 시 페이징 처리
-        
+
         if (StringUtils.isNotBlank(param.getUserSearchText())) {
             try {
                 String mobileNo = param.getUserSearchText();
                 String secretKey = BlockCipherUtils.generateSecretKey(CommonConstants.DEFAULT_AUTH_KEY);
-                param.setUserSearchText(BlockCipherUtils.encrypt(secretKey, mobileNo));     
-            }
-            catch (Exception e) {
+                param.setUserSearchText(BlockCipherUtils.encrypt(secretKey, mobileNo));
+            } catch (Exception e) {
                 logger.error("<<사용자 목록 검색 중 복호화 오류>> {}", e.getMessage());
             }
         }
-        
+
         param.getPagingHelper().setTotalCount(this.userMapper.selectUserListCount(param));
         return this.userMapper.selectUserList(param);
     }
@@ -234,10 +235,10 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void modifyUserUhdb(UserUhdbVo userUhdb) throws Exception {
-        userUhdb.setDelUserSeq(userUhdb.getUserSeq());
+        // userUhdb.setDelUserSeq(userUhdb.getUserSeq());
         userUhdb.setRegUserSeq(userUhdb.getUserSeq());
 
-        this.userMapper.deleteUserUhdb(userUhdb);
+        // this.userMapper.deleteUserUhdb(userUhdb);
         this.userMapper.insertUserUhdb(userUhdb);
     }
 

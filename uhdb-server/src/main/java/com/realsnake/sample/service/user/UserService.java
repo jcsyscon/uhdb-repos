@@ -34,7 +34,7 @@ public interface UserService {
 
     UserVo findUser(UserVo param) throws Exception;
 
-    UserVo findUser(String username) throws Exception;
+    UserVo findUser(String usernameOrMobileNo) throws Exception;
 
     UserVo findUser(Integer seq) throws Exception;
 

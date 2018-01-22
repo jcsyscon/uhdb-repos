@@ -16,8 +16,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * <pre>
- * Class Name : Content.java
- * Description : Description
+ * Class Name : Message.java
+ * Description : 안드로이드용 FCM 메시지
  *
  * Modification Information
  *
@@ -41,7 +41,7 @@ public class Message implements Serializable {
     private String body;
 
     private String adUrl;
-    
+
     private String addedText = "택배도착! 아래로 드래그해서 내용을 확인하세요!";
 
     public Message(String title, String body) {
@@ -80,14 +80,14 @@ public class Message implements Serializable {
     }
 
     public String getAddedText() {
-		return addedText;
-	}
+        return addedText;
+    }
 
-	public void setAddedText(String addedText) {
-		this.addedText = addedText;
-	}
+    public void setAddedText(String addedText) {
+        this.addedText = addedText;
+    }
 
-	@Override
+    @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }

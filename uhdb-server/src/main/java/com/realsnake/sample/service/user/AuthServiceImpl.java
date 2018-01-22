@@ -53,12 +53,15 @@ public class AuthServiceImpl implements UserDetailsService {
         try {
             // UserVo user = this.userService.findUser4Auth(param);
             UserVo user = this.userService.findUser(username);
-
             if (user == null) {
                 throw new UsernameNotFoundException("User[" + username + "] not found.");
             }
             if (user != null && "Y".equalsIgnoreCase(user.getSecedeYn())) {
                 logger.info("<<인증불가 - 탈퇴한 사용자>> {}", user.toString());
+            }
+
+            if ("V1".equals(user.getApiVersion())) {
+                // username = user.getDecMobile();
             }
 
             // return new LoginUser(username, user.getPassword(), user.getAuthorities(), user.getSeq());

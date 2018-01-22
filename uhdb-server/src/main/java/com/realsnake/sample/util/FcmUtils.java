@@ -20,6 +20,7 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.realsnake.sample.model.fcm.FcmReqForm;
+import com.realsnake.sample.model.fcm.FcmReqForm4Ios;
 
 /**
  * <pre>
@@ -110,10 +111,29 @@ public class FcmUtils {
     */
     /* @formatter:on */
 
+    /* @formatter:off */
+    // 아이폰 FCM
+    /**
+    { "notification": {
+        "title": "테스트 제목",
+        "body": "펼치면 내용이 보여여~"
+        "click_action": "http://www.naver.com"
+      },
+      "to" : "e6T1lD85HA8:APA91bFIA0CNtHSHhiUoqY9N3hrQqmzY6OQBm-ecWOTBsWf6okw5NmiR9eV15ct2x6lNFW8Mp-1MpFd-POdDP5Yqk67s9COB9d4N328Co5mEn0c2B1RzXSdvjdgoXspWltU085b3QMCw"
+    }
+    */
+    /* @formatter:on */
+
     // private HttpHeaders headers = new HttpHeaders();
 
     private ObjectMapper mapper = new ObjectMapper();
 
+    /**
+     * 안드로이드용 FCM 발송
+     *
+     * @param fcmReqForm
+     * @return
+     */
     @Async
     public CompletableFuture<String> send(FcmReqForm fcmReqForm) {
         HttpHeaders headers = new HttpHeaders();
@@ -125,6 +145,36 @@ public class FcmUtils {
 
         try {
             String fcmReqStr = this.mapper.writeValueAsString(fcmReqForm);
+            logger.debug("<<FCM메시지>> {}", fcmReqStr);
+
+            entity = new HttpEntity<>(fcmReqStr, headers);
+            responseEntity = this.restTemplate.exchange(FCM_URL, HttpMethod.POST, entity, String.class);
+
+            return CompletableFuture.completedFuture(responseEntity.getBody());
+        } catch (JsonProcessingException e) {
+            logger.error("<<FCM 오류 발생>> {}", e.getMessage());
+
+            return CompletableFuture.completedFuture(null);
+        }
+    }
+
+    /**
+     * iOS용 FCM 발송
+     *
+     * @param fcmReqForm4Ios
+     * @return
+     */
+    @Async
+    public CompletableFuture<String> send4Ios(FcmReqForm4Ios fcmReqForm4Ios) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(FCM_HEADER_KEY, String.format(FCM_HEADER_VALUE, this.fcmServerKey));
+        headers.add(FCM_CONTENT_TYPE, FcmContentType.JSON.getValue());
+
+        HttpEntity<String> entity = null;
+        ResponseEntity<String> responseEntity = null;
+
+        try {
+            String fcmReqStr = this.mapper.writeValueAsString(fcmReqForm4Ios);
             logger.debug("<<FCM메시지>> {}", fcmReqStr);
 
             entity = new HttpEntity<>(fcmReqStr, headers);

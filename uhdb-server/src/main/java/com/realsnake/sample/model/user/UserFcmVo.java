@@ -34,7 +34,7 @@ public class UserFcmVo implements Serializable {
     private String fcmToken;
     /** 앱버전 */
     private String appVersion;
-    /** 디바이스유형(안드로이드/아이폰/none) */
+    /** 디바이스유형(android/ios/none) */
     private String deviceType = UserDeviceType.ANDROID.getValue();
     /** 등록일시 */
     private Date regDate;
