@@ -903,7 +903,7 @@ public class UhdbServiceImpl implements UhdbService {
 
         UserVo userParam = new UserVo();
         userParam.setSeq(param.getUserSeq());
-        
+
         UserVo user = this.userMapper.selectUser(userParam);
         param.setHandphone(StringUtils.remove(user.getDecMobile(), "-"));
 
@@ -923,11 +923,11 @@ public class UhdbServiceImpl implements UhdbService {
         if ("now".equalsIgnoreCase(param.getGubun())) {
             param.getMobilePagingHelper().setPageSize(1000);
             param.getMobilePagingHelper().setTotalCount(this.uhdbMapper.selectUhdbLogListCount4Mobile(param));
-            
+
             uhdbLogList = this.uhdbMapper.selectUhdbLogList4Mobile(param);
         } else {
             param.getMobilePagingHelper().setTotalCount(this.uhdbMapper.selectPastUhdbLogListCount4Mobile(param));
-            
+
             uhdbLogList = this.uhdbMapper.selectPastUhdbLogList4Mobile(param);
         }
 
@@ -941,5 +941,5 @@ public class UhdbServiceImpl implements UhdbService {
 
         return uhdbLogList;
     }
-    
+
 }
