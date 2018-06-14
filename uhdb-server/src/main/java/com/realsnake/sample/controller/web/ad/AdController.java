@@ -99,6 +99,18 @@ public class AdController {
         model.addAttribute("attachFileList", param.getAttachFileList());
         model.addAttribute("sidoList", this.commonService.findSidoList());
 
+        /**
+        List<AdAptCtgrMappVo> adAptCtgrMappList = param.getAdAptCtgrMappList();
+        List<String> targetAptIdList = new ArrayList<>();
+        if (adAptCtgrMappList != null && !adAptCtgrMappList.isEmpty()) {
+            for (AdAptCtgrMappVo adAptCtgrMapp : adAptCtgrMappList) {
+                targetAptIdList.add(adAptCtgrMapp.getTargetAptId());
+            }
+        }
+        */
+        
+        model.addAttribute("adAptCtgrMappList", param.getAdAptCtgrMappList());
+        
         return "ad/view";
     }
 

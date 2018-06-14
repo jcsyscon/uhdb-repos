@@ -338,6 +338,9 @@ public class AdServiceImpl implements AdService {
         attachFile.setGroupSeq(ad.getSeq());
         param.setAttachFileList(this.commonMapper.selectAttachFileList(attachFile));
 
+        // 광고-아파트-광고카테고리 매핑 조회
+        param.setAdAptCtgrMappList(this.adMapper.selectAdAptCtgrMappGroupList(adSeq));
+        
         return ad;
     }
 

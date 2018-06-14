@@ -67,4 +67,10 @@ public interface AdMapper {
     
     void insertAdAptCtgrMapp(AdAptCtgrMappVo adAptCtgrMapp);
     
+    void deleteAdAptCtgrMapp(AdAptCtgrMappVo adAptCtgrMapp);
+    
+    List<AdAptCtgrMappVo> selectAdAptCtgrMappList(Integer adSeq);
+    
+    List<AdAptCtgrMappVo> selectAdAptCtgrMappGroupList(Integer adSeq);
+        
 }

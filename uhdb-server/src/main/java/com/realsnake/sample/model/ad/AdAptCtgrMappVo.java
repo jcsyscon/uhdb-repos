@@ -39,6 +39,10 @@ public class AdAptCtgrMappVo implements Serializable {
     private String targetAptId;
     
     private String adCtgrCode;
+    
+    private String adCtgrCodeWithComma;
+    
+    private String targetAptName;
 
     public Integer getAacmSeq() {
         return aacmSeq;
@@ -70,6 +74,22 @@ public class AdAptCtgrMappVo implements Serializable {
 
     public void setAdCtgrCode(String adCtgrCode) {
         this.adCtgrCode = adCtgrCode;
+    }
+
+    public String getAdCtgrCodeWithComma() {
+        return adCtgrCodeWithComma;
+    }
+
+    public void setAdCtgrCodeWithComma(String adCtgrCodeWithComma) {
+        this.adCtgrCodeWithComma = adCtgrCodeWithComma;
+    }
+
+    public String getTargetAptName() {
+        return targetAptName;
+    }
+
+    public void setTargetAptName(String targetAptName) {
+        this.targetAptName = targetAptName;
     }
 
     @Override

@@ -525,7 +525,7 @@
 <!-- 광고 //-->
 
 	<!-- 광고-아파트-광고카테고리 매핑 등록 -->
-	<update id="insertAdAptCtgrMapp" parameterType="SponsorVo">
+	<update id="insertAdAptCtgrMapp" parameterType="AdAptCtgrMappVo">
 	    INSERT /* insertAdAptCtgrMapp */ INTO ad_apt_ctgr_mapp (
 	    	ad_seq
 	        , target_apt_id
@@ -536,5 +536,26 @@
 	        , #{adCtgrCode}
 	    )
 	</update>
-	
+	<update id="deleteAdAptCtgrMapp" parameterType="AdAptCtgrMappVo">
+		DELETE /* deleteAdAptCtgrMapp */ ad_apt_ctgr_mapp
+	    WHERE ad_seq = #{adSeq}
+	    	AND target_apt_id = #{targetAptId}
+     </update>
+	<select id="selectAdAptCtgrMappList" parameterType="int" resultType="AdAptCtgrMappVo">
+		SELECT /* selectAdAptCtgrMappList */ aacm_seq
+		, ad_seq
+	    , target_apt_id
+	    , ad_ctgr_code
+	    FROM ad_apt_ctgr_mapp
+	    WHERE ad_seq = #{adSeq}
+	</select>
+	<select id="selectAdAptCtgrMappGroupList" parameterType="int" resultType="AdAptCtgrMappVo">
+		SELECT /* selectAdAptCtgrMappGroupList */ AACM.target_apt_id
+        , TA.aptnm AS targetAptName
+	    , GROUP_CONCAT(AACM.ad_ctgr_code) AS adCtgrCodeWithComma
+	    FROM ad_apt_ctgr_mapp AACM JOIN tb_ap0101 TA ON AACM.target_apt_id = TA.aptid
+	    WHERE AACM.ad_seq = #{adSeq}
+	    GROUP BY AACM.target_apt_id, TA.aptnm
+	</select>
+     
 </mapper>
