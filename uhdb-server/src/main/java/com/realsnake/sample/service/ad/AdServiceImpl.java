@@ -352,9 +352,11 @@ public class AdServiceImpl implements AdService {
         UserUhdbVo userUhdbParam = new UserUhdbVo();
         userUhdbParam.setUserSeq(param.getLoginUser().getSeq());
 
+        // 로그인 사용자의 아파트 아이디 조회
         UserUhdbVo userUhdb = this.userMapper.selectUserUhdb(userUhdbParam);
         param.setUserAptId(userUhdb.getAptId());
 
+        // 로그인 사용자의 아파트와 매칭된 랜덤 광고 단건 조회
         AdVo ad = this.adMapper.selectRandomAd(param);
 
         if (ad == null) {
