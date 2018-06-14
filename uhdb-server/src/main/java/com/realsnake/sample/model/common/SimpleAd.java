@@ -17,8 +17,8 @@ import com.realsnake.sample.model.ad.ShopVo;
 
 /**
  * <pre>
- * Class Name : Search.java
- * Description : 검색 데이타
+ * Class Name : SimpleAd.java
+ * Description : 간단 광고
  *
  * Modification Information
  *
