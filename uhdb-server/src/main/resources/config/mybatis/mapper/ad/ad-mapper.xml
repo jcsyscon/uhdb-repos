@@ -524,4 +524,17 @@
 	</select>
 <!-- 광고 //-->
 
+	<!-- 광고-아파트-광고카테고리 매핑 등록 -->
+	<update id="insertAdAptCtgrMapp" parameterType="SponsorVo">
+	    INSERT /* insertAdAptCtgrMapp */ INTO ad_apt_ctgr_mapp (
+	    	ad_seq
+	        , target_apt_id
+	        , ad_ctgr_code
+	    ) VALUES (
+	    	#{adSeq}
+	        , #{targetAptId}
+	        , #{adCtgrCode}
+	    )
+	</update>
+	
 </mapper>

@@ -6,7 +6,7 @@
 package com.realsnake.sample.service.ad;
 
 import java.util.List;
-
+import com.realsnake.sample.model.ad.AdAptCtgrMappVo;
 import com.realsnake.sample.model.ad.AdDto;
 import com.realsnake.sample.model.ad.AdVo;
 import com.realsnake.sample.model.ad.ShopVo;
@@ -45,7 +45,7 @@ public interface AdService {
 
 
 
-    void regAd(AdDto param, AdVo ad) throws Exception;
+    void regAd(AdDto param, AdVo ad, List<AdAptCtgrMappVo> adAptCtgrMappList) throws Exception;
 
     void modifyAd(AdDto param, AdVo ad) throws Exception;
 

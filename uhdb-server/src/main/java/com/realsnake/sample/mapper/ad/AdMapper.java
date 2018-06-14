@@ -6,7 +6,7 @@ package com.realsnake.sample.mapper.ad;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
-
+import com.realsnake.sample.model.ad.AdAptCtgrMappVo;
 import com.realsnake.sample.model.ad.AdDto;
 import com.realsnake.sample.model.ad.AdVo;
 import com.realsnake.sample.model.ad.ShopVo;
@@ -63,4 +63,8 @@ public interface AdMapper {
 
     AdVo selectRandomAd4All(AdDto param);
 
+    
+    
+    void insertAdAptCtgrMapp(AdAptCtgrMappVo adAptCtgrMapp);
+    
 }
