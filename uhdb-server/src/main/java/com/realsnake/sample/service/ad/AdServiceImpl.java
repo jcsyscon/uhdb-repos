@@ -20,6 +20,7 @@ import com.realsnake.sample.constants.CommonConstants;
 import com.realsnake.sample.mapper.ad.AdMapper;
 import com.realsnake.sample.mapper.common.CommonMapper;
 import com.realsnake.sample.mapper.user.UserMapper;
+import com.realsnake.sample.model.ad.AdAptCtgrMappVo;
 import com.realsnake.sample.model.ad.AdDto;
 import com.realsnake.sample.model.ad.AdVo;
 import com.realsnake.sample.model.ad.ShopVo;
@@ -218,7 +219,7 @@ public class AdServiceImpl implements AdService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void regAd(AdDto param, AdVo ad) throws Exception {
+    public void regAd(AdDto param, AdVo ad, List<AdAptCtgrMappVo> adAptCtgrMappList) throws Exception {
         Integer loginSeq = param.getLoginUser().getSeq();
 
         if (StringUtils.isEmpty(ad.getTargetSido())) {
@@ -227,15 +228,26 @@ public class AdServiceImpl implements AdService {
         if (StringUtils.isEmpty(ad.getTargetSigu())) {
             ad.setTargetSigu(ALL);
         }
+        /**
         if (StringUtils.isEmpty(ad.getTargetApt())) {
             ad.setTargetApt(ALL);
         }
+        */
 
         ad.setRegUserSeq(loginSeq);
         this.adMapper.insertAd(ad);
 
         Integer groupSeq = ad.getSeq();
 
+        // 아파트-광고카테고리 매핑 등록
+        if (adAptCtgrMappList != null && !adAptCtgrMappList.isEmpty()) {
+            for (AdAptCtgrMappVo adAptCtgrMapp : adAptCtgrMappList) {
+                adAptCtgrMapp.setAdSeq(ad.getSeq());
+                
+                this.adMapper.insertAdAptCtgrMapp(adAptCtgrMapp);
+            }
+        }
+        
         this.saveAdAttachFile(loginSeq, groupSeq, param.getUploadedFilePush(), CommonConstants.AdImageType.PUSH);
         this.saveAdAttachFile(loginSeq, groupSeq, param.getUploadedFileStart(), CommonConstants.AdImageType.START);
         this.saveAdAttachFile(loginSeq, groupSeq, param.getUploadedFileEnd(), CommonConstants.AdImageType.END);

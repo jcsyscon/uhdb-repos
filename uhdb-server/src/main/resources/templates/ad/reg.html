@@ -51,11 +51,12 @@ $(document).ready(function() {
     	for (var i=0; i<checkCount; i++) {
     		var tempVal = $("input[name=targetAptIds]:eq(" + i + ")").val();
 
-    		$("input[name=adCategoryCodes-" + tempVal + "]:checkbox").each(function() {
-    			if ( !$(this).prop("checked") ) {
-    				isUnchecked = true;
-    			}
-    		});
+    		var checkedCount = $("input[name=adCategoryCodes-" + tempVal + "]:checkbox:checked").length;
+    		
+    		if (checkedCount == 0) {
+    			isUnchecked = true;
+				break;
+    		}
     	}
     	
 		if (isUnchecked) {
