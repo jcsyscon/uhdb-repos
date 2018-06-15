@@ -526,13 +526,13 @@
 <select id="selectAdCtgrListCount" parameterType="AdDto" resultType="int">
 	    SELECT /* selectAdCtgrListCount, 전강욱(realsnake1975@gmail.com) */ COUNT(*)
 	    FROM ad_apt_ctgr_mapp
-	    <include refid="whereClauseOfAd" />
+	 
 	</select>
 	
 <select id="selectAdCtgrList" parameterType="AdCtgrVo" resultType="AdCtgrVo">
 
-      SELECT A.seq
-                ,A.title
+      SELECT A.seq AS adSeq
+                ,A.title As AdTitle
                 ,S.name AS shopName
                 ,S.tel AS shopTel
       FROM ad A JOIN shop S ON A.shop_seq = S.seq

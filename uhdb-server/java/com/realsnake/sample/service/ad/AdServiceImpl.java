@@ -408,13 +408,12 @@ public class AdServiceImpl implements AdService {
     	
     	UserUhdbVo userUhdbParam = new UserUhdbVo();
         userUhdbParam.setUserSeq(param.getLoginUser().getSeq());
-
         UserUhdbVo userUhdb = this.userMapper.selectUserUhdb(userUhdbParam);
         
         AdCtgrVo adCtgrVo = new AdCtgrVo();
         adCtgrVo.setTargetAptId(userUhdb.getAptId());
         adCtgrVo.setAdCtgrCode(categoryCode);
-        
+
         if (param.getMobilePagingHelper().getSortList() == null || param.getMobilePagingHelper().getSortList().isEmpty()) {
             Sort sort = new Sort();
             sort.setColumn("seq");
@@ -425,7 +424,7 @@ public class AdServiceImpl implements AdService {
 
             param.getMobilePagingHelper().setSortList(sortList);
         }
-        
+
         param.getPagingHelper().setTotalCount(this.adMapper.selectAdCtgrListCount(param));
         List<AdCtgrVo> adCtgrList = this.adMapper.selectAdCtgrList(adCtgrVo);
         

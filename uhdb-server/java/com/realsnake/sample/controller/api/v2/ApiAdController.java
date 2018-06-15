@@ -2,6 +2,7 @@ package com.realsnake.sample.controller.api.v2;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -163,7 +164,7 @@ public class ApiAdController {
              List<Map<String, Object>> adCtgrMapList = new ArrayList<>();
 
              for (AdCtgrVo adCtgr : adCtgrList) {
-            	 Map<String, Object> adCtgrMap = new HashMap<>();
+            	 Map<String, Object> adCtgrMap = new LinkedHashMap<>();
             	 adCtgrMap.put("adSeq", adCtgr.getAdSeq());
             	 adCtgrMap.put("adTitle", adCtgr.getAdTitle());
             	 adCtgrMap.put("shopName", adCtgr.getShopName());
