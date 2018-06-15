@@ -48,9 +48,36 @@ $(document).ready(function() {
 			return false;
     	}
 
+    	var checkCount = $("input[name=targetAptIds]:hidden").length;
+    	if (checkCount == 0) {
+			alert(" 타겟 아파트 또는 광고 카테고리를 선택하여 주십시오. ");
+			return false;
+    	}
+
+		var isUnchecked = false;
+
+    	for (var i=0; i<checkCount; i++) {
+    		var tempVal = $("input[name=targetAptIds]:eq(" + i + ")").val();
+
+    		var checkedCount = $("input[name=adCategoryCodes-" + tempVal + "]:checkbox:checked").length;
+
+    		if (checkedCount == 0) {
+    			isUnchecked = true;
+				break;
+    		}
+    	}
+
+		if (isUnchecked) {
+			alert(" 광고 카테고리를 선택하여 주십시오. ");
+			return false;
+		}
+
+		// multiple 일때
+    	/**
     	if ($("#targetApts").val()) {
 			$("#targetApt").val($("#targetApts").val());
     	}
+    	*/
     });
 
 	if ($("#delYn").val() == 'Y') {
@@ -352,7 +379,9 @@ function searchAptList(el) {
 				height = height * (count / 3) + ((count % 3) * 20);
 			}
 
-			$("#targetApts").html("").prepend("<option value=\"all\">전체</value>").append(temp).show().css("height", height + "px");
+			// multiple
+			// $("#targetApts").html("").prepend("<option value=\"all\">전체</value>").append(temp).show().css("height", height + "px");
+			$("#targetApts").html("").prepend("<option value=\"all\">전체</value>").append(temp).show();
 
 			if (gTargetApt == "all") {
 				$("#targetApts").val(gTargetApt);
@@ -380,21 +409,93 @@ function searchAptList(el) {
  */
 function changeTargetApts(el) {
 	var $this = $(el);
+	var targetAptId = $this.val();
 
-	// alert($this.val());
+	var isTargetAptSame = false;
 
-	if ($this.val() == "all") {
-		 for( var i=0; i<$("#targetApts option").size(); i++) {
-			 if (i > 0) {
-				 $("#targetApts option:eq(" + i +")").removeAttr("selected");
-			 }
-		 }
+	if (targetAptId == "all") {
+		$("#divAptAdCategoryMapp").html('');
 	}
 	else {
-		$("#targetApts option:eq(0)").removeAttr("selected");
+		$("input[name=targetAptIds]").each(function() {
+			if ($(this).val() == "all") {
+				$(this).parent().remove();
+			}
+
+			if (targetAptId == $(this).val()) {
+				isTargetAptSame = true;
+			}
+		});
+
+		if (isTargetAptSame) {
+			return;
+		}
 	}
+
+	/**
+	alert(
+		$this.val() + ' ' + $("#targetApts option:selected").text() + ' ' + $("#targetApts option").index($("#targetApts option:selected"))
+	);
+	*/
+
+	var targetAptName = $("#targetApts option:selected").text();
+
+  	var tempHtml = "<div class=\"input-group\">";
+  	tempHtml += "<button type=\"button\" class=\"btn btn-xs btn-danger\" onclick=\"deleteAptAdCategoryMapArea(this, '" + targetAptId + "');\">삭제</button>";
+  	tempHtml += "<i>" + targetAptName + "</i> <input type=\"hidden\" name=\"targetAptIds\" value=\"" + targetAptId + "\" /> &nbsp;&nbsp;&nbsp;&nbsp; ";
+  	tempHtml += "<input type=\"checkbox\" name=\"adCategoryCodes-" + targetAptId + "\" value=\"00\" onclick=\"checkAllAdCategory(this, '" + targetAptId + "');\" />전체";
+  	tempHtml += " &nbsp;&nbsp; <input type=\"checkbox\" name=\"adCategoryCodes-" + targetAptId + "\" value=\"01\" onclick=\"uncheckAllAdCategory(this, '" + targetAptId + "');\" />Best20";
+  	tempHtml += " &nbsp;&nbsp; <input type=\"checkbox\" name=\"adCategoryCodes-" + targetAptId + "\" value=\"02\" onclick=\"uncheckAllAdCategory(this, '" + targetAptId + "');\" />음식";
+  	tempHtml += " &nbsp;&nbsp; <input type=\"checkbox\" name=\"adCategoryCodes-" + targetAptId + "\" value=\"03\" onclick=\"uncheckAllAdCategory(this, '" + targetAptId + "');\" />학원";
+  	tempHtml += " &nbsp;&nbsp; <input type=\"checkbox\" name=\"adCategoryCodes-" + targetAptId + "\" value=\"04\" onclick=\"uncheckAllAdCategory(this, '" + targetAptId + "');\" />스포츠";
+  	tempHtml += " &nbsp;&nbsp; <input type=\"checkbox\" name=\"adCategoryCodes-" + targetAptId + "\" value=\"05\" onclick=\"uncheckAllAdCategory(this, '" + targetAptId + "');\" />미용/뷰티";
+  	tempHtml += " &nbsp;&nbsp; <input type=\"checkbox\" name=\"adCategoryCodes-" + targetAptId + "\" value=\"06\" onclick=\"uncheckAllAdCategory(this, '" + targetAptId + "');\" />생활편의";
+  	tempHtml += "</div>";
+
+  	tempHtml += $("#divAptAdCategoryMapp").html();
+
+    $("#divAptAdCategoryMapp").html(tempHtml);
+	$("#divAdCategoryMappArea").show();
 }
 
+function checkAllAdCategory(el, targetAptId) {
+	if ($(el).prop("checked")) {
+		$("input[name=adCategoryCodes-" + targetAptId + "]:checkbox").prop("checked", true);
+	}
+	else {
+		$("input[name=adCategoryCodes-" + targetAptId + "]:checkbox").prop("checked", false);
+	}
+}
+function uncheckAllAdCategory(el, targetAptId) {
+	if ($(el).prop("checked")) {
+		var isAll = true;
+		$("input[name=adCategoryCodes-" + targetAptId + "]:checkbox").each(function() {
+			if ( ($(this).val() != "00") && ($(this).prop("checked") == false) ) {
+				isAll = false;
+			}
+		});
+
+		if (isAll) {
+			$("input[name=adCategoryCodes-" + targetAptId + "]:checkbox").prop("checked", true);
+		}
+	}
+	else {
+		$("input[name=adCategoryCodes-" + targetAptId + "]:checkbox").each(function() {
+			if ($(this).val() == "00") {
+				$(this).prop("checked", false);
+			}
+		});
+	}
+}
+function deleteAptAdCategoryMapArea(el, targetAptId) {
+	if ( confirm(" 해당 카테고리 매핑을 삭제하시겠습니까? ") ) {
+		$(el).parent().remove();
+
+		if (!$("#divAptAdCategoryMapp").html()) {
+			$("#divAdCategoryMappArea").hide();
+		}
+	}
+}
 /*]]>*/
 </script>
 </head>
@@ -488,8 +589,28 @@ function changeTargetApts(el) {
                   	<select class="form-control" id="targetSigu" name="targetSigu" style="display:none;" onchange="searchAptList(this);"></select>
                   </div>
                   <div class="col-sm-3">
-                  	<select class="form-control" id="targetApts" name="targetApts" style="display:none;" multiple onchange="changeTargetApts(this);"></select>
-                  	<input type="hidden" id="targetApt" name="targetApt" value="" />
+                  	<!--<select class="form-control" id="targetApts" name="targetApts" style="display:none;" multiple onchange="changeTargetApts(this);"></select>-->
+                  	<select class="form-control" id="targetApts" name="targetApts" style="display:none;" onchange="changeTargetApts(this);"></select>
+                  	<!--<input type="hidden" id="targetApt" name="targetApt" value="" />-->
+                  </div>
+                </div>
+                <div id="divAdCategoryMappArea" class="form-group" th:if="${not #lists.isEmpty(adAptCtgrMappList)}">
+                  <!-- 광고카테고리코드( 00 전체, 01  Best20,  02  음식,  03  학원, 04  스포츠, 05  미용/뷰티, 06  생활편의) -->
+                  <label class="col-sm-2 control-label">광고카테고리 매핑</label>
+                  <div id="divAptAdCategoryMapp" class="col-sm-9">
+                  	<div class="input-group" th:each="adAptCtgrMapp,iterStat : ${adAptCtgrMappList}">
+                  		<button type="button" class="btn btn-xs btn-danger" th:onclick="'deleteAptAdCategoryMapArea(this, \'' + ${adAptCtgrMapp.targetAptId} + '\')'">삭제</button>
+                  		<i th:text="${adAptCtgrMapp.targetAptName}">광고형 택배함 테스트</i>
+                  		<input type="hidden" name="targetAptIds" th:value="${adAptCtgrMapp.targetAptId}">
+                  		&nbsp;&nbsp;
+                  		&nbsp;&nbsp; <input type="checkbox" th:checked="${#strings.equals(adAptCtgrMapp.adCtgrCodeWithComma, '01,02,03,04,05,06')}" th:name="'adCategoryCodes-' + ${adAptCtgrMapp.targetAptId}" value="00" th:onclick="'checkAllAdCategory(this, \'' + ${adAptCtgrMapp.targetAptId} + '\')'">전체
+                  		&nbsp;&nbsp; <input type="checkbox" th:checked="${#strings.contains(adAptCtgrMapp.adCtgrCodeWithComma, '01')}" th:name="'adCategoryCodes-' + ${adAptCtgrMapp.targetAptId}" value="01" th:onclick="'checkAllAdCategory(this, \'' + ${adAptCtgrMapp.targetAptId} + '\')'">Best20
+                  		&nbsp;&nbsp; <input type="checkbox" th:checked="${#strings.contains(adAptCtgrMapp.adCtgrCodeWithComma, '02')}" th:name="'adCategoryCodes-' + ${adAptCtgrMapp.targetAptId}" value="02" th:onclick="'checkAllAdCategory(this, \'' + ${adAptCtgrMapp.targetAptId} + '\')'">음식
+                  		&nbsp;&nbsp; <input type="checkbox" th:checked="${#strings.contains(adAptCtgrMapp.adCtgrCodeWithComma, '03')}" th:name="'adCategoryCodes-' + ${adAptCtgrMapp.targetAptId}" value="03" th:onclick="'checkAllAdCategory(this, \'' + ${adAptCtgrMapp.targetAptId} + '\')'">학원
+                  		&nbsp;&nbsp; <input type="checkbox" th:checked="${#strings.contains(adAptCtgrMapp.adCtgrCodeWithComma, '04')}" th:name="'adCategoryCodes-' + ${adAptCtgrMapp.targetAptId}" value="04" th:onclick="'checkAllAdCategory(this, \'' + ${adAptCtgrMapp.targetAptId} + '\')'">스포츠
+                  		&nbsp;&nbsp; <input type="checkbox" th:checked="${#strings.contains(adAptCtgrMapp.adCtgrCodeWithComma, '05')}" th:name="'adCategoryCodes-' + ${adAptCtgrMapp.targetAptId}" value="05" th:onclick="'checkAllAdCategory(this, \'' + ${adAptCtgrMapp.targetAptId} + '\')'">미용/뷰티
+                  		&nbsp;&nbsp; <input type="checkbox" th:checked="${#strings.contains(adAptCtgrMapp.adCtgrCodeWithComma, '06')}" th:name="'adCategoryCodes-' + ${adAptCtgrMapp.targetAptId}" value="06" th:onclick="'checkAllAdCategory(this, \'' + ${adAptCtgrMapp.targetAptId} + '\')'">생활편의
+                  	</div>
                   </div>
                 </div>
 
