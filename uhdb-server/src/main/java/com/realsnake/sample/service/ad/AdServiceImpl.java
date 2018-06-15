@@ -20,6 +20,7 @@ import com.realsnake.sample.constants.CommonConstants;
 import com.realsnake.sample.mapper.ad.AdMapper;
 import com.realsnake.sample.mapper.common.CommonMapper;
 import com.realsnake.sample.mapper.user.UserMapper;
+import com.realsnake.sample.model.ad.AdCtgrVo;
 import com.realsnake.sample.model.ad.AdDto;
 import com.realsnake.sample.model.ad.AdVo;
 import com.realsnake.sample.model.ad.ShopVo;
@@ -374,6 +375,43 @@ public class AdServiceImpl implements AdService {
         param.setAttachFileList(this.commonMapper.selectAttachFileList(attachFile));
 
         return ad;
+    }
+    
+    @Transactional(readOnly = true)
+    public List<AdCtgrVo> findAdList(AdDto param, String categoryCode) throws Exception {
+    	
+    	UserUhdbVo userUhdbParam = new UserUhdbVo();
+        userUhdbParam.setUserSeq(param.getLoginUser().getSeq());
+
+        UserUhdbVo userUhdb = this.userMapper.selectUserUhdb(userUhdbParam);
+        
+        AdCtgrVo adCtgrVo = new AdCtgrVo();
+        adCtgrVo.setTargetAptId(userUhdb.getAptId());
+        adCtgrVo.setAdCtgrCode(categoryCode);
+        
+        if (param.getMobilePagingHelper().getSortList() == null || param.getMobilePagingHelper().getSortList().isEmpty()) {
+            Sort sort = new Sort();
+            sort.setColumn("seq");
+            sort.setAscOrDesc(CommonConstants.SortType.DESC.getValue());
+
+            List<Sort> sortList = new ArrayList<>();
+            sortList.add(sort);
+
+            param.getMobilePagingHelper().setSortList(sortList);
+        }
+        
+        param.getPagingHelper().setTotalCount(this.adMapper.selectAdCtgrListCount(param));
+        List<AdCtgrVo> adCtgrList = this.adMapper.selectAdCtgrList(adCtgrVo);
+        
+        int nextPageToken = 0;
+
+        if (adCtgrList != null && !adCtgrList.isEmpty()) {
+            nextPageToken = adCtgrList.get(adCtgrList.size() - 1).getAdSeq();
+        }
+
+        param.getMobilePagingHelper().setNextPageToken(nextPageToken);
+        
+        return adCtgrList;
     }
 
 }

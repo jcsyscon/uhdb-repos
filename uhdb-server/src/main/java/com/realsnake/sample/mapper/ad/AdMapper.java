@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.realsnake.sample.model.ad.AdCtgrVo;
 import com.realsnake.sample.model.ad.AdDto;
 import com.realsnake.sample.model.ad.AdVo;
 import com.realsnake.sample.model.ad.ShopVo;
@@ -62,5 +63,9 @@ public interface AdMapper {
     AdVo selectRandomAd(AdDto param);
 
     AdVo selectRandomAd4All(AdDto param);
+    
+    List<AdCtgrVo> selectAdCtgrList(AdCtgrVo adCtgrVo);
+    
+    int selectAdCtgrListCount(AdDto param);
 
 }

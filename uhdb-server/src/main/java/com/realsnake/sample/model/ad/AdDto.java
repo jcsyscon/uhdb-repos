@@ -38,6 +38,7 @@ public class AdDto extends CommonDto implements Serializable {
     private SponsorVo sponsor;
     private ShopVo shop;
     private AdVo ad;
+    private AdCtgrVo adCtgr;
 
     private String uploadedFilePush;
     private String uploadedFileStart;
@@ -71,7 +72,15 @@ public class AdDto extends CommonDto implements Serializable {
         this.ad = ad;
     }
 
-    public String getUploadedFilePush() {
+    public AdCtgrVo getAdCtgr() {
+		return adCtgr;
+	}
+
+	public void setAdCtgr(AdCtgrVo adCtgr) {
+		this.adCtgr = adCtgr;
+	}
+
+	public String getUploadedFilePush() {
         return uploadedFilePush;
     }
 

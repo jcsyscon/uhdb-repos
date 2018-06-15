@@ -523,5 +523,25 @@
 		LIMIT 1
 	</select>
 <!-- 광고 //-->
+<select id="selectAdCtgrListCount" parameterType="AdDto" resultType="int">
+	    SELECT /* selectAdCtgrListCount, 전강욱(realsnake1975@gmail.com) */ COUNT(*)
+	    FROM ad_apt_ctgr_mapp
+	    <include refid="whereClauseOfAd" />
+	</select>
+	
+<select id="selectAdCtgrList" parameterType="AdCtgrVo" resultType="AdCtgrVo">
+
+      SELECT A.seq
+                ,A.title
+                ,S.name AS shopName
+                ,S.tel AS shopTel
+      FROM ad A JOIN shop S ON A.shop_seq = S.seq
+      WHERE A.seq IN (
+         SELECT ad_seq
+         FROM ad_apt_ctgr_mapp
+         WHERE target_apt_id = #{targetAptId} AND ad_ctgr_code = #{adCtgrCode} 
+      )
+
+   </select>
 
 </mapper>

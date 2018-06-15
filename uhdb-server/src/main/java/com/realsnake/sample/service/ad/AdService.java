@@ -7,6 +7,7 @@ package com.realsnake.sample.service.ad;
 
 import java.util.List;
 
+import com.realsnake.sample.model.ad.AdCtgrVo;
 import com.realsnake.sample.model.ad.AdDto;
 import com.realsnake.sample.model.ad.AdVo;
 import com.realsnake.sample.model.ad.ShopVo;
@@ -54,5 +55,7 @@ public interface AdService {
     List<AdVo> findAdList(AdDto param) throws Exception;
 
     AdVo findRandomAd(AdDto param) throws Exception;
+    
+    List<AdCtgrVo> findAdList(AdDto param, String categoryCode) throws Exception;
 
 }
