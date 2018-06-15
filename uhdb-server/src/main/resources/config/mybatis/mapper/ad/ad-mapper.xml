@@ -536,10 +536,9 @@
 	        , #{adCtgrCode}
 	    )
 	</update>
-	<update id="deleteAdAptCtgrMapp" parameterType="AdAptCtgrMappVo">
+	<update id="deleteAdAptCtgrMapp" parameterType="int">
 		DELETE /* deleteAdAptCtgrMapp */ ad_apt_ctgr_mapp
 	    WHERE ad_seq = #{adSeq}
-	    	AND target_apt_id = #{targetAptId}
      </update>
 	<select id="selectAdAptCtgrMappList" parameterType="int" resultType="AdAptCtgrMappVo">
 		SELECT /* selectAdAptCtgrMappList */ aacm_seq
@@ -557,5 +556,5 @@
 	    WHERE AACM.ad_seq = #{adSeq}
 	    GROUP BY AACM.target_apt_id, TA.aptnm
 	</select>
-     
+
 </mapper>

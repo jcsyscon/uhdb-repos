@@ -48,9 +48,36 @@ $(document).ready(function() {
 			return false;
     	}
 
+    	var checkCount = $("input[name=targetAptIds]:hidden").length;
+    	if (checkCount == 0) {
+			alert(" 타겟 아파트 또는 광고 카테고리를 선택하여 주십시오. ");
+			return false;
+    	}
+
+		var isUnchecked = false;
+
+    	for (var i=0; i<checkCount; i++) {
+    		var tempVal = $("input[name=targetAptIds]:eq(" + i + ")").val();
+
+    		var checkedCount = $("input[name=adCategoryCodes-" + tempVal + "]:checkbox:checked").length;
+
+    		if (checkedCount == 0) {
+    			isUnchecked = true;
+				break;
+    		}
+    	}
+
+		if (isUnchecked) {
+			alert(" 광고 카테고리를 선택하여 주십시오. ");
+			return false;
+		}
+
+		// multiple 일때
+    	/**
     	if ($("#targetApts").val()) {
 			$("#targetApt").val($("#targetApts").val());
     	}
+    	*/
     });
 
 	if ($("#delYn").val() == 'Y') {
@@ -382,21 +409,93 @@ function searchAptList(el) {
  */
 function changeTargetApts(el) {
 	var $this = $(el);
+	var targetAptId = $this.val();
 
-	// alert($this.val());
+	var isTargetAptSame = false;
 
-	if ($this.val() == "all") {
-		 for( var i=0; i<$("#targetApts option").size(); i++) {
-			 if (i > 0) {
-				 $("#targetApts option:eq(" + i +")").removeAttr("selected");
-			 }
-		 }
+	if (targetAptId == "all") {
+		$("#divAptAdCategoryMapp").html('');
 	}
 	else {
-		$("#targetApts option:eq(0)").removeAttr("selected");
+		$("input[name=targetAptIds]").each(function() {
+			if ($(this).val() == "all") {
+				$(this).parent().remove();
+			}
+
+			if (targetAptId == $(this).val()) {
+				isTargetAptSame = true;
+			}
+		});
+
+		if (isTargetAptSame) {
+			return;
+		}
 	}
+
+	/**
+	alert(
+		$this.val() + ' ' + $("#targetApts option:selected").text() + ' ' + $("#targetApts option").index($("#targetApts option:selected"))
+	);
+	*/
+
+	var targetAptName = $("#targetApts option:selected").text();
+
+  	var tempHtml = "<div class=\"input-group\">";
+  	tempHtml += "<button type=\"button\" class=\"btn btn-xs btn-danger\" onclick=\"deleteAptAdCategoryMapArea(this, '" + targetAptId + "');\">삭제</button>";
+  	tempHtml += "<i>" + targetAptName + "</i> <input type=\"hidden\" name=\"targetAptIds\" value=\"" + targetAptId + "\" /> &nbsp;&nbsp;&nbsp;&nbsp; ";
+  	tempHtml += "<input type=\"checkbox\" name=\"adCategoryCodes-" + targetAptId + "\" value=\"00\" onclick=\"checkAllAdCategory(this, '" + targetAptId + "');\" />전체";
+  	tempHtml += " &nbsp;&nbsp; <input type=\"checkbox\" name=\"adCategoryCodes-" + targetAptId + "\" value=\"01\" onclick=\"uncheckAllAdCategory(this, '" + targetAptId + "');\" />Best20";
+  	tempHtml += " &nbsp;&nbsp; <input type=\"checkbox\" name=\"adCategoryCodes-" + targetAptId + "\" value=\"02\" onclick=\"uncheckAllAdCategory(this, '" + targetAptId + "');\" />음식";
+  	tempHtml += " &nbsp;&nbsp; <input type=\"checkbox\" name=\"adCategoryCodes-" + targetAptId + "\" value=\"03\" onclick=\"uncheckAllAdCategory(this, '" + targetAptId + "');\" />학원";
+  	tempHtml += " &nbsp;&nbsp; <input type=\"checkbox\" name=\"adCategoryCodes-" + targetAptId + "\" value=\"04\" onclick=\"uncheckAllAdCategory(this, '" + targetAptId + "');\" />스포츠";
+  	tempHtml += " &nbsp;&nbsp; <input type=\"checkbox\" name=\"adCategoryCodes-" + targetAptId + "\" value=\"05\" onclick=\"uncheckAllAdCategory(this, '" + targetAptId + "');\" />미용/뷰티";
+  	tempHtml += " &nbsp;&nbsp; <input type=\"checkbox\" name=\"adCategoryCodes-" + targetAptId + "\" value=\"06\" onclick=\"uncheckAllAdCategory(this, '" + targetAptId + "');\" />생활편의";
+  	tempHtml += "</div>";
+
+  	tempHtml += $("#divAptAdCategoryMapp").html();
+
+    $("#divAptAdCategoryMapp").html(tempHtml);
+	$("#divAdCategoryMappArea").show();
 }
 
+function checkAllAdCategory(el, targetAptId) {
+	if ($(el).prop("checked")) {
+		$("input[name=adCategoryCodes-" + targetAptId + "]:checkbox").prop("checked", true);
+	}
+	else {
+		$("input[name=adCategoryCodes-" + targetAptId + "]:checkbox").prop("checked", false);
+	}
+}
+function uncheckAllAdCategory(el, targetAptId) {
+	if ($(el).prop("checked")) {
+		var isAll = true;
+		$("input[name=adCategoryCodes-" + targetAptId + "]:checkbox").each(function() {
+			if ( ($(this).val() != "00") && ($(this).prop("checked") == false) ) {
+				isAll = false;
+			}
+		});
+
+		if (isAll) {
+			$("input[name=adCategoryCodes-" + targetAptId + "]:checkbox").prop("checked", true);
+		}
+	}
+	else {
+		$("input[name=adCategoryCodes-" + targetAptId + "]:checkbox").each(function() {
+			if ($(this).val() == "00") {
+				$(this).prop("checked", false);
+			}
+		});
+	}
+}
+function deleteAptAdCategoryMapArea(el, targetAptId) {
+	if ( confirm(" 해당 카테고리 매핑을 삭제하시겠습니까? ") ) {
+		$(el).parent().remove();
+
+		if (!$("#divAptAdCategoryMapp").html()) {
+			$("#divAdCategoryMappArea").hide();
+		}
+	}
+}
 /*]]>*/
 </script>
 </head>
@@ -514,7 +613,7 @@ function changeTargetApts(el) {
                   	</div>
                   </div>
                 </div>
-                
+
                 <div class="form-group">
                   <label class="col-sm-2 control-label">광고 푸시 이미지<span class="badge-push" style="display: none;">0</span></label>
                   <div class="col-sm-9">

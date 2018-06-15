@@ -2,7 +2,9 @@ package com.realsnake.sample.controller.web.ad;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
 import com.realsnake.sample.model.ad.AdAptCtgrMappVo;
 import com.realsnake.sample.model.ad.AdDto;
 import com.realsnake.sample.model.ad.AdVo;
@@ -62,31 +65,31 @@ public class AdController {
     public String regAd(HttpServletRequest request, AdDto param, AdVo ad, String[] targetAptIds) throws Exception {
         // 아파트-광고 카테고리 매핑 처리
         List<AdAptCtgrMappVo> adAptCtgrMappList = null;
-        
+
         if (targetAptIds != null && targetAptIds.length > 0) {
             adAptCtgrMappList = new ArrayList<>();
-            
+
             for (String targetAptId : targetAptIds) {
                 LOGGER.debug("targetAptId: {}", targetAptId);
-                
+
                 String[] categoryCodes = request.getParameterValues("adCategoryCodes-" + targetAptId);
 
                 for (String categoryCode : categoryCodes) {
                     if (!"00".equals(categoryCode)) {
                         LOGGER.debug("categoryCode: {}", categoryCode);
-                        
+
                         AdAptCtgrMappVo adAptCtgrMapp = new AdAptCtgrMappVo();
                         adAptCtgrMapp.setTargetAptId(targetAptId);
                         adAptCtgrMapp.setAdCtgrCode(categoryCode);
-                        
+
                         LOGGER.debug("adAptCtgrMapp: {}", adAptCtgrMapp.toString());
-                        
+
                         adAptCtgrMappList.add(adAptCtgrMapp);
                     }
                 }
             }
         }
-        
+
         this.adService.regAd(param, ad, adAptCtgrMappList);
         return "redirect:/ad/list";
     }
@@ -99,26 +102,43 @@ public class AdController {
         model.addAttribute("attachFileList", param.getAttachFileList());
         model.addAttribute("sidoList", this.commonService.findSidoList());
 
-        /**
-        List<AdAptCtgrMappVo> adAptCtgrMappList = param.getAdAptCtgrMappList();
-        List<String> targetAptIdList = new ArrayList<>();
-        if (adAptCtgrMappList != null && !adAptCtgrMappList.isEmpty()) {
-            for (AdAptCtgrMappVo adAptCtgrMapp : adAptCtgrMappList) {
-                targetAptIdList.add(adAptCtgrMapp.getTargetAptId());
-            }
-        }
-        */
-        
         model.addAttribute("adAptCtgrMappList", param.getAdAptCtgrMappList());
-        
+
         return "ad/view";
     }
 
     @PostMapping(value = "/modify/{seq}")
-    public String modifyAd(@PathVariable("seq") Integer seq, AdDto param, AdVo ad) throws Exception {
+    public String modifyAd(HttpServletRequest request, @PathVariable("seq") Integer seq, AdDto param, AdVo ad, String[] targetAptIds) throws Exception {
         LOGGER.debug("<<AdDto>> {}", param.toString());
 
-        this.adService.modifyAd(param, ad);
+        // 아파트-광고 카테고리 매핑 처리
+        List<AdAptCtgrMappVo> adAptCtgrMappList = null;
+
+        if (targetAptIds != null && targetAptIds.length > 0) {
+            adAptCtgrMappList = new ArrayList<>();
+
+            for (String targetAptId : targetAptIds) {
+                LOGGER.debug("targetAptId: {}", targetAptId);
+
+                String[] categoryCodes = request.getParameterValues("adCategoryCodes-" + targetAptId);
+
+                for (String categoryCode : categoryCodes) {
+                    if (!"00".equals(categoryCode)) {
+                        LOGGER.debug("categoryCode: {}", categoryCode);
+
+                        AdAptCtgrMappVo adAptCtgrMapp = new AdAptCtgrMappVo();
+                        adAptCtgrMapp.setTargetAptId(targetAptId);
+                        adAptCtgrMapp.setAdCtgrCode(categoryCode);
+
+                        LOGGER.debug("adAptCtgrMapp: {}", adAptCtgrMapp.toString());
+
+                        adAptCtgrMappList.add(adAptCtgrMapp);
+                    }
+                }
+            }
+        }
+
+        this.adService.modifyAd(param, ad, adAptCtgrMappList);
         return "redirect:/ad/list";
     }
 
