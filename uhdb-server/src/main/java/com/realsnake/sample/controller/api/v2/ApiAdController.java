@@ -19,6 +19,7 @@ import com.realsnake.sample.constants.ApiResultCode;
 import com.realsnake.sample.constants.CommonConstants;
 import com.realsnake.sample.exception.CommonApiException;
 import com.realsnake.sample.model.ad.AdCtgrVo;
+
 import com.realsnake.sample.model.ad.AdDto;
 import com.realsnake.sample.model.ad.AdVo;
 import com.realsnake.sample.model.common.AttachFileVo;
@@ -158,20 +159,22 @@ public class ApiAdController {
              }
              
              List<AdCtgrVo> adCtgrList = this.adService.findAdList(param, categoryCode);
-             
+
              List<Map<String, Object>> adCtgrMapList = new ArrayList<>();
+
              for (AdCtgrVo adCtgr : adCtgrList) {
             	 Map<String, Object> adCtgrMap = new HashMap<>();
             	 adCtgrMap.put("adSeq", adCtgr.getAdSeq());
             	 adCtgrMap.put("adTitle", adCtgr.getAdTitle());
             	 adCtgrMap.put("shopName", adCtgr.getShopName());
             	 adCtgrMap.put("shopTel", adCtgr.getShopTel());
+
             	 adCtgrMapList.add(adCtgrMap);
              }
              
              Map<String, Object> bodyMap = new HashMap<>();
              bodyMap.put("adCtgrList", adCtgrList);
-             
+
              ApiResponse<List<Map<String, Object>>> apiResponse = new ApiResponse<>(mobilePagingHelper.getNextPageToken(), mobilePagingHelper.getPageSize());
              apiResponse.setBody(adCtgrMapList);
 

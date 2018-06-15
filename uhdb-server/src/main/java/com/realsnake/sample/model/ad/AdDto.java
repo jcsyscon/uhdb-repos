@@ -6,7 +6,7 @@
 package com.realsnake.sample.model.ad;
 
 import java.io.Serializable;
-
+import java.util.List;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -48,6 +48,8 @@ public class AdDto extends CommonDto implements Serializable {
 
     private String userAptId;
 
+    private List<AdAptCtgrMappVo> adAptCtgrMappList;
+    
     public SponsorVo getSponsor() {
         return sponsor;
     }
@@ -126,6 +128,14 @@ public class AdDto extends CommonDto implements Serializable {
 
     public void setUserAptId(String userAptId) {
         this.userAptId = userAptId;
+    }
+
+    public List<AdAptCtgrMappVo> getAdAptCtgrMappList() {
+        return adAptCtgrMappList;
+    }
+
+    public void setAdAptCtgrMappList(List<AdAptCtgrMappVo> adAptCtgrMappList) {
+        this.adAptCtgrMappList = adAptCtgrMappList;
     }
 
     @Override

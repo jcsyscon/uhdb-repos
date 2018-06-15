@@ -8,6 +8,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.realsnake.sample.model.ad.AdCtgrVo;
+import com.realsnake.sample.model.ad.AdAptCtgrMappVo;
 import com.realsnake.sample.model.ad.AdDto;
 import com.realsnake.sample.model.ad.AdVo;
 import com.realsnake.sample.model.ad.ShopVo;
@@ -67,5 +68,15 @@ public interface AdMapper {
     List<AdCtgrVo> selectAdCtgrList(AdCtgrVo adCtgrVo);
     
     int selectAdCtgrListCount(AdDto param);
+
+
+
+    void insertAdAptCtgrMapp(AdAptCtgrMappVo adAptCtgrMapp);
+
+    void deleteAdAptCtgrMapp(Integer adSeq);
+
+    List<AdAptCtgrMappVo> selectAdAptCtgrMappList(Integer adSeq);
+
+    List<AdAptCtgrMappVo> selectAdAptCtgrMappGroupList(Integer adSeq);
 
 }

@@ -21,6 +21,7 @@ import com.realsnake.sample.mapper.ad.AdMapper;
 import com.realsnake.sample.mapper.common.CommonMapper;
 import com.realsnake.sample.mapper.user.UserMapper;
 import com.realsnake.sample.model.ad.AdCtgrVo;
+import com.realsnake.sample.model.ad.AdAptCtgrMappVo;
 import com.realsnake.sample.model.ad.AdDto;
 import com.realsnake.sample.model.ad.AdVo;
 import com.realsnake.sample.model.ad.ShopVo;
@@ -219,7 +220,7 @@ public class AdServiceImpl implements AdService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void regAd(AdDto param, AdVo ad) throws Exception {
+    public void regAd(AdDto param, AdVo ad, List<AdAptCtgrMappVo> adAptCtgrMappList) throws Exception {
         Integer loginSeq = param.getLoginUser().getSeq();
 
         if (StringUtils.isEmpty(ad.getTargetSido())) {
@@ -228,14 +229,23 @@ public class AdServiceImpl implements AdService {
         if (StringUtils.isEmpty(ad.getTargetSigu())) {
             ad.setTargetSigu(ALL);
         }
-        if (StringUtils.isEmpty(ad.getTargetApt())) {
-            ad.setTargetApt(ALL);
-        }
+        // if (StringUtils.isEmpty(ad.getTargetApt())) {
+        // ad.setTargetApt(ALL);
+        // }
 
         ad.setRegUserSeq(loginSeq);
         this.adMapper.insertAd(ad);
 
         Integer groupSeq = ad.getSeq();
+
+        // 아파트-광고카테고리 매핑 등록
+        if (adAptCtgrMappList != null && !adAptCtgrMappList.isEmpty()) {
+            for (AdAptCtgrMappVo adAptCtgrMapp : adAptCtgrMappList) {
+                adAptCtgrMapp.setAdSeq(ad.getSeq());
+
+                this.adMapper.insertAdAptCtgrMapp(adAptCtgrMapp);
+            }
+        }
 
         this.saveAdAttachFile(loginSeq, groupSeq, param.getUploadedFilePush(), CommonConstants.AdImageType.PUSH);
         this.saveAdAttachFile(loginSeq, groupSeq, param.getUploadedFileStart(), CommonConstants.AdImageType.START);
@@ -279,7 +289,7 @@ public class AdServiceImpl implements AdService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void modifyAd(AdDto param, AdVo ad) throws Exception {
+    public void modifyAd(AdDto param, AdVo ad, List<AdAptCtgrMappVo> adAptCtgrMappList) throws Exception {
         Integer loginSeq = param.getLoginUser().getSeq();
 
         if ("Y".equalsIgnoreCase(ad.getDelYn())) {
@@ -294,13 +304,24 @@ public class AdServiceImpl implements AdService {
             if (StringUtils.isEmpty(ad.getTargetSigu())) {
                 ad.setTargetSigu(ALL);
             }
-            if (StringUtils.isEmpty(ad.getTargetApt())) {
-                ad.setTargetApt(ALL);
-            }
+            // if (StringUtils.isEmpty(ad.getTargetApt())) {
+            // ad.setTargetApt(ALL);
+            // }
 
             this.adMapper.updateAd(ad);
 
             Integer groupSeq = ad.getSeq();
+
+            // 아파트-광고카테고리 매핑 삭제 및 등록
+            if (adAptCtgrMappList != null && !adAptCtgrMappList.isEmpty()) {
+                this.adMapper.deleteAdAptCtgrMapp(ad.getSeq());
+
+                for (AdAptCtgrMappVo adAptCtgrMapp : adAptCtgrMappList) {
+                    adAptCtgrMapp.setAdSeq(ad.getSeq());
+
+                    this.adMapper.insertAdAptCtgrMapp(adAptCtgrMapp);
+                }
+            }
 
             this.saveAdAttachFile(loginSeq, groupSeq, param.getUploadedFilePush(), CommonConstants.AdImageType.PUSH);
             this.saveAdAttachFile(loginSeq, groupSeq, param.getUploadedFileStart(), CommonConstants.AdImageType.START);
@@ -326,6 +347,9 @@ public class AdServiceImpl implements AdService {
         attachFile.setGubun(CommonConstants.AttachFileFolderType.AD.getValue());
         attachFile.setGroupSeq(ad.getSeq());
         param.setAttachFileList(this.commonMapper.selectAttachFileList(attachFile));
+
+        // 광고-아파트-광고카테고리 매핑 조회
+        param.setAdAptCtgrMappList(this.adMapper.selectAdAptCtgrMappGroupList(adSeq));
 
         return ad;
     }
@@ -353,9 +377,11 @@ public class AdServiceImpl implements AdService {
         UserUhdbVo userUhdbParam = new UserUhdbVo();
         userUhdbParam.setUserSeq(param.getLoginUser().getSeq());
 
+        // 로그인 사용자의 아파트 아이디 조회
         UserUhdbVo userUhdb = this.userMapper.selectUserUhdb(userUhdbParam);
         param.setUserAptId(userUhdb.getAptId());
 
+        // 로그인 사용자의 아파트와 매칭된 랜덤 광고 단건 조회
         AdVo ad = this.adMapper.selectRandomAd(param);
 
         if (ad == null) {
