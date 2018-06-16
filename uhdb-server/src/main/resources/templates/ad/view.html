@@ -594,23 +594,29 @@ function deleteAptAdCategoryMapArea(el, targetAptId) {
                   	<!--<input type="hidden" id="targetApt" name="targetApt" value="" />-->
                   </div>
                 </div>
-                <div id="divAdCategoryMappArea" class="form-group" th:if="${not #lists.isEmpty(adAptCtgrMappList)}">
+                <div class="form-group">
+                	<label class="col-sm-2 control-label"></label>
+                	<div class="col-sm-9">※ <u>광고 카테고리가 보이지 않을 경우, 아파트를 다시 선택해야지만 광고 카테고리가 노출됩니다.</u></div>
+                </div>
+                <div id="divAdCategoryMappArea" class="form-group">
                   <!-- 광고카테고리코드( 00 전체, 01  Best20,  02  음식,  03  학원, 04  스포츠, 05  미용/뷰티, 06  생활편의) -->
                   <label class="col-sm-2 control-label">광고카테고리 매핑</label>
-                  <div id="divAptAdCategoryMapp" class="col-sm-9">
+                  <div id="divAptAdCategoryMapp" class="col-sm-9" th:if="${not #lists.isEmpty(adAptCtgrMappList)}" >
                   	<div class="input-group" th:each="adAptCtgrMapp,iterStat : ${adAptCtgrMappList}">
                   		<button type="button" class="btn btn-xs btn-danger" th:onclick="'deleteAptAdCategoryMapArea(this, \'' + ${adAptCtgrMapp.targetAptId} + '\')'">삭제</button>
                   		<i th:text="${adAptCtgrMapp.targetAptName}">광고형 택배함 테스트</i>
                   		<input type="hidden" name="targetAptIds" th:value="${adAptCtgrMapp.targetAptId}">
                   		&nbsp;&nbsp;
                   		&nbsp;&nbsp; <input type="checkbox" th:checked="${#strings.equals(adAptCtgrMapp.adCtgrCodeWithComma, '01,02,03,04,05,06')}" th:name="'adCategoryCodes-' + ${adAptCtgrMapp.targetAptId}" value="00" th:onclick="'checkAllAdCategory(this, \'' + ${adAptCtgrMapp.targetAptId} + '\')'">전체
-                  		&nbsp;&nbsp; <input type="checkbox" th:checked="${#strings.contains(adAptCtgrMapp.adCtgrCodeWithComma, '01')}" th:name="'adCategoryCodes-' + ${adAptCtgrMapp.targetAptId}" value="01" th:onclick="'checkAllAdCategory(this, \'' + ${adAptCtgrMapp.targetAptId} + '\')'">Best20
-                  		&nbsp;&nbsp; <input type="checkbox" th:checked="${#strings.contains(adAptCtgrMapp.adCtgrCodeWithComma, '02')}" th:name="'adCategoryCodes-' + ${adAptCtgrMapp.targetAptId}" value="02" th:onclick="'checkAllAdCategory(this, \'' + ${adAptCtgrMapp.targetAptId} + '\')'">음식
-                  		&nbsp;&nbsp; <input type="checkbox" th:checked="${#strings.contains(adAptCtgrMapp.adCtgrCodeWithComma, '03')}" th:name="'adCategoryCodes-' + ${adAptCtgrMapp.targetAptId}" value="03" th:onclick="'checkAllAdCategory(this, \'' + ${adAptCtgrMapp.targetAptId} + '\')'">학원
-                  		&nbsp;&nbsp; <input type="checkbox" th:checked="${#strings.contains(adAptCtgrMapp.adCtgrCodeWithComma, '04')}" th:name="'adCategoryCodes-' + ${adAptCtgrMapp.targetAptId}" value="04" th:onclick="'checkAllAdCategory(this, \'' + ${adAptCtgrMapp.targetAptId} + '\')'">스포츠
-                  		&nbsp;&nbsp; <input type="checkbox" th:checked="${#strings.contains(adAptCtgrMapp.adCtgrCodeWithComma, '05')}" th:name="'adCategoryCodes-' + ${adAptCtgrMapp.targetAptId}" value="05" th:onclick="'checkAllAdCategory(this, \'' + ${adAptCtgrMapp.targetAptId} + '\')'">미용/뷰티
-                  		&nbsp;&nbsp; <input type="checkbox" th:checked="${#strings.contains(adAptCtgrMapp.adCtgrCodeWithComma, '06')}" th:name="'adCategoryCodes-' + ${adAptCtgrMapp.targetAptId}" value="06" th:onclick="'checkAllAdCategory(this, \'' + ${adAptCtgrMapp.targetAptId} + '\')'">생활편의
+                  		&nbsp;&nbsp; <input type="checkbox" th:checked="${#strings.contains(adAptCtgrMapp.adCtgrCodeWithComma, '01')}" th:name="'adCategoryCodes-' + ${adAptCtgrMapp.targetAptId}" value="01" th:onclick="'uncheckAllAdCategory(this, \'' + ${adAptCtgrMapp.targetAptId} + '\')'">Best20
+                  		&nbsp;&nbsp; <input type="checkbox" th:checked="${#strings.contains(adAptCtgrMapp.adCtgrCodeWithComma, '02')}" th:name="'adCategoryCodes-' + ${adAptCtgrMapp.targetAptId}" value="02" th:onclick="'uncheckAllAdCategory(this, \'' + ${adAptCtgrMapp.targetAptId} + '\')'">음식
+                  		&nbsp;&nbsp; <input type="checkbox" th:checked="${#strings.contains(adAptCtgrMapp.adCtgrCodeWithComma, '03')}" th:name="'adCategoryCodes-' + ${adAptCtgrMapp.targetAptId}" value="03" th:onclick="'uncheckAllAdCategory(this, \'' + ${adAptCtgrMapp.targetAptId} + '\')'">학원
+                  		&nbsp;&nbsp; <input type="checkbox" th:checked="${#strings.contains(adAptCtgrMapp.adCtgrCodeWithComma, '04')}" th:name="'adCategoryCodes-' + ${adAptCtgrMapp.targetAptId}" value="04" th:onclick="'uncheckAllAdCategory(this, \'' + ${adAptCtgrMapp.targetAptId} + '\')'">스포츠
+                  		&nbsp;&nbsp; <input type="checkbox" th:checked="${#strings.contains(adAptCtgrMapp.adCtgrCodeWithComma, '05')}" th:name="'adCategoryCodes-' + ${adAptCtgrMapp.targetAptId}" value="05" th:onclick="'uncheckAllAdCategory(this, \'' + ${adAptCtgrMapp.targetAptId} + '\')'">미용/뷰티
+                  		&nbsp;&nbsp; <input type="checkbox" th:checked="${#strings.contains(adAptCtgrMapp.adCtgrCodeWithComma, '06')}" th:name="'adCategoryCodes-' + ${adAptCtgrMapp.targetAptId}" value="06" th:onclick="'uncheckAllAdCategory(this, \'' + ${adAptCtgrMapp.targetAptId} + '\')'">생활편의
                   	</div>
+                  </div>
+                  <div id="divAptAdCategoryMapp" class="col-sm-9" th:if="${#lists.isEmpty(adAptCtgrMappList)}">
                   </div>
                 </div>
 
