@@ -557,7 +557,7 @@
 	    )
 	</update>
 	<update id="deleteAdAptCtgrMapp" parameterType="int">
-		DELETE /* deleteAdAptCtgrMapp */ ad_apt_ctgr_mapp
+		DELETE FROM ad_apt_ctgr_mapp
 	    WHERE ad_seq = #{adSeq}
      </update>
 	<select id="selectAdAptCtgrMappList" parameterType="int" resultType="AdAptCtgrMappVo">
