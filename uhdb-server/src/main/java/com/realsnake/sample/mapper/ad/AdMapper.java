@@ -65,9 +65,10 @@ public interface AdMapper {
 
     AdVo selectRandomAd4All(AdDto param);
     
-    List<AdCtgrVo> selectAdCtgrList(AdCtgrVo adCtgrVo);
-    
     int selectAdCtgrListCount(AdDto param);
+    
+    List<AdCtgrVo> selectAdCtgrList(AdDto param);
+  
 
 
 

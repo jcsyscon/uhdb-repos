@@ -39,9 +39,6 @@ public class AdCtgrVo implements Serializable {
 	/** 매장 전화번호 */
 	private String shopTel;
 	
-	private String targetAptId;
-	private String adCtgrCode;
-	
 	public Integer getAdSeq() {
 		return adSeq;
 	}
@@ -72,22 +69,6 @@ public class AdCtgrVo implements Serializable {
 	
 	public void setShopTel(String shopTel) {
 		this.shopTel = shopTel;
-	}
-
-    public String getTargetAptId() {
-		return targetAptId;
-	}
-
-	public void setTargetAptId(String targetAptId) {
-		this.targetAptId = targetAptId;
-	}
-
-	public String getAdCtgrCode() {
-		return adCtgrCode;
-	}
-
-	public void setAdCtgrCode(String adCtgrCode) {
-		this.adCtgrCode = adCtgrCode;
 	}
 
 	@Override

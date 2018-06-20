@@ -47,6 +47,9 @@ public class AdDto extends CommonDto implements Serializable {
     private String uploadedFilePopup;
 
     private String userAptId;
+    
+	private String targetAptId;
+	private String adCtgrCode;
 
     private List<AdAptCtgrMappVo> adAptCtgrMappList;
     
@@ -130,7 +133,23 @@ public class AdDto extends CommonDto implements Serializable {
         this.userAptId = userAptId;
     }
 
-    public List<AdAptCtgrMappVo> getAdAptCtgrMappList() {
+    public String getTargetAptId() {
+		return targetAptId;
+	}
+
+	public void setTargetAptId(String targetAptId) {
+		this.targetAptId = targetAptId;
+	}
+
+	public String getAdCtgrCode() {
+		return adCtgrCode;
+	}
+
+	public void setAdCtgrCode(String adCtgrCode) {
+		this.adCtgrCode = adCtgrCode;
+	}
+
+	public List<AdAptCtgrMappVo> getAdAptCtgrMappList() {
         return adAptCtgrMappList;
     }
 
