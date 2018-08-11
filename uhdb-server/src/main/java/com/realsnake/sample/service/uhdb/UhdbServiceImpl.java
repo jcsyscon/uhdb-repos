@@ -163,13 +163,20 @@ public class UhdbServiceImpl implements UhdbService {
             // body4User = String.format(CommonConstants.SafeFuncType.SAFE_FUNC_10.getBody(), aptPosiName, this.removeZero(param.getBoxNo()), param.getPswd(), param.getDong(), param.getHo(),
             // param.getTaekbae());
 
-            body4User = String.format(CommonConstants.SafeFuncType.SAFE_FUNC_10.getBody(), aptsName, param.getDong(), param.getHo(), this.removeZero(param.getBoxNo()), param.getPswd());
+            // 3. 고객 보관문자 수신시 비밀번호 삭제요청. 20180811
+            // body4User = String.format(CommonConstants.SafeFuncType.SAFE_FUNC_10.getBody(), aptsName, param.getDong(), param.getHo(), this.removeZero(param.getBoxNo()), param.getPswd());
+            body4User = String.format(CommonConstants.SafeFuncType.SAFE_FUNC_10.getBody(), aptsName, param.getDong(), param.getHo(), this.removeZero(param.getBoxNo()));
             tbMobile = param.getTaekbaeHandphone();
             // 택배기사 발송 문자
             // 아파트명 택배함설치장소명 인증번호:taekbae_PSWD 물품교체/보관함 열리지 않았을때 사용
             // - tb_ap0101.aptSnm tb_ap0102.aptPosiNM 인증번호:tb_bx0201.taekbae_pswd 물품교체/보관함이 열리지 않았을 때 사용
-            body4Tb = "%s %s 인증번호:%s 물품교체/보관함 열리지 않았을때 사용<고객용비번아님>";
-            body4Tb = String.format(body4Tb, aptsName, aptPosiName, param.getTaekbaePswd());
+
+            // 2. 택배기사 보관문자 MMS로 발신됨(보관문자 발송시 아파트명 및 동호수 삭제요청, 교환비밀번호만 발송되도록 요청), 20180811 수정
+            // body4Tb = "%s %s 인증번호:%s 물품교체/보관함 열리지 않았을때 사용<고객용비번아님>";
+            // body4Tb = String.format(body4Tb, aptsName, aptPosiName, param.getTaekbaePswd());
+            // 20180811 수정
+            body4Tb = "인증번호:%s 물품교체/보관함 열리지 않았을때 사용<고객용비번아님>";
+            body4Tb = String.format(body4Tb, param.getTaekbaePswd());
 
             param.setUseYn("Y");
             param.setStDt(nowDate);
