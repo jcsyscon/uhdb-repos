@@ -164,8 +164,8 @@ public class UhdbServiceImpl implements UhdbService {
             // param.getTaekbae());
 
             // 3. 고객 보관문자 수신시 비밀번호 삭제요청. 20180811
-            // body4User = String.format(CommonConstants.SafeFuncType.SAFE_FUNC_10.getBody(), aptsName, param.getDong(), param.getHo(), this.removeZero(param.getBoxNo()), param.getPswd());
-            body4User = String.format(CommonConstants.SafeFuncType.SAFE_FUNC_10.getBody(), aptsName, param.getDong(), param.getHo(), this.removeZero(param.getBoxNo()));
+            body4User = String.format(CommonConstants.SafeFuncType.SAFE_FUNC_10.getBody(), aptsName, param.getDong(), param.getHo(), this.removeZero(param.getBoxNo()), param.getPswd());
+            // body4User = String.format(CommonConstants.SafeFuncType.SAFE_FUNC_10.getBody(), aptsName, param.getDong(), param.getHo(), this.removeZero(param.getBoxNo()));
             tbMobile = param.getTaekbaeHandphone();
             // 택배기사 발송 문자
             // 아파트명 택배함설치장소명 인증번호:taekbae_PSWD 물품교체/보관함 열리지 않았을때 사용
